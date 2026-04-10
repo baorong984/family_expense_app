@@ -1,0 +1,486 @@
+// ============================================
+// 🌌 CYBERPUNK GLOBAL STYLES
+// ============================================
+
+// 字体引入
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: $font-body;
+  font-size: 14px;
+  color: $text-primary;
+  background: $bg-deep;
+  overflow-x: hidden;
+}
+
+#__nuxt {
+  width: 100%;
+  height: 100%;
+}
+
+// ============================================
+// 🎨 科技背景
+// ============================================
+
+body {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $gradient-mesh;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+    animation: gridMove 20s linear infinite;
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+// ============================================
+// 🌟 发光动画
+// ============================================
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.6);
+  }
+}
+
+@keyframes neonFlicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 
+      0 0 5px $neon-blue,
+      0 0 10px $neon-blue,
+      0 0 20px $neon-blue,
+      0 0 40px $neon-cyan;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    border-color: rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(0, 240, 255, 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// ============================================
+// 📜 页面过渡动画
+// ============================================
+
+.page-enter-active,
+.page-leave-active {
+  transition: all $transition-slow;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+  filter: blur(10px);
+}
+
+// ============================================
+// 🖱️ 滚动条样式
+// ============================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, $neon-blue, $neon-purple);
+  border-radius: 4px;
+  
+  &:hover {
+    background: linear-gradient(180deg, $neon-cyan, $neon-violet);
+  }
+}
+
+// ============================================
+// 💎 玻璃态卡片
+// ============================================
+
+.glass-card {
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+  
+  &:hover {
+    border-color: rgba(0, 240, 255, 0.3);
+    box-shadow: $shadow-glow;
+    transform: translateY(-2px);
+  }
+}
+
+// ============================================
+// 🎯 通用卡片样式
+// ============================================
+
+.page-card {
+  background: $bg-card;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// ============================================
+// 📄 页面头部
+// ============================================
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-color;
+  
+  h2 {
+    font-family: $font-display;
+    font-size: 28px;
+    font-weight: 700;
+    color: $text-neon;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: neonFlicker 3s infinite;
+    
+    &::before {
+      content: '>';
+      margin-right: $spacing-sm;
+      animation: blink 1s infinite;
+    }
+  }
+  
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: $spacing-md;
+  }
+}
+
+// ============================================
+// 🔘 按钮样式
+// ============================================
+
+.el-button {
+  background: $glass-bg;
+  border: 1px solid $border-color;
+  color: $text-neon;
+  font-family: $font-display;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: $neon-blue;
+    box-shadow: $shadow-neon;
+    transform: translateY(-2px);
+  }
+  
+  &.el-button--primary {
+    background: $gradient-primary;
+    border: none;
+    color: $bg-deep;
+    
+    &:hover {
+      background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+      box-shadow: $shadow-neon;
+    }
+  }
+  
+  &.el-button--success {
+    background: $gradient-green;
+    border: none;
+    color: $bg-deep;
+    
+    &:hover {
+      box-shadow: $shadow-green;
+    }
+  }
+  
+  &.el-button--danger {
+    background: $gradient-pink;
+    border: none;
+    color: white;
+    
+    &:hover {
+      box-shadow: $shadow-pink;
+    }
+  }
+}
+
+// ============================================
+// 💻 输入框样式
+// ============================================
+
+.el-input__wrapper {
+  background: $bg-input;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: none;
+  transition: all $transition-base;
+  
+  &:hover {
+    border-color: $border-color-hover;
+  }
+  
+  &.is-focus {
+    border-color: $neon-blue;
+    box-shadow: $shadow-neon;
+    background: $bg-input-focus;
+  }
+}
+
+.el-textarea__inner {
+  background: $bg-input;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  color: $text-primary;
+  
+  &:focus {
+    border-color: $neon-blue;
+    box-shadow: $shadow-neon;
+    background: $bg-input-focus;
+  }
+}
+
+// ============================================
+// 🎨 卡片样式
+// ============================================
+
+.el-card {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-card;
+  
+  &.glass-card {
+    backdrop-filter: $glass-blur;
+    -webkit-backdrop-filter: $glass-blur;
+  }
+  
+  .el-card__header {
+    border-bottom: 1px solid $border-color;
+    padding: $spacing-lg;
+    
+    .card-title {
+      font-family: $font-display;
+      color: $text-neon;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+  
+  .el-card__body {
+    padding: $spacing-lg;
+  }
+}
+
+// ============================================
+// 💰 金额样式
+// ============================================
+
+.amount {
+  font-family: $font-mono;
+  font-weight: 700;
+  color: $neon-pink;
+  text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+  
+  &.positive {
+    color: $neon-green;
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+  }
+}
+
+// ============================================
+// 📊 统计项
+// ============================================
+
+.stat-item {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+  }
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-glow;
+    border-color: $neon-blue;
+  }
+  
+  .label {
+    display: block;
+    font-size: 12px;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .value {
+    display: block;
+    font-family: $font-mono;
+    font-size: 32px;
+    font-weight: 700;
+    color: $text-neon;
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  }
+}
+
+// ============================================
+// 📈 趋势指示器
+// ============================================
+
+.trend-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius;
+  font-size: 12px;
+  font-weight: 600;
+  
+  &.up {
+    color: $neon-green;
+    background: rgba(57, 255, 20, 0.1);
+  }
+  
+  &.down {
+    color: $neon-pink;
+    background: rgba(255, 0, 110, 0.1);
+  }
+}
+
+// ============================================
+// 📱 响应式
+// ============================================
+
+@media (max-width: $breakpoint-sm) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+    
+    h2 {
+      font-size: 22px;
+    }
+  }
+  
+  .stat-item {
+    .value {
+      font-size: 24px;
+    }
+  }
+}

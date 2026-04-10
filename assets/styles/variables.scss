@@ -1,0 +1,100 @@
+// ============================================
+// 🎨 CYBERPUNK TECH THEME
+// ============================================
+
+// 霓虹色系
+$neon-blue: #00f0ff;
+$neon-cyan: #00d4ff;
+$neon-pink: #ff006e;
+$neon-magenta: #ff4d94;
+$neon-green: #39ff14;
+$neon-lime: #00ff87;
+$neon-purple: #b026ff;
+$neon-violet: #7c3aed;
+
+// 深色背景
+$bg-deep: #0a0e27;
+$bg-dark: #151932;
+$bg-card: rgba(21, 25, 50, 0.7);
+$bg-card-hover: rgba(21, 25, 50, 0.85);
+$bg-input: rgba(0, 240, 255, 0.05);
+$bg-input-focus: rgba(0, 240, 255, 0.1);
+
+// 文字颜色
+$text-primary: #ffffff;
+$text-secondary: #a0aec0;
+$text-muted: #718096;
+$text-neon: #00f0ff;
+
+// 边框
+$border-color: rgba(0, 240, 255, 0.2);
+$border-color-hover: rgba(0, 240, 255, 0.4);
+$border-radius: 12px;
+$border-radius-lg: 16px;
+$border-radius-xl: 24px;
+
+// 阴影和发光
+$shadow-neon: 0 0 20px rgba(0, 240, 255, 0.3);
+$shadow-pink: 0 0 20px rgba(255, 0, 110, 0.3);
+$shadow-green: 0 0 20px rgba(57, 255, 20, 0.3);
+$shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+$shadow-glow: 0 0 40px rgba(0, 240, 255, 0.15);
+
+// 玻璃态效果
+$glass-bg: rgba(21, 25, 50, 0.6);
+$glass-border: rgba(255, 255, 255, 0.1);
+$glass-blur: blur(20px);
+
+// 渐变
+$gradient-primary: linear-gradient(135deg, #00f0ff 0%, #00d4ff 50%, #7c3aed 100%);
+$gradient-pink: linear-gradient(135deg, #ff006e 0%, #ff4d94 100%);
+$gradient-green: linear-gradient(135deg, #39ff14 0%, #00ff87 100%);
+$gradient-dark: linear-gradient(135deg, #0a0e27 0%, #151932 100%);
+$gradient-mesh: 
+  radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
+  radial-gradient(circle at 80% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+  radial-gradient(circle at 40% 20%, rgba(57, 255, 20, 0.1) 0%, transparent 50%);
+
+// 状态色
+$success-color: $neon-green;
+$warning-color: $neon-pink;
+$danger-color: #ff2a6d;
+$info-color: $neon-cyan;
+
+// 间距
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// 布局
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 80px;
+$header-height: 72px;
+
+// 字体
+$font-display: 'Orbitron', 'Space Grotesk', sans-serif;
+$font-body: 'Inter', 'Roboto', sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+// 响应式断点
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1536px;
+
+// 动画
+$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Z-index层级
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
