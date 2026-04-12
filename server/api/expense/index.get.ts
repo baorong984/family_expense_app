@@ -50,6 +50,9 @@ export default defineEventHandler(async (event) => {
   const total = countResult?.total || 0
   
   // 查询列表
+  const offset = Math.max(0, (page - 1) * pageSize)
+  const limit = Math.max(1, pageSize)
+  
   const list = await query<Expense>(
     `SELECT e.*, c.name as category_name, m.name as member_name
      FROM expenses e
@@ -57,8 +60,8 @@ export default defineEventHandler(async (event) => {
      LEFT JOIN members m ON e.member_id = m.id
      ${whereClause}
      ORDER BY e.expense_date DESC, e.expense_time DESC
-     LIMIT ? OFFSET ?`,
-    [...params, pageSize, (page - 1) * pageSize]
+     LIMIT ${limit} OFFSET ${offset}`,
+    params
   )
   
   return successResponse({
