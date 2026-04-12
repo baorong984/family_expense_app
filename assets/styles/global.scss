@@ -522,20 +522,224 @@ body {
 // 📱 响应式
 // ============================================
 
-@media (max-width: $breakpoint-sm) {
+// 平板端
+@media (max-width: $breakpoint-md) {
   .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-md;
-    
     h2 {
-      font-size: 20px;
+      font-size: 22px;
     }
   }
   
   .stat-item {
     .value {
-      font-size: 22px;
+      font-size: 24px;
     }
   }
+}
+
+// 移动端 (iPhone 14 Pro Max 及更小)
+@media (max-width: $breakpoint-sm) {
+  html, body {
+    font-size: 14px;
+    // 防止iOS Safari橡皮筋效果
+    overscroll-behavior: none;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-mobile-md;
+    padding-bottom: $spacing-sm;
+    
+    h2 {
+      font-size: 18px;
+      
+      &::before {
+        left: -12px;
+        width: 3px;
+        height: 18px;
+      }
+    }
+    
+    .header-actions {
+      gap: $spacing-sm;
+    }
+  }
+  
+  .stat-item {
+    padding: $spacing-mobile-sm;
+    
+    .label {
+      font-size: 11px;
+    }
+    
+    .value {
+      font-size: 20px;
+    }
+  }
+  
+  // 卡片移动端适配
+  .el-card {
+    border-radius: $border-radius;
+    
+    .el-card__header {
+      padding: $spacing-mobile-md;
+      font-size: 14px;
+    }
+    
+    .el-card__body {
+      padding: $spacing-mobile-md;
+    }
+  }
+  
+  // 表格移动端适配
+  .el-table {
+    font-size: 13px;
+    
+    th.el-table__cell,
+    td.el-table__cell {
+      padding: 8px 4px;
+    }
+  }
+  
+  // 按钮移动端适配
+  .el-button {
+    padding: 8px 12px;
+    
+    &.el-button--large {
+      padding: 10px 16px;
+    }
+  }
+  
+  // 表单移动端适配
+  .el-form-item {
+    margin-bottom: $spacing-mobile-md;
+    
+    .el-form-item__label {
+      font-size: 13px;
+      padding-bottom: 4px;
+    }
+  }
+  
+  // 输入框移动端适配
+  .el-input__wrapper {
+    padding: 8px 12px;
+  }
+  
+  // 分页移动端适配
+  .el-pagination {
+    .el-pagination__sizes {
+      display: none;
+    }
+  }
+  
+  // 金额移动端适配
+  .amount.large {
+    font-size: 22px;
+  }
+  
+  // 对话框移动端适配
+  .el-dialog {
+    margin: 0 !important;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    
+    .el-dialog__header {
+      padding: $spacing-mobile-md;
+    }
+    
+    .el-dialog__body {
+      padding: $spacing-mobile-md;
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+    }
+    
+    .el-dialog__footer {
+      padding: $spacing-mobile-md;
+    }
+  }
+  
+  // 抽屉移动端适配
+  .el-drawer {
+    .el-drawer__body {
+      padding: $spacing-mobile-md;
+    }
+  }
+  
+  // 下拉框移动端适配
+  .el-select {
+    width: 100%;
+  }
+  
+  // 日期选择器移动端适配
+  .el-date-editor {
+    width: 100%;
+  }
+  
+  // 级联选择器移动端适配
+  .el-cascader {
+    width: 100%;
+  }
+}
+
+// 超小屏幕 (< 375px)
+@media (max-width: 374px) {
+  .page-header {
+    h2 {
+      font-size: 16px;
+    }
+  }
+  
+  .stat-item {
+    .value {
+      font-size: 18px;
+    }
+  }
+}
+
+// ============================================
+// 📱 移动端专用工具类
+// ============================================
+
+// 移动端隐藏
+.hide-mobile {
+  @media (max-width: $breakpoint-sm) {
+    display: none !important;
+  }
+}
+
+// 桌面端隐藏
+.hide-desktop {
+  @media (min-width: $breakpoint-sm) {
+    display: none !important;
+  }
+}
+
+// 移动端全宽
+.full-width-mobile {
+  @media (max-width: $breakpoint-sm) {
+    width: 100% !important;
+  }
+}
+
+// 移动端堆叠布局
+.stack-mobile {
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column !important;
+    gap: $spacing-mobile-sm !important;
+  }
+}
+
+// 移动端紧凑间距
+.compact-mobile {
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-mobile-sm !important;
+    margin: $spacing-mobile-xs !important;
+  }
+}
+
+// 安全区域适配 (iOS)
+.safe-area-bottom {
+  padding-bottom: $safe-area-inset-bottom;
 }
