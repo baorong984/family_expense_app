@@ -1,12 +1,5 @@
 <template>
   <div class="main-layout">
-    <!-- 背景装饰 -->
-    <div class="background-decoration">
-      <div class="orbit orbit-1"></div>
-      <div class="orbit orbit-2"></div>
-      <div class="orbit orbit-3"></div>
-    </div>
-    
     <Header :is-collapsed="isCollapsed" @toggle="toggleCollapse" />
     <div class="main-container">
       <Sidebar :is-collapsed="isCollapsed" />
@@ -51,76 +44,9 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: $bg-deep;
+  background: $bg-page;
   position: relative;
   overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: $gradient-mesh;
-    pointer-events: none;
-    z-index: 0;
-  }
-}
-
-// 背景装饰
-.background-decoration {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  
-  .orbit {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 240, 255, 0.1);
-    animation: orbitRotate 30s linear infinite;
-  }
-  
-  .orbit-1 {
-    width: 600px;
-    height: 600px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .orbit-2 {
-    width: 800px;
-    height: 800px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-duration: 40s;
-    animation-direction: reverse;
-  }
-  
-  .orbit-3 {
-    width: 1000px;
-    height: 1000px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-duration: 50s;
-  }
-}
-
-@keyframes orbitRotate {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
 }
 
 .main-container {
@@ -140,14 +66,14 @@ onUnmounted(() => {
   .content-wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    animation: fadeInUp 0.5s ease-out;
+    animation: fadeInUp 0.4s ease-out;
   }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -158,12 +84,6 @@ onUnmounted(() => {
 @media (max-width: $breakpoint-sm) {
   .main-content {
     padding: $spacing-md;
-  }
-  
-  .background-decoration {
-    .orbit {
-      opacity: 0.5;
-    }
   }
 }
 </style>

@@ -1383,7 +1383,7 @@ const handleExcelImport = async (file: File) => {
 
     .chat-edit-form {
       .result {
-        color: $success-color;
+        color: $success;
         font-weight: 600;
       }
     }
@@ -1418,16 +1418,17 @@ const handleExcelImport = async (file: File) => {
         gap: $spacing-xs;
 
         &:hover {
-          border-color: $neon-blue;
+          border-color: $primary;
         }
 
         &.active {
-          border-color: $neon-blue;
-          background: rgba($neon-blue, 0.1);
+          border-color: $primary;
+          background: rgba($primary, 0.1);
         }
 
         .name {
           font-weight: 500;
+          color: $text-primary;
         }
 
         .confidence {
@@ -1499,7 +1500,7 @@ const handleExcelImport = async (file: File) => {
     }
     
     .ai-avatar {
-      background: $success-color;
+      background: $success;
     }
   }
   
@@ -1529,7 +1530,7 @@ const handleExcelImport = async (file: File) => {
     border-top: 1px solid $border-color;
     
     .amount {
-      color: $danger-color;
+      color: $accent;
       font-weight: 600;
       font-size: 16px;
     }
@@ -1571,7 +1572,7 @@ const handleExcelImport = async (file: File) => {
     }
     
     .result {
-      color: $success-color;
+      color: $success;
       font-weight: 600;
     }
   }
@@ -1619,7 +1620,7 @@ const handleExcelImport = async (file: File) => {
 // 录入表单样式
 .expense-form {
   .result {
-    color: $success-color;
+    color: $success;
     font-weight: 600;
   }
 }

@@ -408,7 +408,7 @@ const goToCreate = () => {
 }
 
 .amount {
-  color: $danger-color;
+  color: $accent;
   font-weight: 600;
 }
 

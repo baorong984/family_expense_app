@@ -211,6 +211,7 @@ const deleteMember = async (member: Member) => {
     h3 {
       font-size: 16px;
       margin-bottom: $spacing-xs;
+      color: $text-primary;
     }
     
     .stats {
@@ -232,10 +233,10 @@ const deleteMember = async (member: Member) => {
     transition: all 0.3s;
     
     &:hover {
-      border-color: $neon-blue;
+      border-color: $primary;
       
       .add-content {
-        color: $neon-blue;
+        color: $primary;
       }
     }
     
