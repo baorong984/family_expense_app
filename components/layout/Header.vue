@@ -12,7 +12,7 @@
     
     <div class="right">
       <!-- 时间显示 -->
-      <div class="time-display">
+      <div class="time-display" :class="{ 'hide-mobile': isMobile }">
         <div class="time">{{ currentTime }}</div>
         <div class="date">{{ currentDate }}</div>
       </div>
@@ -23,7 +23,7 @@
           <el-avatar :size="36" class="avatar">
             {{ userStore.username?.charAt(0)?.toUpperCase() }}
           </el-avatar>
-          <div class="user-details">
+          <div class="user-details" :class="{ 'hide-mobile': isMobile }">
             <span class="username">{{ userStore.username }}</span>
             <span class="user-role">{{ userStore.isAdmin ? '管理员' : '成员' }}</span>
           </div>
@@ -55,6 +55,7 @@ import PasswordDialog from './PasswordDialog.vue'
 
 const props = defineProps<{
   isCollapsed: boolean
+  isMobile: boolean
 }>()
 
 const emit = defineEmits<{
@@ -265,6 +266,36 @@ const handleCommand = async (command: string) => {
     
     .danger {
       color: $danger;
+    }
+  }
+}
+
+// 移动端适配
+@media (max-width: $breakpoint-sm) {
+  .header {
+    padding: 0 $spacing-mobile-md;
+  }
+  
+  .left {
+    gap: $spacing-sm;
+    
+    .title-container .title {
+      font-size: 16px;
+    }
+  }
+  
+  .right {
+    gap: $spacing-sm;
+  }
+  
+  .user-info {
+    padding: $spacing-xs $spacing-sm;
+    
+    .avatar {
+      :deep(.el-avatar) {
+        width: 32px !important;
+        height: 32px !important;
+      }
     }
   }
 }

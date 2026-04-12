@@ -72,10 +72,15 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
-// 布局
+// 布局 - 桌面端
 $sidebar-width: 240px;
 $sidebar-collapsed-width: 80px;
 $header-height: 64px;
+
+// 布局 - 移动端 (iPhone 14 Pro Max: 430px)
+$header-height-mobile: 56px;
+$bottom-nav-height: 60px;
+$safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 
 // 字体
 $font-display: 'Nunito', 'PingFang SC', sans-serif;
@@ -83,10 +88,20 @@ $font-body: 'Inter', 'PingFang SC', -apple-system, sans-serif;
 $font-mono: 'SF Mono', 'Consolas', monospace;
 
 // 响应式断点
-$breakpoint-sm: 768px;
-$breakpoint-md: 1024px;
-$breakpoint-lg: 1280px;
-$breakpoint-xl: 1536px;
+// iPhone 14 Pro Max: 430px (移动端基准)
+// iPad Mini: 768px
+// iPad Pro: 1024px
+$breakpoint-xs: 430px;    // 移动端基准 (iPhone 14 Pro Max)
+$breakpoint-sm: 768px;    // 平板端
+$breakpoint-md: 1024px;   // 小桌面
+$breakpoint-lg: 1280px;   // 桌面
+$breakpoint-xl: 1536px;   // 大桌面
+
+// 移动端专用间距
+$spacing-mobile-xs: 8px;
+$spacing-mobile-sm: 12px;
+$spacing-mobile-md: 16px;
+$spacing-mobile-lg: 20px;
 
 // 动画
 $transition-fast: 0.15s ease;

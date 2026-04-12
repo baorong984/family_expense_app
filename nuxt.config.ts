@@ -2,6 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   
+  ssr: false,  // 禁用 SSR 避免水合不匹配
+  
   modules: [
     '@pinia/nuxt',
   ],

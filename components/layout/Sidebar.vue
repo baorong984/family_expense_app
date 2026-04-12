@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :class="{ collapsed: isCollapsed }">
+  <div class="sidebar" :class="{ collapsed: isCollapsed, 'is-mobile': isMobile }">
     <!-- Logo 区域 -->
     <div class="sidebar-logo">
       <transition name="logo-fade" mode="out-in">
@@ -14,25 +14,25 @@
     <!-- 菜单 -->
     <el-menu
       :default-active="activeMenu"
-      :collapse="isCollapsed"
+      :collapse="isCollapsed && !isMobile"
       router
       class="sidebar-menu"
     >
-      <el-menu-item index="/expense/create">
+      <el-menu-item index="/expense/create" @click="handleSelect">
         <el-icon><Edit /></el-icon>
         <template #title>
           <span>记账</span>
         </template>
       </el-menu-item>
       
-      <el-menu-item index="/expense/history">
+      <el-menu-item index="/expense/history" @click="handleSelect">
         <el-icon><List /></el-icon>
         <template #title>
           <span>消费记录</span>
         </template>
       </el-menu-item>
       
-      <el-menu-item index="/statistics">
+      <el-menu-item index="/statistics" @click="handleSelect">
         <el-icon><DataAnalysis /></el-icon>
         <template #title>
           <span>统计分析</span>
@@ -43,21 +43,21 @@
       <template v-if="userStore.isAdmin">
         <div class="menu-divider"></div>
         
-        <el-menu-item index="/budget">
+        <el-menu-item index="/budget" @click="handleSelect">
           <el-icon><Wallet /></el-icon>
           <template #title>
             <span>预算管理</span>
           </template>
         </el-menu-item>
         
-        <el-menu-item index="/category">
+        <el-menu-item index="/category" @click="handleSelect">
           <el-icon><Grid /></el-icon>
           <template #title>
             <span>分类管理</span>
           </template>
         </el-menu-item>
         
-        <el-menu-item index="/member">
+        <el-menu-item index="/member" @click="handleSelect">
           <el-icon><User /></el-icon>
           <template #title>
             <span>成员管理</span>
@@ -67,7 +67,7 @@
     </el-menu>
 
     <!-- 底部状态 -->
-    <div class="sidebar-footer" v-if="!isCollapsed">
+    <div v-if="!isCollapsed && !isMobile" class="sidebar-footer">
       <div class="tip-card">
         <span class="tip-icon">💡</span>
         <span class="tip-text">AI 智能记账</span>
@@ -79,8 +79,13 @@
 <script setup lang="ts">
 import { Edit, List, DataAnalysis, Wallet, Grid, User } from '@element-plus/icons-vue'
 
-defineProps<{
+const props = defineProps<{
   isCollapsed: boolean
+  isMobile?: boolean
+}>()
+
+const emit = defineEmits<{
+  select: []
 }>()
 
 const route = useRoute()
@@ -89,6 +94,10 @@ const userStore = useUserStore()
 const activeMenu = computed(() => {
   return route.path
 })
+
+const handleSelect = () => {
+  emit('select')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -103,6 +112,11 @@ const activeMenu = computed(() => {
   
   &.collapsed {
     width: $sidebar-collapsed-width;
+  }
+  
+  &.is-mobile {
+    width: 100%;
+    border-right: none;
   }
 }
 
@@ -169,6 +183,12 @@ const activeMenu = computed(() => {
         color: white;
       }
     }
+    
+    // 移动端样式
+    .is-mobile & {
+      margin: 2px 16px;
+      height: 48px;
+    }
   }
 }
 
@@ -176,6 +196,10 @@ const activeMenu = computed(() => {
   height: 1px;
   background: $border-color;
   margin: $spacing-md $spacing-xl;
+  
+  .is-mobile & {
+    margin: $spacing-sm $spacing-mobile-lg;
+  }
 }
 
 // 底部

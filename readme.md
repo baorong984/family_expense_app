@@ -39,6 +39,7 @@
 | 智能分类 | AI根据消费描述自动推荐分类，减少手动操作           |
 | 数据洞察 | AI分析消费趋势，提供节省建议和异常检测             |
 | 协作共享 | 家庭成员共享账本，共同管理家庭财务                 |
+| 移动适配 | 响应式设计，完美支持移动端和桌面端                 |
 
 ---
 
@@ -96,6 +97,13 @@
 - 设置每月预算
 - 查看预算执行情况
 - 超支提醒
+
+#### 移动端支持
+
+- 响应式布局，自动适配不同设备
+- 底部导航栏，移动端专属交互
+- 抽屉式侧边栏，节省屏幕空间
+- 触摸优化的按钮和表单
 
 ### 2.3 用户流程
 
@@ -155,7 +163,8 @@ family_expense_app/
 │   ├── layout/                # 布局组件
 │   │   ├── Header.vue
 │   │   ├── Sidebar.vue
-│   │   └── MainLayout.vue
+│   │   ├── MainLayout.vue
+│   │   └── MobileNav.vue      # 移动端底部导航
 │   └── expense/
 │       └── ExpenseEditDialog.vue
 ├── composables/               # 组合式函数
@@ -181,7 +190,8 @@ family_expense_app/
 │       ├── db.ts
 │       └── response.ts
 ├── database/                  # 数据库脚本
-│   └── init.sql
+│   ├── init.sql
+│   └── add_password_to_members.sql
 ├── assets/styles/            # 全局样式
 │   ├── variables.scss
 │   └── global.scss
@@ -194,18 +204,34 @@ family_expense_app/
 │   └── auth.ts
 ├── plugins/                  # 插件
 │   └── element-plus.ts
+├── layouts/                  # 布局文件
+│   ├── default.vue
+│   └── blank.vue
 ├── nuxt.config.ts           # Nuxt配置
 ├── package.json
+├── .env.development         # 开发环境配置
+├── .env.production          # 生产环境配置
 └── .env.example             # 环境变量示例
 ```
 
 ### 3.3 响应式断点
 
-| 设备类型 | 宽度范围       | 布局方式                  |
-| -------- | -------------- | ------------------------- |
-| 移动端   | < 768px        | 单栏布局，侧边栏折叠      |
-| 平板     | 768px - 1024px | 两栏布局，侧边栏收缩      |
-| 桌面端   | > 1024px       | 两栏布局，侧边栏固定200px |
+| 设备类型   | 宽度范围       | 布局方式                       | 参考设备         |
+| ---------- | -------------- | ------------------------------ | ---------------- |
+| 移动端     | < 768px        | 单栏布局，底部导航栏           | iPhone 14 Pro Max |
+| 平板       | 768px - 1024px | 两栏布局，侧边栏收缩           | iPad             |
+| 桌面端     | > 1024px       | 两栏布局，侧边栏固定           | 桌面显示器       |
+
+### 3.4 移动端适配标准
+
+**基准设备**: iPhone 14 Pro Max (430px 宽度)
+
+**适配要点**:
+- 使用 viewport meta 标签禁用缩放
+- 支持 iOS 安全区域
+- 底部导航栏高度: 60px + safe-area-inset-bottom
+- 触摸目标最小尺寸: 44x44px
+- 字体使用系统默认字体栈
 
 ---
 
@@ -265,6 +291,7 @@ budgets (预算表)
 | id         | INT(11)      | 成员ID（主键）          |
 | name       | VARCHAR(50)  | 成员姓名                |
 | avatar     | VARCHAR(255) | 头像URL                 |
+| password   | VARCHAR(255) | 密码（bcrypt加密）      |
 | created_by | INT(11)      | 创建者（外键→users.id） |
 | created_at | DATETIME     | 创建时间                |
 | updated_at | DATETIME     | 更新时间                |
@@ -439,7 +466,47 @@ budgets (预算表)
 
 ## 6. 前端设计
 
-### 6.1 页面布局结构
+### 6.1 设计风格
+
+**当前风格**: 小清新风格
+
+**色彩系统**:
+
+```scss
+// 主色调 - 小清新配色
+$primary: #4ECDC4;        // 薄荷绿
+$secondary: #45B7D1;      // 天空蓝
+$accent: #FF6B9D;         // 樱花粉
+
+// 功能色
+$success: #4ECDC4;
+$warning: #FFD93D;
+$danger: #FF6B9D;
+$info: #45B7D1;
+
+// 背景色
+$bg-page: #F8F9FA;        // 页面背景
+$bg-white: #FFFFFF;       // 白色背景
+$bg-gray: #F0F2F5;        // 灰色背景
+
+// 文字色
+$text-primary: #2C3E50;   // 主要文字
+$text-secondary: #7F8C8D; // 次要文字
+$text-placeholder: #BDC3C7; // 占位文字
+
+// 边框和圆角
+$border-color: #E1E8ED;
+$border-radius: 12px;     // 圆角更柔和
+$border-radius-sm: 8px;
+
+// 阴影 - 更轻柔
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+$box-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.1);
+```
+
+### 6.2 页面布局结构
+
+**桌面端布局**:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -452,30 +519,19 @@ budgets (预算表)
 └────────────┴─────────────────────────────────────────────────┘
 ```
 
-### 6.2 全局样式变量
+**移动端布局**:
 
-```scss
-// 主题色
-$primary-color: #409eff;
-$success-color: #67c23a;
-$warning-color: #e6a23c;
-$danger-color: #f56c6c;
-
-// 背景色
-$bg-color: #f5f7fa;
-$bg-color-page: #f0f2f5;
-
-// 文字颜色
-$text-primary: #303133;
-$text-regular: #606266;
-$text-secondary: #909399;
-
-// 边框
-$border-color: #dcdfe6;
-$border-radius: 4px;
-
-// 阴影
-$box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+```
+┌─────────────────────────────────────┐
+│          顶部导航栏 (56px)          │
+├─────────────────────────────────────┤
+│                                     │
+│          主内容区域                │
+│       (全宽，自适应高度)            │
+│                                     │
+├─────────────────────────────────────┤
+│        底部导航栏 (60px)            │
+└─────────────────────────────────────┘
 ```
 
 ### 6.3 页面模块
@@ -483,8 +539,10 @@ $box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 #### 6.3.1 登录页面 (`/login`)
 
 - 居中卡片式登录表单
+- 小清新配色设计
 - 用户名/密码输入框
 - 登录按钮，支持回车键登录
+- 移动端适配，表单宽度自适应
 
 #### 6.3.2 记账页面 (`/expense/create`)
 
@@ -502,6 +560,7 @@ $box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 - 统计摘要卡片：总支出、记录数、平均、最高
 - 记录列表表格：支持分页
 - 编辑/删除操作
+- 移动端：筛选条件折叠，表格卡片化展示
 
 #### 6.3.4 统计分析页面 (`/statistics`)
 
@@ -510,6 +569,7 @@ $box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 - 分类分布饼图
 - 成员占比饼图
 - AI分析洞察卡片：同比分析、异常检测、节省建议、趋势预测
+- 移动端：图表垂直排列，适配小屏幕
 
 #### 6.3.5 预算管理页面 (`/budget`)
 
@@ -517,6 +577,7 @@ $box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 - 总预算设置
 - 分类预算分配（带进度条）
 - 预算执行情况图表
+- 移动端：预算卡片堆叠展示
 
 #### 6.3.6 分类管理页面 (`/category`)
 
@@ -529,8 +590,25 @@ $box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 - 成员卡片网格布局
 - 添加成员按钮
 - 编辑/删除成员弹窗
+- 移动端：成员列表垂直展示
 
-### 6.4 图表配置示例
+### 6.4 移动端专属组件
+
+#### MobileNav.vue - 底部导航栏
+
+- 5个主要功能入口
+- 图标 + 文字标签
+- 当前页面高亮
+- 支持 iOS 安全区域
+
+#### 抽屉式侧边栏
+
+- 点击菜单按钮打开
+- 从左侧滑出
+- 280px 宽度
+- 点击遮罩关闭
+
+### 6.5 图表配置示例
 
 #### 消费趋势折线图
 
@@ -546,6 +624,7 @@ const trendChartOption = {
       smooth: true,
       data: [],
       areaStyle: { opacity: 0.3 },
+      itemStyle: { color: "#4ECDC4" },
     },
   ],
 };
@@ -726,6 +805,10 @@ export class AIService {
 
 ### 9.1 环境变量
 
+项目支持多环境配置，分为开发环境和生产环境。
+
+#### 开发环境 (.env.development)
+
 ```bash
 # 数据库配置
 DB_HOST=localhost
@@ -735,7 +818,7 @@ DB_USER=root
 DB_PASSWORD=your_password
 
 # JWT配置
-JWT_SECRET=your_jwt_secret_key
+JWT_SECRET=your_jwt_secret_key_dev
 JWT_EXPIRES_IN=7d
 
 # SCNet AI配置
@@ -745,9 +828,55 @@ SCNET_MODEL=DeepSeek-R1-Distill-Qwen-7B
 
 # 应用配置
 NUXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NUXT_PUBLIC_MODE=开发环境
+NUXT_PUBLIC_PROJECT_NAME=family_expense_app
 ```
 
-### 9.2 依赖安装
+#### 生产环境 (.env.production)
+
+```bash
+# 数据库配置
+DB_HOST=your_production_host
+DB_PORT=3306
+DB_NAME=family_expense
+DB_USER=your_production_user
+DB_PASSWORD=your_production_password
+
+# JWT配置
+JWT_SECRET=your_strong_jwt_secret_key
+JWT_EXPIRES_IN=7d
+
+# SCNet AI配置
+SCNET_API_KEY=your_production_api_key
+SCNET_API_URL=https://api.scnet.cn/api/llm/v1
+SCNET_MODEL=DeepSeek-R1-Distill-Qwen-7B
+
+# 应用配置
+NUXT_PUBLIC_API_BASE_URL=https://your-domain.com
+NUXT_PUBLIC_MODE=生产环境
+NUXT_PUBLIC_PROJECT_NAME=family_expense_app
+```
+
+### 9.2 构建命令
+
+```bash
+# 开发环境
+npm run dev
+
+# 生产环境开发
+npm run dev:prod
+
+# 开发环境构建
+npm run build
+
+# 生产环境构建
+npm run build:prod
+
+# 生产环境生成
+npm run generate:prod
+```
+
+### 9.3 依赖安装
 
 ```bash
 npm install openai
@@ -825,6 +954,7 @@ npm install bcrypt
 ✨ 智能识别消费信息（支持文字、语音、图片）
 🎯 自动推荐消费分类
 📊 分析消费趋势，提供节省建议
+📱 完美支持移动端使用
 
 快速开始：
 - 点击"记账"开始记录消费
@@ -850,15 +980,40 @@ npm install bcrypt
 
 用户月初进入预算设置页面，设置本月总预算5000元，其中餐饮2000元、交通1000元、购物1000元、其他1000元。月中查看预算执行情况，发现餐饮已超支，系统提醒"餐饮预算已超支200元，请注意控制"。
 
-### B. 待确认事项
+#### 场景4：移动端使用
 
-1. 数据库表结构细节优化
-2. 主题风格是否需要深色模式
-3. 移动端是否需要独立布局
-4. 国际化是否需要多语言支持
+用户在手机上打开应用，底部导航栏快速切换功能，点击"记账"按钮，通过语音输入消费信息，AI自动识别并分类，快速完成记账。
+
+### B. 项目特性总结
+
+✅ **已实现功能**:
+- 用户认证和权限管理
+- 多模态消费记录（文字/语音/图片）
+- AI智能识别和分类
+- 消费历史记录管理
+- 数据统计和可视化
+- 预算管理和监控
+- 分类和成员管理
+- 移动端响应式适配
+- 多环境配置支持
+- 小清新UI设计
+
+📱 **移动端特性**:
+- iPhone 14 Pro Max 完美适配
+- 底部导航栏
+- 抽屉式侧边栏
+- 触摸优化
+- iOS 安全区域支持
+
+🎨 **UI/UX特性**:
+- 小清新配色方案
+- 柔和的圆角和阴影
+- 流畅的页面过渡
+- 响应式布局
+- 深色模式支持（待实现）
 
 ---
 
-> 文档版本：v1.0  
-> 最后更新：2025-01-15  
+> 文档版本：v2.0  
+> 最后更新：2026-04-12  
 > 维护者：开发团队
