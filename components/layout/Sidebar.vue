@@ -4,10 +4,10 @@
     <div class="sidebar-logo">
       <transition name="logo-fade" mode="out-in">
         <div v-if="!isCollapsed" class="logo-text">
-          <span class="logo-icon">⚡</span>
-          <span class="logo-name">EXPENSE</span>
+          <span class="logo-icon">🌿</span>
+          <span class="logo-name">记账本</span>
         </div>
-        <div v-else class="logo-icon-only">⚡</div>
+        <div v-else class="logo-icon-only">🌿</div>
       </transition>
     </div>
 
@@ -19,23 +19,23 @@
       class="sidebar-menu"
     >
       <el-menu-item index="/expense/create">
-        <el-icon class="menu-icon"><Edit /></el-icon>
+        <el-icon><Edit /></el-icon>
         <template #title>
-          <span class="menu-text">记账</span>
+          <span>记账</span>
         </template>
       </el-menu-item>
       
       <el-menu-item index="/expense/history">
-        <el-icon class="menu-icon"><List /></el-icon>
+        <el-icon><List /></el-icon>
         <template #title>
-          <span class="menu-text">消费记录</span>
+          <span>消费记录</span>
         </template>
       </el-menu-item>
       
       <el-menu-item index="/statistics">
-        <el-icon class="menu-icon"><DataAnalysis /></el-icon>
+        <el-icon><DataAnalysis /></el-icon>
         <template #title>
-          <span class="menu-text">统计分析</span>
+          <span>统计分析</span>
         </template>
       </el-menu-item>
       
@@ -44,33 +44,33 @@
         <div class="menu-divider"></div>
         
         <el-menu-item index="/budget">
-          <el-icon class="menu-icon"><Wallet /></el-icon>
+          <el-icon><Wallet /></el-icon>
           <template #title>
-            <span class="menu-text">预算管理</span>
+            <span>预算管理</span>
           </template>
         </el-menu-item>
         
         <el-menu-item index="/category">
-          <el-icon class="menu-icon"><Grid /></el-icon>
+          <el-icon><Grid /></el-icon>
           <template #title>
-            <span class="menu-text">分类管理</span>
+            <span>分类管理</span>
           </template>
         </el-menu-item>
         
         <el-menu-item index="/member">
-          <el-icon class="menu-icon"><User /></el-icon>
+          <el-icon><User /></el-icon>
           <template #title>
-            <span class="menu-text">成员管理</span>
+            <span>成员管理</span>
           </template>
         </el-menu-item>
       </template>
     </el-menu>
 
     <!-- 底部状态 -->
-    <div class="sidebar-footer">
-      <div class="system-status">
-        <div class="status-indicator"></div>
-        <span v-if="!isCollapsed" class="status-text">SYSTEM ONLINE</span>
+    <div class="sidebar-footer" v-if="!isCollapsed">
+      <div class="tip-card">
+        <span class="tip-icon">💡</span>
+        <span class="tip-text">AI 智能记账</span>
       </div>
     </div>
   </div>
@@ -95,28 +95,11 @@ const activeMenu = computed(() => {
 .sidebar {
   width: $sidebar-width;
   height: 100%;
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
+  background: $bg-white;
   border-right: 1px solid $border-color;
   transition: width $transition-base;
   display: flex;
   flex-direction: column;
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(180deg, 
-      transparent 0%, 
-      $neon-blue 50%, 
-      transparent 100%);
-    opacity: 0.5;
-  }
   
   &.collapsed {
     width: $sidebar-collapsed-width;
@@ -127,51 +110,30 @@ const activeMenu = computed(() => {
 .sidebar-logo {
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(90deg, 
-      transparent, 
-      $neon-blue, 
-      transparent);
-  }
+  background: linear-gradient(180deg, $bg-light 0%, $bg-white 100%);
 }
 
 .logo-text {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
+  gap: $spacing-sm;
   
   .logo-icon {
-    font-size: 28px;
-    animation: glowPulse 2s infinite;
+    font-size: 24px;
   }
   
   .logo-name {
     font-family: $font-display;
     font-size: 18px;
     font-weight: 700;
-    letter-spacing: 3px;
-    background: $gradient-primary;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-transform: uppercase;
+    color: $text-primary;
   }
 }
 
 .logo-icon-only {
   display: flex;
   justify-content: center;
-  font-size: 28px;
-  animation: glowPulse 2s infinite;
+  font-size: 24px;
 }
 
 // 菜单
@@ -185,107 +147,59 @@ const activeMenu = computed(() => {
   :deep(.el-menu-item) {
     color: $text-secondary;
     border-radius: $border-radius;
-    margin: 4px 8px;
+    margin: 4px 12px;
+    height: 44px;
     transition: all $transition-base;
     
-    .menu-icon {
-      font-size: 20px;
-    }
-    
-    .menu-text {
-      font-family: $font-display;
-      letter-spacing: 1px;
+    .el-icon {
+      font-size: 18px;
     }
     
     &:hover {
-      color: $text-neon;
-      background: rgba(0, 240, 255, 0.1);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-      
-      .menu-icon {
-        animation: iconPulse 0.5s ease-in-out;
-      }
+      color: $primary;
+      background: rgba(78, 205, 196, 0.08);
     }
     
     &.is-active {
-      color: $bg-deep;
+      color: white;
       background: $gradient-primary;
-      box-shadow: $shadow-neon;
+      box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
       
-      .menu-icon {
-        animation: iconPulse 0.5s ease-in-out;
+      .el-icon {
+        color: white;
       }
     }
-  }
-}
-
-@keyframes iconPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
   }
 }
 
 .menu-divider {
   height: 1px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    $border-color, 
-    transparent);
-  margin: $spacing-md $spacing-lg;
+  background: $border-color;
+  margin: $spacing-md $spacing-xl;
 }
 
-// 底部状态
+// 底部
 .sidebar-footer {
-  padding: $spacing-lg;
+  padding: $spacing-md;
   border-top: 1px solid $border-color;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(90deg, 
-      transparent, 
-      $neon-blue, 
-      transparent);
-  }
-}
-
-.system-status {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  
-  .status-indicator {
-    width: 8px;
-    height: 8px;
-    background: $neon-green;
-    border-radius: 50%;
-    box-shadow: 0 0 10px $neon-green;
-    animation: statusPulse 2s infinite;
-  }
-  
-  .status-text {
-    font-family: $font-mono;
-    font-size: 10px;
-    color: $text-secondary;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-}
-
-@keyframes statusPulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
+  .tip-card {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(69, 183, 209, 0.1) 100%);
+    border-radius: $border-radius;
+    
+    .tip-icon {
+      font-size: 16px;
+    }
+    
+    .tip-text {
+      font-size: 12px;
+      color: $primary-dark;
+      font-weight: 500;
+    }
   }
 }
 
@@ -297,11 +211,11 @@ const activeMenu = computed(() => {
 
 .logo-fade-enter-from {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.9);
 }
 
 .logo-fade-leave-to {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.9);
 }
 </style>

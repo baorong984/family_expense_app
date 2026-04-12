@@ -1,9 +1,9 @@
 // ============================================
-// 🌌 CYBERPUNK GLOBAL STYLES
+// 🌿 FRESH & LIGHT GLOBAL STYLES - 小清新风格
 // ============================================
 
 // 字体引入
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -17,8 +17,10 @@ html, body {
   font-family: $font-body;
   font-size: 14px;
   color: $text-primary;
-  background: $bg-deep;
+  background: $bg-page;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #__nuxt {
@@ -27,7 +29,7 @@ html, body {
 }
 
 // ============================================
-// 🎨 科技背景
+// 🌈 清新背景
 // ============================================
 
 body {
@@ -40,78 +42,51 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: $gradient-mesh;
+    background: $gradient-bg-light;
     pointer-events: none;
     z-index: -1;
-  }
-  
-  &::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
-    pointer-events: none;
-    z-index: -1;
-    animation: gridMove 20s linear infinite;
   }
 }
 
-@keyframes gridMove {
+// ============================================
+// 🌊 动画
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes shimmer {
   0% {
-    transform: translate(0, 0);
+    background-position: -200% 0;
   }
   100% {
-    transform: translate(50px, 50px);
+    background-position: 200% 0;
   }
 }
 
-// ============================================
-// 🌟 发光动画
-// ============================================
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(0, 240, 255, 0.6);
-  }
-}
-
-@keyframes neonFlicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
-    text-shadow: 
-      0 0 5px $neon-blue,
-      0 0 10px $neon-blue,
-      0 0 20px $neon-blue,
-      0 0 40px $neon-cyan;
-  }
-  20%, 24%, 55% {
-    text-shadow: none;
-  }
-}
-
-@keyframes borderGlow {
-  0%, 100% {
-    border-color: rgba(0, 240, 255, 0.3);
-  }
-  50% {
-    border-color: rgba(0, 240, 255, 0.6);
-  }
-}
-
-@keyframes float {
+@keyframes bounce {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 }
 
@@ -121,19 +96,17 @@ body {
 
 .page-enter-active,
 .page-leave-active {
-  transition: all $transition-slow;
+  transition: all $transition-base;
 }
 
 .page-enter-from {
   opacity: 0;
-  transform: translateY(30px);
-  filter: blur(10px);
+  transform: translateY(15px);
 }
 
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-30px);
-  filter: blur(10px);
+  transform: translateY(-15px);
 }
 
 // ============================================
@@ -141,51 +114,44 @@ body {
 // ============================================
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: $bg-light;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, $neon-blue, $neon-purple);
-  border-radius: 4px;
+  background: linear-gradient(180deg, $primary, $secondary);
+  border-radius: 3px;
   
   &:hover {
-    background: linear-gradient(180deg, $neon-cyan, $neon-violet);
+    background: linear-gradient(180deg, $primary-dark, $secondary-dark);
   }
 }
 
 // ============================================
-// 💎 玻璃态卡片
+// 💎 卡片样式
 // ============================================
 
 .glass-card {
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
+  background: $bg-card;
+  border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-card;
   transition: all $transition-base;
   
   &:hover {
-    border-color: rgba(0, 240, 255, 0.3);
-    box-shadow: $shadow-glow;
+    border-color: rgba(78, 205, 196, 0.3);
+    box-shadow: $shadow-hover;
     transform: translateY(-2px);
   }
 }
 
-// ============================================
-// 🎯 通用卡片样式
-// ============================================
-
 .page-card {
   background: $bg-card;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   padding: $spacing-xl;
@@ -193,6 +159,7 @@ body {
   box-shadow: $shadow-card;
   position: relative;
   overflow: hidden;
+  transition: all $transition-base;
   
   &::before {
     content: '';
@@ -200,14 +167,18 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: $gradient-primary;
     opacity: 0;
     transition: opacity $transition-base;
   }
   
-  &:hover::before {
-    opacity: 1;
+  &:hover {
+    box-shadow: $shadow-lg;
+    
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -225,27 +196,22 @@ body {
   
   h2 {
     font-family: $font-display;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
-    color: $text-neon;
+    color: $text-primary;
     margin: 0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    animation: neonFlicker 3s infinite;
+    position: relative;
     
     &::before {
-      content: '>';
-      margin-right: $spacing-sm;
-      animation: blink 1s infinite;
-    }
-  }
-  
-  @keyframes blink {
-    0%, 50% {
-      opacity: 1;
-    }
-    51%, 100% {
-      opacity: 0;
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 24px;
+      background: $gradient-primary;
+      border-radius: 2px;
     }
   }
   
@@ -260,50 +226,64 @@ body {
 // ============================================
 
 .el-button {
-  background: $glass-bg;
-  border: 1px solid $border-color;
-  color: $text-neon;
-  font-family: $font-display;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-family: $font-body;
+  font-weight: 500;
+  border-radius: $border-radius;
   transition: all $transition-base;
   
   &:hover {
-    background: rgba(0, 240, 255, 0.1);
-    border-color: $neon-blue;
-    box-shadow: $shadow-neon;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
   
   &.el-button--primary {
     background: $gradient-primary;
     border: none;
-    color: $bg-deep;
+    color: white;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
     
     &:hover {
-      background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
-      box-shadow: $shadow-neon;
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+      transform: translateY(-2px);
     }
   }
   
   &.el-button--success {
-    background: $gradient-green;
+    background: linear-gradient(135deg, $success 0%, $primary-light 100%);
     border: none;
-    color: $bg-deep;
+    color: white;
+    box-shadow: 0 4px 12px rgba(149, 230, 163, 0.3);
     
     &:hover {
-      box-shadow: $shadow-green;
+      box-shadow: 0 6px 20px rgba(149, 230, 163, 0.4);
     }
   }
   
   &.el-button--danger {
-    background: $gradient-pink;
+    background: linear-gradient(135deg, $danger 0%, $accent 100%);
     border: none;
     color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
     
     &:hover {
-      box-shadow: $shadow-pink;
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
     }
+  }
+  
+  &.el-button--warning {
+    background: linear-gradient(135deg, $warning 0%, #FFE066 100%);
+    border: none;
+    color: #5A4A00;
+  }
+  
+  // 默认按钮
+  background: $bg-card;
+  border: 1px solid $border-color;
+  color: $text-secondary;
+  
+  &:hover {
+    background: $bg-light;
+    border-color: $primary;
+    color: $primary;
   }
 }
 
@@ -323,9 +303,9 @@ body {
   }
   
   &.is-focus {
-    border-color: $neon-blue;
-    box-shadow: $shadow-neon;
-    background: $bg-input-focus;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+    background: $bg-card;
   }
 }
 
@@ -336,14 +316,14 @@ body {
   color: $text-primary;
   
   &:focus {
-    border-color: $neon-blue;
-    box-shadow: $shadow-neon;
-    background: $bg-input-focus;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+    background: $bg-card;
   }
 }
 
 // ============================================
-// 🎨 卡片样式
+// 🎨 Element Plus 卡片样式
 // ============================================
 
 .el-card {
@@ -351,10 +331,10 @@ body {
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-card;
+  transition: all $transition-base;
   
-  &.glass-card {
-    backdrop-filter: $glass-blur;
-    -webkit-backdrop-filter: $glass-blur;
+  &:hover {
+    box-shadow: $shadow-md;
   }
   
   .el-card__header {
@@ -363,9 +343,8 @@ body {
     
     .card-title {
       font-family: $font-display;
-      color: $text-neon;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-weight: 600;
+      color: $text-primary;
     }
   }
   
@@ -381,12 +360,18 @@ body {
 .amount {
   font-family: $font-mono;
   font-weight: 700;
-  color: $neon-pink;
-  text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+  color: $accent;
   
   &.positive {
-    color: $neon-green;
-    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+    color: $primary;
+  }
+  
+  &.large {
+    font-size: 28px;
+    background: $gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
@@ -396,7 +381,7 @@ body {
 
 .stat-item {
   text-align: center;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
   background: $bg-card;
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
@@ -410,32 +395,42 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: $gradient-primary;
+    opacity: 0;
+    transition: opacity $transition-base;
   }
   
   &:hover {
     transform: translateY(-4px);
-    box-shadow: $shadow-glow;
-    border-color: $neon-blue;
+    box-shadow: $shadow-lg;
+    border-color: $primary-light;
+    
+    &::before {
+      opacity: 1;
+    }
   }
   
   .label {
     display: block;
     font-size: 12px;
-    color: $text-secondary;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    color: $text-muted;
+    font-weight: 500;
     margin-bottom: $spacing-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
   .value {
     display: block;
     font-family: $font-mono;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
-    color: $text-neon;
-    text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    color: $text-primary;
+  }
+  
+  .value-accent {
+    color: $primary;
   }
 }
 
@@ -453,14 +448,74 @@ body {
   font-weight: 600;
   
   &.up {
-    color: $neon-green;
-    background: rgba(57, 255, 20, 0.1);
+    color: #2E9A8F;
+    background: rgba(78, 205, 196, 0.1);
   }
   
   &.down {
-    color: $neon-pink;
-    background: rgba(255, 0, 110, 0.1);
+    color: #E54A7D;
+    background: rgba(255, 107, 157, 0.1);
   }
+}
+
+// ============================================
+// 🏷️ 标签样式
+// ============================================
+
+.el-tag {
+  border-radius: $border-radius;
+  font-weight: 500;
+  
+  &.el-tag--success {
+    background: rgba(78, 205, 196, 0.1);
+    border-color: rgba(78, 205, 196, 0.2);
+    color: #2E9A8F;
+  }
+  
+  &.el-tag--warning {
+    background: rgba(255, 217, 61, 0.15);
+    border-color: rgba(255, 217, 61, 0.3);
+    color: #9A7B00;
+  }
+  
+  &.el-tag--danger {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.2);
+    color: #E54A5A;
+  }
+  
+  &.el-tag--info {
+    background: rgba(116, 185, 255, 0.1);
+    border-color: rgba(116, 185, 255, 0.2);
+    color: #2E7BB8;
+  }
+}
+
+// ============================================
+// 📱 表格样式
+// ============================================
+
+.el-table {
+  background: transparent;
+  
+  th.el-table__cell {
+    background: $bg-light;
+    color: $text-secondary;
+    font-weight: 600;
+    border-bottom: 1px solid $border-color;
+  }
+  
+  td.el-table__cell {
+    border-bottom: 1px solid $border-light;
+  }
+  
+  tr:hover td {
+    background: $bg-light !important;
+  }
+  
+  --el-table-border-color: #{$border-color};
+  --el-table-header-bg-color: #{$bg-light};
+  --el-table-tr-hover-bg-color: #{$bg-light};
 }
 
 // ============================================
@@ -474,13 +529,13 @@ body {
     gap: $spacing-md;
     
     h2 {
-      font-size: 22px;
+      font-size: 20px;
     }
   }
   
   .stat-item {
     .value {
-      font-size: 24px;
+      font-size: 22px;
     }
   }
 }

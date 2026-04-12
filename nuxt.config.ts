@@ -53,6 +53,8 @@ export default defineNuxtConfig({
     // 公共配置
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3000',
+      mode: process.env.NUXT_PUBLIC_MODE || '开发环境',
+      projectName: process.env.NUXT_PUBLIC_PROJECT_NAME || 'family_expense_app',
     },
   },
   

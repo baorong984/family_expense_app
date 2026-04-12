@@ -373,6 +373,7 @@ const resetForm = () => {
     .name {
       width: 80px;
       font-weight: 500;
+      color: $text-primary;
     }
   }
   
@@ -404,11 +405,11 @@ const resetForm = () => {
   color: $text-secondary;
   
   .remaining {
-    color: $success-color;
+    color: $success;
   }
   
   .exceeded {
-    color: $danger-color;
+    color: $accent;
   }
 }
 

@@ -558,11 +558,11 @@ const exportExcel = async () => {
 }
 
 .increase {
-  color: $danger-color;
+  color: $accent;
 }
 
 .decrease {
-  color: $success-color;
+  color: $success;
 }
 
 @media (max-width: $breakpoint-sm) {
