@@ -297,15 +297,20 @@ body {
   border-radius: $border-radius;
   box-shadow: none;
   transition: all $transition-base;
-  
+  color: $text-primary;
+
   &:hover {
     border-color: $border-color-hover;
   }
-  
+
   &.is-focus {
     border-color: $primary;
     box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
     background: $bg-card;
+  }
+
+  .el-input__inner {
+    color: $text-primary;
   }
 }
 
@@ -332,24 +337,26 @@ body {
   border-radius: $border-radius-lg;
   box-shadow: $shadow-card;
   transition: all $transition-base;
-  
+  color: $text-primary;
+
   &:hover {
     box-shadow: $shadow-md;
   }
-  
+
   .el-card__header {
     border-bottom: 1px solid $border-color;
     padding: $spacing-lg;
-    
+
     .card-title {
       font-family: $font-display;
       font-weight: 600;
       color: $text-primary;
     }
   }
-  
+
   .el-card__body {
     padding: $spacing-lg;
+    color: $text-primary;
   }
 }
 
@@ -497,22 +504,23 @@ body {
 
 .el-table {
   background: transparent;
-  
+
   th.el-table__cell {
     background: $bg-light;
     color: $text-secondary;
     font-weight: 600;
     border-bottom: 1px solid $border-color;
   }
-  
+
   td.el-table__cell {
     border-bottom: 1px solid $border-light;
+    color: $text-primary;
   }
-  
+
   tr:hover td {
     background: $bg-light !important;
   }
-  
+
   --el-table-border-color: #{$border-color};
   --el-table-header-bg-color: #{$bg-light};
   --el-table-tr-hover-bg-color: #{$bg-light};
@@ -742,4 +750,76 @@ body {
 // 安全区域适配 (iOS)
 .safe-area-bottom {
   padding-bottom: $safe-area-inset-bottom;
+}
+
+// ============================================
+// 📝 表单组件文字颜色统一
+// ============================================
+
+.el-select,
+.el-cascader,
+.el-date-editor,
+.el-picker__popper {
+  .el-select__wrapper,
+  .el-cascader__wrapper {
+    color: $text-primary;
+  }
+
+  .el-select__placeholder,
+  .el-cascader__placeholder {
+    color: $text-muted;
+  }
+}
+
+.el-select-dropdown__item {
+  color: $text-primary;
+
+  &.is-selected {
+    color: $primary;
+  }
+
+  &:hover {
+    background: $bg-light;
+  }
+}
+
+.el-descriptions {
+  .el-descriptions__label {
+    color: $text-secondary;
+  }
+
+  .el-descriptions__content {
+    color: $text-primary;
+  }
+}
+
+.el-dialog {
+  color: $text-primary;
+
+  .el-dialog__title {
+    color: $text-primary;
+  }
+
+  .el-dialog__body {
+    color: $text-primary;
+  }
+}
+
+.el-message {
+  color: $text-primary;
+}
+
+.el-notification {
+  color: $text-primary;
+}
+
+.el-dropdown-menu {
+  .el-dropdown-menu__item {
+    color: $text-primary;
+
+    &:hover {
+      background: $bg-light;
+      color: $primary;
+    }
+  }
 }
