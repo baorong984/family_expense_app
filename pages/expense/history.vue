@@ -180,11 +180,11 @@
             <el-tag type="primary" size="small">{{ row.category_name }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="member_name" label="成员" width="80">
+        <el-table-column prop="member_name" label="成员" width="100">
           <template #default="{ row }">
-            <el-tag v-if="row.member_name" type="info" size="small">{{
-              row.member_name
-            }}</el-tag>
+            <div v-if="row.member_name" class="member-tag" :style="{ backgroundColor: row.member_color || '#4ECDC4' }">
+              {{ row.member_name }}
+            </div>
             <span v-else class="text-placeholder">-</span>
           </template>
         </el-table-column>
@@ -266,9 +266,9 @@
               <el-tag type="primary" size="small">{{
                 item.category_name
               }}</el-tag>
-              <el-tag v-if="item.member_name" type="info" size="small">
+              <div v-if="item.member_name" class="member-tag" :style="{ backgroundColor: item.member_color || '#4ECDC4' }">
                 {{ item.member_name }}
-              </el-tag>
+              </div>
             </div>
           </div>
           <div class="card-right">
@@ -545,6 +545,16 @@ const goToCreate = () => {
 
 <style lang="scss" scoped>
 .expense-history-page {
+  // 成员标签样式
+  .member-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+  }
+
   .filter-card {
     margin-bottom: $spacing-md;
     box-shadow: $shadow-md;

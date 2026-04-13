@@ -15,6 +15,7 @@ export interface Member {
   name: string
   avatar: string | null
   password: string | null
+  color: string
   created_by: number
   created_at: string
   updated_at: string
@@ -43,6 +44,7 @@ export interface Expense {
   category_name?: string
   member_id: number | null
   member_name?: string
+  member_color?: string
   description: string | null
   remarks: string | null
   created_by: number
@@ -145,6 +147,7 @@ export interface StatisticsSummary {
   member_summary: Array<{
     member_id: number
     member_name: string
+    member_color: string
     amount: number
     count: number
     percentage: number

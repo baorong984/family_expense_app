@@ -15,7 +15,7 @@
         class="member-card"
       >
         <div class="avatar">
-          <el-avatar :size="80" :src="member.avatar || undefined">
+          <el-avatar :size="80" :style="{ backgroundColor: member.color }" :src="member.avatar || undefined">
             {{ member.name.charAt(0) }}
           </el-avatar>
         </div>
@@ -53,7 +53,7 @@
     >
       <el-form ref="formRef" :model="memberForm" :rules="rules" label-width="80px">
         <el-form-item label="成员姓名" prop="name">
-          <el-input v-model="memberForm.name" placeholder="请输入成员姓名" />
+          <el-input v-model="memberForm.name" placeholder="请输入成员姓名（仅限英文字符）" />
         </el-form-item>
         <el-form-item label="登录密码" prop="password">
           <el-input
@@ -62,6 +62,9 @@
             placeholder="设置登录密码（至少6位，可选）"
             show-password
           />
+        </el-form-item>
+        <el-form-item label="成员颜色" prop="color">
+          <el-color-picker v-model="memberForm.color" />
         </el-form-item>
         <el-form-item label="头像">
           <el-input v-model="memberForm.avatar" placeholder="头像URL（可选）" />
@@ -109,15 +112,28 @@ const memberForm = reactive({
   name: '',
   password: '',
   avatar: '',
+  color: '#4ECDC4',
 })
 
 const rules: FormRules = {
   name: [
     { required: true, message: '请输入成员姓名', trigger: 'blur' },
     { max: 50, message: '成员姓名不能超过50个字符', trigger: 'blur' },
+    {
+      pattern: /^[a-zA-Z0-9\s\-_]+$/,
+      message: '成员姓名只能包含英文字母、数字、空格、横线和下划线',
+      trigger: 'blur',
+    },
   ],
   password: [
     { min: 6, message: '密码不能少于6位', trigger: 'blur' },
+  ],
+  color: [
+    {
+      pattern: /^#[0-9A-Fa-f]{6}$/,
+      message: '颜色格式错误',
+      trigger: 'blur',
+    },
   ],
 }
 
@@ -133,6 +149,7 @@ const openAddDialog = () => {
   memberForm.name = ''
   memberForm.password = ''
   memberForm.avatar = ''
+  memberForm.color = '#4ECDC4'
   dialogVisible.value = true
 }
 
@@ -143,6 +160,7 @@ const openEditDialog = (member: Member) => {
   memberForm.name = member.name
   memberForm.password = '' // 编辑时不显示密码
   memberForm.avatar = member.avatar || ''
+  memberForm.color = member.color || '#4ECDC4'
   dialogVisible.value = true
 }
 
@@ -156,12 +174,14 @@ const submitMember = async () => {
       await memberStore.updateMember(memberForm.id, {
         name: memberForm.name,
         avatar: memberForm.avatar || undefined,
+        color: memberForm.color,
       })
     } else {
       await memberStore.createMember({
         name: memberForm.name,
         password: memberForm.password || undefined,
         avatar: memberForm.avatar || undefined,
+        color: memberForm.color,
       })
     }
     dialogVisible.value = false

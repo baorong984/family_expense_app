@@ -73,7 +73,12 @@
                   :key="member.id"
                   :label="member.name"
                   :value="member.id"
-                />
+                >
+                  <div class="member-option">
+                    <span class="member-color-dot" :style="{ backgroundColor: member.color }"></span>
+                    <span class="member-name">{{ member.name }}</span>
+                  </div>
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -363,7 +368,12 @@
                 :key="member.id"
                 :label="member.name"
                 :value="member.id"
-              />
+              >
+                <div class="member-option">
+                  <span class="member-color-dot" :style="{ backgroundColor: member.color }"></span>
+                  <span class="member-name">{{ member.name }}</span>
+                </div>
+              </el-option>
             </el-select>
           </el-form-item>
 
@@ -1501,6 +1511,24 @@ const handleExcelImport = async (file: File) => {
 .expense-create-page {
   max-width: 800px;
   margin: 0 auto;
+}
+
+// 成员选择框样式
+.member-option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  .member-color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .member-name {
+    font-size: 14px;
+  }
 }
 
 .input-mode-card {
