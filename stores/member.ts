@@ -24,6 +24,12 @@ export const useMemberStore = defineStore('member', {
       const member = state.members.find(m => m.id === id)
       return member?.name || ''
     },
+
+    getMemberColor: (state) => (id: number | null) => {
+      if (!id) return '#4ECDC4'
+      const member = state.members.find(m => m.id === id)
+      return member?.color || '#4ECDC4'
+    },
   },
 
   actions: {
@@ -40,7 +46,7 @@ export const useMemberStore = defineStore('member', {
       }
     },
 
-    async createMember(data: { name: string; avatar?: string; password?: string }) {
+    async createMember(data: { name: string; avatar?: string; password?: string; color?: string }) {
       const api = useApi()
       const res = await api.post('/api/member', data)
 
@@ -52,7 +58,7 @@ export const useMemberStore = defineStore('member', {
       }
     },
 
-    async updateMember(id: number, data: { name?: string; avatar?: string }) {
+    async updateMember(id: number, data: { name?: string; avatar?: string; color?: string }) {
       const api = useApi()
       const res = await api.put(`/api/member/${id}`, data)
 

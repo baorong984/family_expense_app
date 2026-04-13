@@ -72,17 +72,19 @@ export default defineEventHandler(async (event) => {
   const memberSummary = await query<{
     member_id: number
     member_name: string
+    member_color: string
     amount: number
     count: number
   }>(
-    `SELECT 
+    `SELECT
       m.id as member_id,
       m.name as member_name,
+      m.color as member_color,
       COALESCE(SUM(e.amount), 0) as amount,
       COUNT(e.id) as count
      FROM members m
      LEFT JOIN expenses e ON m.id = e.member_id AND e.expense_date BETWEEN ? AND ?
-     GROUP BY m.id, m.name
+     GROUP BY m.id, m.name, m.color
      HAVING amount > 0
      ORDER BY amount DESC`,
     [startDate, endDate]

@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
   const limit = Math.max(1, pageSize)
   
   const list = await query<Expense>(
-    `SELECT e.*, c.name as category_name, m.name as member_name
+    `SELECT e.*, c.name as category_name, m.name as member_name, m.color as member_color
      FROM expenses e
      LEFT JOIN categories c ON e.category_id = c.id
      LEFT JOIN members m ON e.member_id = m.id

@@ -349,6 +349,9 @@ const updateMemberChart = (data: any[]) => {
   const chartData = data.map(d => ({
     name: d.member_name,
     value: Number(d.total_amount) || 0,
+    itemStyle: {
+      color: d.member_color || '#4ECDC4',
+    },
   }))
 
   memberChart.setOption({
