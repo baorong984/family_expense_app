@@ -109,9 +109,26 @@ const handleSelect = () => {
   transition: width $transition-base;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   
   &.collapsed {
     width: $sidebar-collapsed-width;
+    
+    .sidebar-logo {
+      padding: $spacing-md $spacing-sm;
+    }
+    
+    .sidebar-menu {
+      :deep(.el-menu-item) {
+        margin: 4px 8px;
+        padding: 0 !important;
+        justify-content: center;
+      }
+    }
+    
+    .menu-divider {
+      margin: $spacing-md $spacing-md;
+    }
   }
   
   &.is-mobile {
@@ -125,12 +142,18 @@ const handleSelect = () => {
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
   background: linear-gradient(180deg, $bg-light 0%, $bg-white 100%);
+  transition: padding $transition-base;
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo-text {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
+  white-space: nowrap;
   
   .logo-icon {
     font-size: 24px;
@@ -157,6 +180,7 @@ const handleSelect = () => {
   background: transparent;
   padding: $spacing-md 0;
   overflow-y: auto;
+  overflow-x: hidden;
   
   :deep(.el-menu-item) {
     color: $text-secondary;
@@ -190,12 +214,22 @@ const handleSelect = () => {
       height: 48px;
     }
   }
+  
+  :deep(.el-menu--collapse) {
+    width: 100%;
+    
+    .el-menu-item {
+      padding: 0 !important;
+      text-align: center;
+    }
+  }
 }
 
 .menu-divider {
   height: 1px;
   background: $border-color;
   margin: $spacing-md $spacing-xl;
+  transition: margin $transition-base;
   
   .is-mobile & {
     margin: $spacing-sm $spacing-mobile-lg;

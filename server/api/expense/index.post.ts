@@ -4,7 +4,7 @@ import { successResponse, errorResponse } from '~/server/utils/response'
 import { insert } from '~/server/utils/db'
 
 const schema = z.object({
-  amount: z.number().positive('金额必须为正数'),
+  amount: z.coerce.number().positive('金额必须为正数'),
   expense_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式错误'),
   expense_time: z.string().optional().nullable(),
   category_id: z.number().int().positive('请选择分类'),
