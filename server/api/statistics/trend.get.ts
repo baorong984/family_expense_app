@@ -32,14 +32,19 @@ export default defineEventHandler(async (event) => {
     count: number
   }>(
     `SELECT 
-      DATE_FORMAT(expense_date, ?) as date,
+      date,
       COALESCE(SUM(amount), 0) as amount,
       COUNT(*) as count
-     FROM expenses
-     WHERE expense_date BETWEEN ? AND ?
-     GROUP BY DATE_FORMAT(expense_date, ?)
+     FROM (
+       SELECT 
+         DATE_FORMAT(expense_date, ?) as date,
+         amount
+       FROM expenses
+       WHERE expense_date BETWEEN ? AND ?
+     ) as formatted_expenses
+     GROUP BY date
      ORDER BY date`,
-    [dateFormat, startDate, endDate, dateFormat]
+    [dateFormat, startDate, endDate]
   )
   
   const totalAmount = trendData.reduce((sum, item) => sum + item.amount, 0)

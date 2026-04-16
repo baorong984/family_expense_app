@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { requireAuth } from '~/server/utils/auth'
 import { successResponse, errorResponse } from '~/server/utils/response'
-import { insert } from '~/server/utils/db'
+import { insert, queryOne, update } from '~/server/utils/db'
 
 const schema = z.object({
   amount: z.coerce.number().positive('金额必须为正数'),
@@ -44,8 +44,91 @@ export default defineEventHandler(async (event) => {
     ]
   )
   
-  return successResponse({
+  // 检查分类是否属于人情分类
+  let category = null
+  try {
+    category = await queryOne<{ name: string; parent_id: number | null }>(
+      `SELECT c.name, c.parent_id 
+       FROM categories c 
+       WHERE c.id = ?`,
+      [data.category_id]
+    )
+  } catch (dbError: any) {
+    console.error('查询分类失败:', dbError)
+    // 分类查询失败不影响主要功能，继续创建消费记录
+  }
+  
+  let gift = null
+  
+  // 如果分类属于人情分类，自动创建人情记录
+  if (category) {
+    try {
+      // 查找父级分类
+      let parentCategory = null
+      if (category.parent_id) {
+        parentCategory = await queryOne<{ name: string }>(
+          `SELECT name FROM categories WHERE id = ?`,
+          [category.parent_id]
+        )
+      }
+      
+      // 检查是否为人情分类（出礼或收礼）
+      const isOutgoingCategory = parentCategory?.name === '出礼' || category.name === '出礼'
+      const isIncomingCategory = parentCategory?.name === '收礼' || category.name === '收礼'
+      
+      if (isOutgoingCategory || isIncomingCategory) {
+        const giftType = isIncomingCategory ? 'incoming' : 'outgoing'
+        const occasion = category.name || '其他'
+        
+        // 创建人情记录
+        const giftId = await insert(
+          `INSERT INTO gifts (
+            expense_id, gift_type, payment_type, amount, 
+            related_person, occasion, expense_date, expense_time, 
+            remarks, is_returned, created_by
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            id,
+            giftType,
+            'cash',
+            data.amount,
+            '',  // 关联人初始为空，需要用户补充
+            occasion,
+            data.expense_date,
+            toNull(data.expense_time),
+            toNull(data.description),
+            0,
+            user.id
+          ]
+        )
+        
+        // 更新expense表的is_gift和gift_id字段
+        await update(
+          `UPDATE expenses SET is_gift = 1, gift_id = ? WHERE id = ?`,
+          [giftId, id]
+        )
+        
+        // 查询创建的人情记录
+        gift = await queryOne(
+          `SELECT * FROM gifts WHERE id = ?`,
+          [giftId]
+        )
+      }
+    } catch (giftError: any) {
+      console.error('创建人情记录失败:', giftError)
+      // 人情记录创建失败不影响主要功能，消费记录已经创建成功
+    }
+  }
+  
+  const response: any = {
     id,
     ...data,
-  }, '创建成功')
+  }
+  
+  // 如果创建了人情记录，添加到响应中
+  if (gift) {
+    response.gift = gift
+  }
+  
+  return successResponse(response, '创建成功')
 })

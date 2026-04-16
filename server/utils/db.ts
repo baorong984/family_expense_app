@@ -5,6 +5,8 @@ let pool: mysql.Pool | null = null
 export function getPool() {
   if (!pool) {
     const config = useRuntimeConfig()
+    console.log('创建数据库连接池...')
+    
     pool = mysql.createPool({
       host: config.dbHost,
       port: config.dbPort as number,
@@ -16,6 +18,8 @@ export function getPool() {
       queueLimit: 0,
       charset: 'utf8mb4',
     })
+    
+    console.log('数据库连接池创建完成')
   }
   return pool
 }
@@ -28,6 +32,7 @@ function normalizeParams(params?: any[]): any[] | undefined {
 
 export async function query<T = any>(sql: string, params?: any[]): Promise<T[]> {
   const pool = getPool()
+  console.log('执行查询:', sql)
   const [rows] = await pool.execute(sql, normalizeParams(params))
   return rows as T[]
 }
@@ -39,6 +44,7 @@ export async function queryOne<T = any>(sql: string, params?: any[]): Promise<T 
 
 export async function insert(sql: string, params?: any[]): Promise<number> {
   const pool = getPool()
+  console.log('执行插入:', sql)
   const [result] = await pool.execute(sql, normalizeParams(params))
   return (result as any).insertId
 }

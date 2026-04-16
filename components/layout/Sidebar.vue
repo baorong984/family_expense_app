@@ -39,6 +39,23 @@
         </template>
       </el-menu-item>
       
+      <!-- 人情管理 -->
+      <div class="menu-divider"></div>
+      
+      <el-menu-item index="/gift" @click="handleSelect">
+        <el-icon><Present /></el-icon>
+        <template #title>
+          <span>人情记录</span>
+        </template>
+      </el-menu-item>
+
+      <el-menu-item index="/gift/statistics" @click="handleSelect">
+        <el-icon><Document /></el-icon>
+        <template #title>
+          <span>人情统计</span>
+        </template>
+      </el-menu-item>
+      
       <!-- 管理员菜单 -->
       <template v-if="userStore.isAdmin">
         <div class="menu-divider"></div>
@@ -77,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { Edit, List, DataAnalysis, Wallet, Grid, User } from '@element-plus/icons-vue'
+import { Edit, List, DataAnalysis, Wallet, Grid, User, Present, Document } from '@element-plus/icons-vue'
 
 const props = defineProps<{
   isCollapsed: boolean

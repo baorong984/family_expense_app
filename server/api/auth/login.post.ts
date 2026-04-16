@@ -62,20 +62,22 @@ export default defineEventHandler(async (event) => {
     return errorResponse('用户名或密码错误', 401)
   }
 
-  // 生成Token（使用成员ID）
+  // 生成Token（使用创建该成员的用户ID，但包含成员ID）
   const token = generateToken({
-    id: member.id,
+    id: member.created_by,
     username: member.name,
     is_admin: 0,
+    member_id: member.id,  // 添加成员ID到token
   })
 
   return successResponse({
     token,
     user: {
-      id: member.id,
+      id: member.created_by,  // 使用创建者的ID，确保外键约束正确
       username: member.name,
       email: null,
       is_admin: 0,
+      member_id: member.id,  // 返回成员ID供前端使用
     },
   }, '登录成功')
 })
