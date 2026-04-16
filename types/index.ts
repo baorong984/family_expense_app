@@ -7,6 +7,7 @@ export interface User {
   status: number
   created_at: string
   updated_at: string
+  member_id?: number  // 成员登录时的成员ID
 }
 
 // 成员类型
@@ -189,4 +190,90 @@ export interface ExpenseFilters {
 export interface ImageRecognizeResult {
   ocr_text: string
   extracted_info: RecognizeResult
+}
+
+// =====================================================
+// 人情模块类型定义
+// =====================================================
+
+// 人情记录类型
+export interface Gift {
+  id: number
+  expense_id: number | null
+  gift_type: 'outgoing' | 'incoming'
+  payment_type: 'cash' | 'item'
+  amount: number | null
+  item_name: string | null
+  item_value: number | null
+  related_person: string
+  occasion: string
+  expense_date: string
+  expense_time: string | null
+  remarks: string | null
+  is_returned: number
+  return_gift_id: number | null
+  created_by: number
+  created_at: string
+  updated_at: string
+  // 关联数据
+  category_name?: string
+  member_name?: string
+  return_gift?: Gift
+}
+
+// 人情记录筛选
+export interface GiftFilters {
+  gift_type?: 'outgoing' | 'incoming'
+  start_date?: string
+  end_date?: string
+  related_person?: string
+  occasion?: string
+}
+
+// 人情统计类型
+export interface GiftStatistics {
+  outgoing: {
+    total_amount: number
+    total_count: number
+    cash_amount: number
+    item_count: number
+  }
+  incoming: {
+    total_amount: number
+    total_count: number
+    cash_amount: number
+    item_count: number
+  }
+  net_outgoing: number
+  occasion_breakdown: Array<{
+    occasion: string
+    outgoing_amount: number
+    outgoing_count: number
+    incoming_amount: number
+    incoming_count: number
+  }>
+  person_breakdown: Array<{
+    related_person: string
+    outgoing_amount: number
+    outgoing_count: number
+    incoming_amount: number
+    incoming_count: number
+    net_amount: number
+  }>
+}
+
+// 人情记录表单
+export interface GiftForm {
+  id?: number
+  gift_type: 'outgoing' | 'incoming'
+  payment_type: 'cash' | 'item'
+  amount?: number
+  item_name?: string
+  item_value?: number
+  related_person: string
+  occasion: string
+  expense_date: string
+  expense_time?: string
+  is_returned?: number
+  remarks?: string
 }

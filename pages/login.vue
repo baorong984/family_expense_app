@@ -17,7 +17,7 @@
         <p class="description">AI智能记账 · 轻松管理家庭消费</p>
       </div>
       
-      <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
+      <el-form ref="formRef" :model="form" :rules="rules" class="login-form" @submit.prevent="handleLogin">
         <el-form-item prop="username">
           <el-input
             v-model="form.username"
@@ -30,7 +30,7 @@
             </template>
           </el-input>
         </el-form-item>
-        
+
         <el-form-item prop="password">
           <el-input
             v-model="form.password"
@@ -45,13 +45,14 @@
             </template>
           </el-input>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button
             type="primary"
             size="large"
             :loading="loading"
             class="login-btn"
+            native-type="submit"
             @click="handleLogin"
           >
             登录

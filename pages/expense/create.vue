@@ -660,6 +660,8 @@ const quickCategories = computed(() => {
   const tree = categoryStore.tree || [];
   const subCategories: Category[] = [];
 
+  console.log('计算快捷分类 - 树形结构:', tree);
+
   // 从树形结构中提取所有子分类
   tree.forEach((parent) => {
     if (parent.children && parent.children.length > 0) {
@@ -669,8 +671,11 @@ const quickCategories = computed(() => {
     }
   });
 
+  console.log('计算快捷分类 - 子分类数量:', subCategories.length);
+
   // 如果没有数据，返回空数组
   if (subCategories.length === 0) {
+    console.warn('快捷分类为空 - 没有子分类数据');
     return [];
   }
 
@@ -680,11 +685,14 @@ const quickCategories = computed(() => {
   });
 
   // 返回前 12 个分类（避免太多）
-  return sorted.slice(0, 12).map((cat) => ({
+  const result = sorted.slice(0, 12).map((cat) => ({
     id: cat.id,
     name: cat.name,
     icon: categoryIcons[cat.name] || "📌",
   }));
+
+  console.log('计算快捷分类 - 最终结果:', result);
+  return result;
 });
 
 // 根据描述自动匹配分类
@@ -781,7 +789,8 @@ const saveFormToStorage = () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (e) {
-    // ignore
+    // iOS隐私模式下localStorage不可用，静默失败
+    console.warn("localStorage保存失败:", e);
   }
 };
 
@@ -804,7 +813,7 @@ const restoreFormFromStorage = () => {
       return true;
     }
   } catch (e) {
-    // ignore
+    console.warn("localStorage恢复失败:", e);
   }
   return false;
 };
@@ -854,10 +863,22 @@ const hourOptions = Array.from({ length: 24 }, (_, i) => {
 
 // 初始化
 onMounted(async () => {
-  await Promise.all([
-    categoryStore.fetchCategories(),
-    memberStore.fetchMembers(),
-  ]);
+  try {
+    await Promise.all([
+      categoryStore.fetchCategories(),
+      memberStore.fetchMembers(),
+    ]);
+
+    // 调试日志
+    console.log('分类数据加载完成:', {
+      treeLength: categoryStore.tree?.length || 0,
+      categoriesLength: categoryStore.categories?.length || 0,
+      treeData: categoryStore.tree
+    });
+  } catch (error) {
+    console.error('初始化数据加载失败:', error);
+    ElMessage.error('加载数据失败，请刷新页面重试');
+  }
 
   // 恢复持久化的表单内容
   const restored = restoreFormFromStorage();
@@ -865,9 +886,9 @@ onMounted(async () => {
   // 如果当前用户是成员（非管理员），且表单中没有设置 member_id，则默认选择当前登录成员
   if (!restored || !expenseForm.member_id) {
     if (userStore.user && !userStore.isAdmin) {
-      // 检查当前用户 ID 是否在成员列表中
+      // 检查当前用户 member_id 是否在成员列表中
       const currentUserAsMember = memberStore.members.find(
-        (m) => m.id === userStore.user.id,
+        (m) => m.id === userStore.user.member_id,
       );
       if (currentUserAsMember) {
         expenseForm.member_id = currentUserAsMember.id;
@@ -880,7 +901,7 @@ onMounted(async () => {
 
 // 计算表达式
 const evaluateExpression = (expr: string): number | null => {
-  if (!expr.trim()) return null;
+  if (!expr || !expr.trim()) return null;
 
   try {
     // 清理表达式，只保留数字、运算符、括号、小数点
@@ -890,16 +911,20 @@ const evaluateExpression = (expr: string): number | null => {
     // 使用 Function 安全计算（比 eval 稍安全）
     const result = new Function("return " + cleaned)();
 
+    // 严格验证结果
     if (
       typeof result === "number" &&
       !isNaN(result) &&
       isFinite(result) &&
-      result >= 0
+      result >= 0 &&
+      result < Number.MAX_SAFE_INTEGER
     ) {
       return Math.round(result * 100) / 100;
     }
+    console.warn("表达式计算结果无效:", expr, result);
     return null;
-  } catch {
+  } catch (e) {
+    console.warn("表达式计算失败:", expr, e);
     return null;
   }
 };
@@ -1299,24 +1324,42 @@ const saveExpense = async () => {
     expenseForm.amount = amountExpressionResult.value;
   }
 
-  if (!expenseForm.amount || expenseForm.amount <= 0) {
-    ElMessage.warning("请输入金额");
+  // 验证金额
+  if (!expenseForm.amount || expenseForm.amount <= 0 || isNaN(expenseForm.amount)) {
+    console.warn("金额验证失败:", { amount: expenseForm.amount, amountInput: amountInput.value, expressionResult: amountExpressionResult.value });
+    ElMessage.warning("请输入有效金额");
     return;
   }
 
+  // 验证日期
   if (!expenseForm.expense_date) {
+    console.warn("日期验证失败:", expenseForm.expense_date);
     ElMessage.warning("请选择日期");
     return;
   }
 
+  // 验证分类
   if (!expenseForm.category_id) {
+    console.warn("分类验证失败:", expenseForm.category_id);
     ElMessage.warning("请选择分类");
     return;
   }
 
+  // 准备提交数据
+  const submitData = {
+    amount: expenseForm.amount,
+    expense_date: expenseForm.expense_date,
+    expense_time: expenseForm.expense_time || null,
+    category_id: expenseForm.category_id,
+    member_id: expenseForm.member_id || null,
+    description: expenseForm.description || null,
+  };
+
+  console.log("提交消费记录:", submitData);
+
   saving.value = true;
   try {
-    const res = await api.post("/api/expense", expenseForm);
+    const res = await api.post("/api/expense", submitData);
 
     if (res.success) {
       ElMessage.success("保存成功");
@@ -1325,9 +1368,11 @@ const saveExpense = async () => {
       // 重置表单
       resetForm();
     } else {
+      console.error("保存失败:", res);
       ElMessage.error(res.message || "保存失败");
     }
   } catch (error: any) {
+    console.error("保存异常:", error);
     ElMessage.error(error.message || "保存失败");
   } finally {
     saving.value = false;

@@ -52,9 +52,13 @@ export const useCategoryStore = defineStore('category', {
       try {
         const api = useApi()
         const res = await api.get('/api/category')
+        console.log('分类API响应:', res);
+
         if (res.success) {
           // API 返回的已经是树形结构，直接使用
           this.tree = res.data.categories
+          console.log('分类树形数据:', this.tree);
+
           // 将树形结构扁平化为数组
           const flattenCategories = (tree: Category[]): Category[] => {
             const result: Category[] = []
@@ -67,7 +71,16 @@ export const useCategoryStore = defineStore('category', {
             return result
           }
           this.categories = flattenCategories(res.data.categories)
+          console.log('分类扁平数据:', this.categories);
+        } else {
+          console.error('获取分类失败:', res.message);
+          throw new Error(res.message);
         }
+      } catch (error) {
+        console.error('获取分类异常:', error);
+        this.tree = []
+        this.categories = []
+        throw error;
       } finally {
         this.loading = false
       }
