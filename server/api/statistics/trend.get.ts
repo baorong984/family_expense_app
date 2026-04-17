@@ -6,17 +6,29 @@ export default defineEventHandler(async (event) => {
   await requireAuth(event)
   
   const queryParams = getQuery(event)
-  const startDate = queryParams.start_date as string
-  const endDate = queryParams.end_date as string
+  const startDateInput = queryParams.start_date as string
+  const endDateInput = queryParams.end_date as string
   const granularity = (queryParams.granularity as string) || 'day'
-  
-  if (!startDate || !endDate) {
+
+  if (!startDateInput || !endDateInput) {
     return successResponse({
       trend_data: [],
       total_amount: 0,
       total_count: 0,
     })
   }
+
+  // 将ISO格式日期转换为YYYY-MM-DD格式
+  const formatSQLDate = (isoDate: string) => {
+    const dateObj = new Date(isoDate)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const startDate = formatSQLDate(startDateInput)
+  const endDate = formatSQLDate(endDateInput)
   
   // 根据粒度决定分组方式
   let dateFormat = '%Y-%m-%d'

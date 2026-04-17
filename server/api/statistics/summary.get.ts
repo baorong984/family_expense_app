@@ -6,10 +6,10 @@ export default defineEventHandler(async (event) => {
   await requireAuth(event)
 
   const queryParams = getQuery(event)
-  const startDate = queryParams.start_date as string
-  const endDate = queryParams.end_date as string
-  
-  if (!startDate || !endDate) {
+  const startDateInput = queryParams.start_date as string
+  const endDateInput = queryParams.end_date as string
+
+  if (!startDateInput || !endDateInput) {
     return successResponse({
       total_amount: 0,
       total_count: 0,
@@ -20,6 +20,18 @@ export default defineEventHandler(async (event) => {
       member_summary: [],
     })
   }
+
+  // 将ISO格式日期转换为YYYY-MM-DD格式
+  const formatSQLDate = (isoDate: string) => {
+    const dateObj = new Date(isoDate)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const startDate = formatSQLDate(startDateInput)
+  const endDate = formatSQLDate(endDateInput)
   
   // 基本统计
   const basicStats = await queryOne<{

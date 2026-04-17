@@ -85,12 +85,12 @@
           placeholder="请选择事由"
           style="width: 100%"
         >
-          <el-option label="婚礼" value="婚礼" />
-          <el-option label="生日" value="生日" />
-          <el-option label="丧礼" value="丧礼" />
-          <el-option label="满月" value="满月" />
-          <el-option label="乔迁" value="乔迁" />
-          <el-option label="其他" value="其他" />
+          <el-option
+            v-for="item in occasionOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
 
@@ -170,6 +170,7 @@ const emit = defineEmits<{
 }>();
 
 const giftStore = useGiftStore();
+const categoryStore = useCategoryStore();
 const api = useApi();
 
 const formRef = ref<FormInstance>();
@@ -190,6 +191,23 @@ const form = reactive<GiftForm>({
 });
 
 const isReturned = ref(false);
+
+/** 事由选项（根据gift_type动态获取对应的分类） */
+const occasionOptions = computed(() => {
+  const options: { label: string; value: string }[] = [];
+  const categoryName = form.gift_type === 'outgoing' ? '出礼' : '收礼';
+  categoryStore.tree.forEach(cat => {
+    if (cat.name === categoryName) {
+      cat.children?.forEach(sub => {
+        options.push({
+          label: sub.name,
+          value: sub.name
+        });
+      });
+    }
+  });
+  return options;
+});
 
 const rules: FormRules = {
   gift_type: [{ required: true, message: "请选择类型", trigger: "change" }],

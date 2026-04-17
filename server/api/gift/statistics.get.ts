@@ -20,6 +20,18 @@ export default defineEventHandler(async (event) => {
     const validatedData = schema.parse(queryParams)
     const { start_date, end_date } = validatedData
 
+    // 将ISO格式日期转换为YYYY-MM-DD格式
+    const formatSQLDate = (isoDate: string) => {
+      const dateObj = new Date(isoDate)
+      const year = dateObj.getFullYear()
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+      const day = String(dateObj.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    const startDate = formatSQLDate(start_date)
+    const endDate = formatSQLDate(end_date)
+
     // 出礼统计
     const outgoingStats = await query<any>(
       `SELECT
@@ -30,7 +42,7 @@ export default defineEventHandler(async (event) => {
        FROM gifts
        WHERE gift_type = 'outgoing'
        AND expense_date BETWEEN ? AND ?`,
-      [start_date, end_date]
+      [startDate, endDate]
     )
 
     const outgoing = {
@@ -50,7 +62,7 @@ export default defineEventHandler(async (event) => {
        FROM gifts
        WHERE gift_type = 'incoming'
        AND expense_date BETWEEN ? AND ?`,
-      [start_date, end_date]
+      [startDate, endDate]
     )
 
     const incoming = {
@@ -77,7 +89,7 @@ export default defineEventHandler(async (event) => {
        WHERE expense_date BETWEEN ? AND ?
        GROUP BY occasion
        ORDER BY occasion`,
-      [start_date, end_date]
+      [startDate, endDate]
     )
 
     // 按关联人统计
@@ -94,7 +106,7 @@ export default defineEventHandler(async (event) => {
        WHERE expense_date BETWEEN ? AND ?
        GROUP BY related_person
        ORDER BY outgoing_amount DESC`,
-      [start_date, end_date]
+      [startDate, endDate]
     )
 
     const statistics: GiftStatistics = {

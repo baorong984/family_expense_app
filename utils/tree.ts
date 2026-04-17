@@ -94,14 +94,17 @@ export function categoryTreeToCascaderData(categories: Category[]) {
     return isSystem === 1 ? `${name} 🔷` : `${name} ⭐`
   }
 
-  return categories.map(cat => ({
-    id: cat.id,
-    name: cat.name,
-    is_system: cat.is_system,
-    children: cat.children?.map(sub => ({
-      id: sub.id,
-      name: formatName(sub.name, sub.is_system),
-      is_system: sub.is_system,
-    })),
-  }))
+  // 过滤掉"收礼"分类及其子分类
+  return categories
+    .filter(cat => cat.name !== '收礼')
+    .map(cat => ({
+      id: cat.id,
+      name: cat.name,
+      is_system: cat.is_system,
+      children: cat.children?.map(sub => ({
+        id: sub.id,
+        name: formatName(sub.name, sub.is_system),
+        is_system: sub.is_system,
+      })),
+    }))
 }

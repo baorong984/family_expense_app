@@ -76,7 +76,12 @@ export default defineEventHandler(async (event) => {
     }
     if (validatedData.expense_date !== undefined) {
       updateFields.push('expense_date = ?')
-      updateValues.push(validatedData.expense_date)
+      // 将ISO格式日期转换为YYYY-MM-DD格式
+      const dateObj = new Date(validatedData.expense_date)
+      const year = dateObj.getFullYear()
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+      const day = String(dateObj.getDate()).padStart(2, '0')
+      updateValues.push(`${year}-${month}-${day}`)
     }
     if (validatedData.expense_time !== undefined) {
       updateFields.push('expense_time = ?')

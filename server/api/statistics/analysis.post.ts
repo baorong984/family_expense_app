@@ -25,7 +25,19 @@ export default defineEventHandler(async (event) => {
   }
   
   const { start_date, end_date, budget } = result.data
-  
+
+  // 将ISO格式日期转换为YYYY-MM-DD格式
+  const formatSQLDate = (isoDate: string) => {
+    const dateObj = new Date(isoDate)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const startDate = formatSQLDate(start_date)
+  const endDate = formatSQLDate(end_date)
+
   // 获取消费数据
   const expenses = await query<{
     date: string
@@ -34,7 +46,7 @@ export default defineEventHandler(async (event) => {
     subcategory: string
     member: string
   }>(
-    `SELECT 
+    `SELECT
       e.expense_date as date,
       e.amount,
       pc.name as category,
@@ -46,13 +58,13 @@ export default defineEventHandler(async (event) => {
      LEFT JOIN members m ON e.member_id = m.id
      WHERE e.expense_date BETWEEN ? AND ?
      ORDER BY e.expense_date`,
-    [start_date, end_date]
+    [startDate, endDate]
   )
-  
+
   // 调用AI分析
   const analysis = await analyzeExpense(
     expenses,
-    { start: start_date, end: end_date },
+    { start: startDate, end: endDate },
     budget || { total: 0, categories: {} }
   )
   
