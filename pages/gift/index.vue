@@ -77,7 +77,6 @@
               placeholder="全部"
               clearable
               style="width: 100%"
-              @change="fetchData"
             >
               <el-option label="全部" value="" />
               <el-option label="出礼" value="outgoing" />
@@ -121,7 +120,6 @@
               placeholder="搜索..."
               clearable
               style="width: 100%"
-              @keyup.enter="fetchData"
             />
           </el-form-item>
           <el-form-item label="事由">
@@ -130,18 +128,17 @@
               placeholder="全部"
               clearable
               style="width: 100%"
-              @change="fetchData"
             >
-              <el-option label="婚礼" value="婚礼" />
-              <el-option label="生日" value="生日" />
-              <el-option label="丧礼" value="丧礼" />
-              <el-option label="满月" value="满月" />
-              <el-option label="乔迁" value="乔迁" />
-              <el-option label="其他" value="其他" />
+              <el-option
+                v-for="item in occasionOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item v-if="isMobile">
-            <el-button type="primary" @click="fetchData" style="width: 100%">
+            <el-button type="primary" @click="handleQuery" style="width: 100%">
               查询
             </el-button>
           </el-form-item>
@@ -151,7 +148,7 @@
             </el-button>
           </el-form-item>
           <div v-if="!isMobile" class="filter-actions">
-            <el-button type="primary" @click="fetchData">
+            <el-button type="primary" @click="handleQuery">
               查询
             </el-button>
             <el-button @click="resetFilters">
@@ -296,7 +293,7 @@
     <GiftEditDialog
       v-model="editDialogVisible"
       :gift="currentGift"
-      @success="fetchData"
+      @success="handleGiftSaved"
     />
   </div>
 </template>
@@ -313,6 +310,23 @@ definePageMeta({
 });
 
 const giftStore = useGiftStore();
+const categoryStore = useCategoryStore();
+
+/** 事由选项（从分类表中动态读取） */
+const occasionOptions = computed(() => {
+  const occasions: { label: string; value: string }[] = [];
+  categoryStore.tree.forEach(cat => {
+    if (cat.name === '出礼' || cat.name === '收礼') {
+      cat.children?.forEach(sub => {
+        occasions.push({
+          label: sub.name,
+          value: sub.name
+        });
+      });
+    }
+  });
+  return occasions;
+});
 
 /** 判断是否为移动端 */
 const isMobile = inject<Ref<boolean>>("isMobile", ref(false));
@@ -350,8 +364,11 @@ onMounted(async () => {
   startDateTemp.value = range.start;
   endDateTemp.value = range.end;
 
-  await fetchData();
-  await fetchStatistics();
+  await Promise.all([
+    categoryStore.fetchCategories(),
+    fetchData(),
+    fetchStatistics(),
+  ]);
 });
 
 /** 处理桌面端日期范围变化 */
@@ -363,8 +380,6 @@ const handleDateChange = (val: [string, string] | null) => {
     filters.start_date = "";
     filters.end_date = "";
   }
-  fetchData();
-  fetchStatistics();
 };
 
 /** 处理移动端开始日期变化 */
@@ -374,15 +389,19 @@ const handleStartDateChange = (val: string) => {
     endDateTemp.value = val;
     filters.end_date = val;
   }
-  fetchData();
-  fetchStatistics();
 };
 
 /** 处理移动端结束日期变化 */
 const handleEndDateChange = (val: string) => {
   filters.end_date = val;
-  fetchData();
-  fetchStatistics();
+};
+
+/** 处理查询按钮点击 */
+const handleQuery = async () => {
+  await Promise.all([
+    fetchData(),
+    fetchStatistics(),
+  ]);
 };
 
 /** 获取数据 */
@@ -446,6 +465,11 @@ const editGift = (gift: Gift) => {
   editDialogVisible.value = true;
 };
 
+/** 保存成功后处理 */
+const handleGiftSaved = async () => {
+  await Promise.all([fetchData(), fetchStatistics()]);
+};
+
 /** 删除人情记录 */
 const deleteGift = async (gift: Gift) => {
   try {
@@ -455,6 +479,7 @@ const deleteGift = async (gift: Gift) => {
 
     await giftStore.deleteGift(gift.id);
     ElMessage.success("删除成功");
+    await Promise.all([fetchData(), fetchStatistics()]);
   } catch (error: any) {
     if (error !== "cancel") {
       ElMessage.error(error.message || "删除失败");

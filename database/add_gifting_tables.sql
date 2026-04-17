@@ -64,22 +64,19 @@ CREATE TABLE IF NOT EXISTS `gift_reminders` (
 -- 3. 添加人情分类数据（出礼和收礼作为独立父分类）
 -- =====================================================
 
--- 清理可能存在的错误数据
-DELETE FROM categories WHERE name IN ('出礼', '收礼');
-
--- 添加出礼父分类
-INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
+-- 检查出礼父分类是否存在，不存在则添加
+INSERT IGNORE INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 ('出礼', NULL, 1, 10);
 
--- 添加收礼父分类
-INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
+-- 检查收礼父分类是否存在，不存在则添加
+INSERT IGNORE INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 ('收礼', NULL, 1, 11);
 
 -- 获取出礼父分类ID
-SET @outgoing_category_id = (SELECT id FROM categories WHERE name = '出礼' LIMIT 1);
+SET @outgoing_category_id = (SELECT id FROM (SELECT id FROM categories WHERE name = '出礼' LIMIT 1) AS tmp);
 
--- 为出礼添加子分类
-INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
+-- 为出礼添加子分类（避免重复插入）
+INSERT IGNORE INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 ('婚礼', @outgoing_category_id, 1, 1),
 ('生日', @outgoing_category_id, 1, 2),
 ('丧礼', @outgoing_category_id, 1, 3),
@@ -88,10 +85,10 @@ INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 ('其他出礼', @outgoing_category_id, 1, 6);
 
 -- 获取收礼父分类ID
-SET @incoming_category_id = (SELECT id FROM categories WHERE name = '收礼' LIMIT 1);
+SET @incoming_category_id = (SELECT id FROM (SELECT id FROM categories WHERE name = '收礼' LIMIT 1) AS tmp);
 
--- 为收礼添加子分类
-INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
+-- 为收礼添加子分类（避免重复插入）
+INSERT IGNORE INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 ('婚礼', @incoming_category_id, 1, 1),
 ('生日', @incoming_category_id, 1, 2),
 ('丧礼', @incoming_category_id, 1, 3),
@@ -102,12 +99,55 @@ INSERT INTO `categories` (`name`, `parent_id`, `is_system`, `sort_order`) VALUES
 -- =====================================================
 -- 4. 为expenses表添加字段（用于标记人情记录）
 -- =====================================================
-ALTER TABLE `expenses`
-ADD COLUMN `is_gift` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为人情记录（0=否，1=是）' AFTER `remarks`,
-ADD COLUMN `gift_id` INT(11) DEFAULT NULL COMMENT '关联的人情记录ID' AFTER `is_gift`,
-ADD KEY `idx_is_gift` (`is_gift`),
-ADD KEY `idx_gift_id` (`gift_id`),
-ADD CONSTRAINT `fk_expense_gift` FOREIGN KEY (`gift_id`) REFERENCES `gifts` (`id`) ON DELETE SET NULL;
+-- 检查字段是否存在，不存在才添加
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns 
+  WHERE table_schema = 'family_expense' AND table_name = 'expenses' AND column_name = 'is_gift');
+
+SET @sql_stmt = IF(@col_exists = 0,
+  'ALTER TABLE `expenses` ADD COLUMN `is_gift` TINYINT(1) NOT NULL DEFAULT 0 COMMENT ''是否为人情记录（0=否，1=是）'' AFTER `remarks`',
+  'SELECT ''is_gift 字段已存在'' AS message');
+PREPARE stmt FROM @sql_stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @col_exists2 = (SELECT COUNT(*) FROM information_schema.columns 
+  WHERE table_schema = 'family_expense' AND table_name = 'expenses' AND column_name = 'gift_id');
+
+SET @sql_stmt2 = IF(@col_exists2 = 0,
+  'ALTER TABLE `expenses` ADD COLUMN `gift_id` INT(11) DEFAULT NULL COMMENT ''关联的人情记录ID'' AFTER `is_gift`',
+  'SELECT ''gift_id 字段已存在'' AS message');
+PREPARE stmt2 FROM @sql_stmt2;
+EXECUTE stmt2;
+DEALLOCATE PREPARE stmt2;
+
+-- 检查并添加索引
+SET @idx_exists = (SELECT COUNT(*) FROM information_schema.statistics 
+  WHERE table_schema = 'family_expense' AND table_name = 'expenses' AND index_name = 'idx_is_gift');
+SET @sql_idx = IF(@idx_exists = 0,
+  'ALTER TABLE `expenses` ADD KEY `idx_is_gift` (`is_gift`)',
+  'SELECT ''idx_is_gift 索引已存在'' AS message');
+PREPARE stmt3 FROM @sql_idx;
+EXECUTE stmt3;
+DEALLOCATE PREPARE stmt3;
+
+SET @idx_exists2 = (SELECT COUNT(*) FROM information_schema.statistics 
+  WHERE table_schema = 'family_expense' AND table_name = 'expenses' AND index_name = 'idx_gift_id');
+SET @sql_idx2 = IF(@idx_exists2 = 0,
+  'ALTER TABLE `expenses` ADD KEY `idx_gift_id` (`gift_id`)',
+  'SELECT ''idx_gift_id 索引已存在'' AS message');
+PREPARE stmt4 FROM @sql_idx2;
+EXECUTE stmt4;
+DEALLOCATE PREPARE stmt4;
+
+-- 检查并添加外键
+SET @fk_exists = (SELECT COUNT(*) FROM information_schema.table_constraints 
+  WHERE table_schema = 'family_expense' AND table_name = 'expenses' AND constraint_name = 'fk_expense_gift');
+SET @sql_fk = IF(@fk_exists = 0,
+  'ALTER TABLE `expenses` ADD CONSTRAINT `fk_expense_gift` FOREIGN KEY (`gift_id`) REFERENCES `gifts` (`id`) ON DELETE SET NULL',
+  'SELECT ''fk_expense_gift 外键已存在'' AS message');
+PREPARE stmt5 FROM @sql_fk;
+EXECUTE stmt5;
+DEALLOCATE PREPARE stmt5;
 
 -- =====================================================
 -- 5. 完成验证

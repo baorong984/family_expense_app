@@ -46,9 +46,14 @@ export default defineEventHandler(async (event) => {
     // 验证数据
     const validatedData = giftSchema.parse(body)
     console.log('数据验证成功:', JSON.stringify(validatedData))
-    
+
     // 处理日期时间
-    const expenseDate = validatedData.expense_date
+    // 将ISO格式日期转换为YYYY-MM-DD格式
+    const dateObj = new Date(validatedData.expense_date)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    const expenseDate = `${year}-${month}-${day}`
     const expenseTime = validatedData.expense_time || null
     
     console.log('准备插入人情记录...')

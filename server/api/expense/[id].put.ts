@@ -58,7 +58,12 @@ export default defineEventHandler(async (event) => {
   }
   if (data.expense_date !== undefined) {
     updates.push("expense_date = ?");
-    params.push(data.expense_date);
+    // 将ISO格式日期转换为YYYY-MM-DD格式
+    const dateObj = new Date(data.expense_date);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    params.push(`${year}-${month}-${day}`);
   }
   if (data.expense_time !== undefined) {
     updates.push("expense_time = ?");

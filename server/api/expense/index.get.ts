@@ -11,12 +11,24 @@ export default defineEventHandler(async (event) => {
   
   const page = parseInt(queryParams.page as string) || 1
   const pageSize = parseInt(queryParams.pageSize as string) || 20
-  const startDate = queryParams.start_date as string
-  const endDate = queryParams.end_date as string
+  const startDateInput = queryParams.start_date as string
+  const endDateInput = queryParams.end_date as string
   const categoryId = queryParams.category_id ? parseInt(queryParams.category_id as string) : null
   const memberId = queryParams.member_id ? parseInt(queryParams.member_id as string) : null
   const keyword = queryParams.keyword as string
-  
+
+  // 将ISO格式日期转换为YYYY-MM-DD格式
+  const formatSQLDate = (isoDate: string) => {
+    const dateObj = new Date(isoDate)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const startDate = startDateInput ? formatSQLDate(startDateInput) : ''
+  const endDate = endDateInput ? formatSQLDate(endDateInput) : ''
+
   // 构建查询条件
   let whereClause = 'WHERE 1=1'
   const params: any[] = []

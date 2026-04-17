@@ -38,7 +38,14 @@
         <el-table-column label="操作" width="150" align="center">
           <template #default="{ row }">
             <el-button link type="primary" @click="openEditDialog(row)">编辑</el-button>
-            <el-button link type="danger" @click="deleteCategory(row)">删除</el-button>
+            <el-button
+              link
+              type="danger"
+              :disabled="row.is_system"
+              @click="deleteCategory(row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -170,9 +177,15 @@ const submitCategory = async () => {
 
 // 删除分类
 const deleteCategory = async (category: Category) => {
+  // 禁止删除系统分类
+  if (category.is_system) {
+    ElMessage.warning('系统分类不能删除')
+    return
+  }
+
   try {
     await ElMessageBox.confirm(
-      category.is_system ? '确定要删除该系统分类吗？删除后不可恢复。' : '确定要删除该分类吗？',
+      '确定要删除该分类吗？',
       '提示',
       { type: 'warning' }
     )
