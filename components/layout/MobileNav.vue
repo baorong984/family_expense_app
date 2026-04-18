@@ -23,6 +23,7 @@ import {
   Present,
   Wallet,
   User,
+  Van,
 } from "@element-plus/icons-vue";
 
 const route = useRoute();
@@ -34,6 +35,7 @@ const navItems = computed(() => {
     { path: "/expense/create", icon: Edit, label: "记账" },
     { path: "/expense/history", icon: List, label: "记录" },
     { path: "/gift", icon: Present, label: "人情" },
+    { path: "/vehicle/fuel", icon: Van, label: "车辆" },
     { path: "/statistics", icon: DataAnalysis, label: "统计" },
   ];
 
