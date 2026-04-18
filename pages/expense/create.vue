@@ -75,7 +75,10 @@
                   :value="member.id"
                 >
                   <div class="member-option">
-                    <span class="member-color-dot" :style="{ backgroundColor: member.color }"></span>
+                    <span
+                      class="member-color-dot"
+                      :style="{ backgroundColor: member.color }"
+                    ></span>
                     <span class="member-name">{{ member.name }}</span>
                   </div>
                 </el-option>
@@ -220,10 +223,11 @@
                     >
                   </el-descriptions-item>
                   <el-descriptions-item label="分类">
-                    {{ msg.result.category || '-' }} / {{ msg.result.subcategory || '-' }}
+                    {{ msg.result.category || "-" }} /
+                    {{ msg.result.subcategory || "-" }}
                   </el-descriptions-item>
                   <el-descriptions-item label="日期">{{
-                    msg.result.date || '-'
+                    msg.result.date || "-"
                   }}</el-descriptions-item>
                   <el-descriptions-item label="置信度">
                     <el-progress
@@ -370,7 +374,10 @@
                 :value="member.id"
               >
                 <div class="member-option">
-                  <span class="member-color-dot" :style="{ backgroundColor: member.color }"></span>
+                  <span
+                    class="member-color-dot"
+                    :style="{ backgroundColor: member.color }"
+                  ></span>
                   <span class="member-name">{{ member.name }}</span>
                 </div>
               </el-option>
@@ -660,7 +667,7 @@ const quickCategories = computed(() => {
   const tree = categoryStore.tree || [];
   const subCategories: Category[] = [];
 
-  console.log('计算快捷分类 - 树形结构:', tree);
+  console.log("计算快捷分类 - 树形结构:", tree);
 
   // 从树形结构中提取所有子分类
   tree.forEach((parent) => {
@@ -671,11 +678,11 @@ const quickCategories = computed(() => {
     }
   });
 
-  console.log('计算快捷分类 - 子分类数量:', subCategories.length);
+  console.log("计算快捷分类 - 子分类数量:", subCategories.length);
 
   // 如果没有数据，返回空数组
   if (subCategories.length === 0) {
-    console.warn('快捷分类为空 - 没有子分类数据');
+    console.warn("快捷分类为空 - 没有子分类数据");
     return [];
   }
 
@@ -691,7 +698,7 @@ const quickCategories = computed(() => {
     icon: categoryIcons[cat.name] || "📌",
   }));
 
-  console.log('计算快捷分类 - 最终结果:', result);
+  console.log("计算快捷分类 - 最终结果:", result);
   return result;
 });
 
@@ -772,80 +779,41 @@ const expenseForm = reactive({
 const amountInput = ref("");
 const amountExpressionResult = ref<number | null>(null);
 
-// ==================== 持久化处理 ====================
-const STORAGE_KEY = "expense-create-form";
-
-// 保存表单到 localStorage
-const saveFormToStorage = () => {
-  if (typeof window === "undefined") return;
-  try {
-    const data = {
-      inputMode: inputMode.value,
-      expenseForm: { ...expenseForm },
-      amountInput: amountInput.value,
-      expressionInput: expressionInput.value,
-      inputText: inputText.value,
-      quickCategoryId: quickCategoryId.value,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) {
-    // iOS隐私模式下localStorage不可用，静默失败
-    console.warn("localStorage保存失败:", e);
-  }
+// ==================== 获取当前日期时间 ====================
+const get_current_datetime = () => {
+  const now = new Date();
+  const str_date =
+    now.getFullYear() +
+    "-" +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(now.getDate()).padStart(2, "0");
+  const str_hour = String(now.getHours()).padStart(2, "0");
+  const str_time = `${str_hour}:00:00`;
+  return { str_date, str_time };
 };
 
-// 从 localStorage 恢复表单
-const restoreFormFromStorage = () => {
-  if (typeof window === "undefined") return false;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const data = JSON.parse(stored);
-      if (data.inputMode) inputMode.value = data.inputMode;
-      if (data.expenseForm) {
-        Object.assign(expenseForm, data.expenseForm);
-      }
-      if (data.amountInput) amountInput.value = data.amountInput;
-      if (data.expressionInput) expressionInput.value = data.expressionInput;
-      if (data.inputText) inputText.value = data.inputText;
-      if (data.quickCategoryId !== undefined)
-        quickCategoryId.value = data.quickCategoryId;
-      return true;
-    }
-  } catch (e) {
-    console.warn("localStorage恢复失败:", e);
-  }
-  return false;
+/** 重置表单到最新日期时间 */
+const reset_form_to_now = () => {
+  const { str_date, str_time } = get_current_datetime();
+  expenseForm.amount = 0;
+  expenseForm.expense_date = str_date;
+  expenseForm.expense_time = str_time;
+  expenseForm.category_id = null;
+  expenseForm.member_id = null;
+  expenseForm.description = "";
+  recognizeResult.value = null;
+  recommendations.value = [];
+  selectedRecommendIndex.value = null;
+  isEditing.value = false;
+  amountInput.value = "";
+  amountExpressionResult.value = null;
+  expressionInput.value = "";
+  expressionResult.value = null;
+  inputText.value = "";
+  quickCategoryId.value = null;
+  clearInput();
 };
-
-// 清除 localStorage
-const clearFormStorage = () => {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (e) {
-    // ignore
-  }
-};
-
-// 监听表单变化，自动保存
-watch(
-  [
-    () => inputMode.value,
-    () => expenseForm.amount,
-    () => expenseForm.expense_date,
-    () => expenseForm.category_id,
-    () => expenseForm.member_id,
-    () => expenseForm.description,
-    () => amountInput.value,
-    () => expressionInput.value,
-    () => inputText.value,
-  ],
-  () => {
-    saveFormToStorage();
-  },
-  { deep: true },
-);
 
 // 分类级联数据
 const categoryCascaderData = computed(() => {
@@ -869,30 +837,36 @@ onMounted(async () => {
       memberStore.fetchMembers(),
     ]);
 
-    // 调试日志
-    console.log('分类数据加载完成:', {
+    console.log("分类数据加载完成:", {
       treeLength: categoryStore.tree?.length || 0,
       categoriesLength: categoryStore.categories?.length || 0,
-      treeData: categoryStore.tree
+      treeData: categoryStore.tree,
     });
   } catch (error) {
-    console.error('初始化数据加载失败:', error);
-    ElMessage.error('加载数据失败，请刷新页面重试');
+    console.error("初始化数据加载失败:", error);
+    ElMessage.error("加载数据失败，请刷新页面重试");
   }
 
-  // 恢复持久化的表单内容
-  const restored = restoreFormFromStorage();
+  reset_form_to_now();
 
-  // 如果当前用户是成员（非管理员），且表单中没有设置 member_id，则默认选择当前登录成员
-  if (!restored || !expenseForm.member_id) {
-    if (userStore.user && !userStore.isAdmin) {
-      // 检查当前用户 member_id 是否在成员列表中
-      const currentUserAsMember = memberStore.members.find(
-        (m) => m.id === userStore.user.member_id,
-      );
-      if (currentUserAsMember) {
-        expenseForm.member_id = currentUserAsMember.id;
-      }
+  if (userStore.user && !userStore.isAdmin) {
+    const currentUserAsMember = memberStore.members.find(
+      (m) => m.id === userStore.user.member_id,
+    );
+    if (currentUserAsMember) {
+      expenseForm.member_id = currentUserAsMember.id;
+    }
+  }
+});
+
+onActivated(() => {
+  reset_form_to_now();
+  if (userStore.user && !userStore.isAdmin) {
+    const currentUserAsMember = memberStore.members.find(
+      (m) => m.id === userStore.user.member_id,
+    );
+    if (currentUserAsMember) {
+      expenseForm.member_id = currentUserAsMember.id;
     }
   }
 });
@@ -967,12 +941,12 @@ const sendChatMessage = async () => {
   try {
     const res = await recognizeExpense(userMessage);
 
-    console.log('AI识别响应:', res);
+    console.log("AI识别响应:", res);
 
     if (res.success) {
       const result = res.data;
 
-      console.log('识别结果:', result);
+      console.log("识别结果:", result);
 
       // 生成回复内容
       let replyContent = "";
@@ -1000,7 +974,7 @@ const sendChatMessage = async () => {
         result: result,
       };
 
-      console.log('要添加到对话历史的数据:', messageData);
+      console.log("要添加到对话历史的数据:", messageData);
 
       chatHistory.value.push(messageData);
     } else {
@@ -1010,7 +984,7 @@ const sendChatMessage = async () => {
       });
     }
   } catch (error: any) {
-    console.error('AI识别错误:', error);
+    console.error("AI识别错误:", error);
     chatHistory.value.push({
       role: "assistant",
       content: "抱歉，出现了一些问题，请稍后再试。",
@@ -1325,8 +1299,16 @@ const saveExpense = async () => {
   }
 
   // 验证金额
-  if (!expenseForm.amount || expenseForm.amount <= 0 || isNaN(expenseForm.amount)) {
-    console.warn("金额验证失败:", { amount: expenseForm.amount, amountInput: amountInput.value, expressionResult: amountExpressionResult.value });
+  if (
+    !expenseForm.amount ||
+    expenseForm.amount <= 0 ||
+    isNaN(expenseForm.amount)
+  ) {
+    console.warn("金额验证失败:", {
+      amount: expenseForm.amount,
+      amountInput: amountInput.value,
+      expressionResult: amountExpressionResult.value,
+    });
     ElMessage.warning("请输入有效金额");
     return;
   }
@@ -1363,9 +1345,6 @@ const saveExpense = async () => {
 
     if (res.success) {
       ElMessage.success("保存成功");
-      // 清除持久化存储
-      clearFormStorage();
-      // 重置表单
       resetForm();
     } else {
       console.error("保存失败:", res);
@@ -1380,19 +1359,7 @@ const saveExpense = async () => {
 };
 
 const resetForm = () => {
-  expenseForm.amount = 0;
-  expenseForm.expense_date = formatDate(new Date());
-  expenseForm.expense_time = "00:00:00";
-  expenseForm.category_id = null;
-  expenseForm.member_id = null;
-  expenseForm.description = "";
-  recognizeResult.value = null;
-  recommendations.value = [];
-  selectedRecommendIndex.value = null;
-  isEditing.value = false;
-  amountInput.value = "";
-  amountExpressionResult.value = null;
-  clearInput();
+  reset_form_to_now();
 };
 
 const goToHistory = () => {

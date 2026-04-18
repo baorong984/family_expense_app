@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-nav">
-    <div 
-      v-for="item in navItems" 
+    <div
+      v-for="item in navItems"
       :key="item.path"
       class="nav-item"
       :class="{ active: isActive(item.path) }"
@@ -16,34 +16,42 @@
 </template>
 
 <script setup lang="ts">
-import { Edit, List, DataAnalysis, Wallet, User } from '@element-plus/icons-vue'
+import {
+  Edit,
+  List,
+  DataAnalysis,
+  Present,
+  Wallet,
+  User,
+} from "@element-plus/icons-vue";
 
-const route = useRoute()
-const router = useRouter()
-const userStore = useUserStore()
+const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
 
 const navItems = computed(() => {
   const items = [
-    { path: '/expense/create', icon: Edit, label: '记账' },
-    { path: '/expense/history', icon: List, label: '记录' },
-    { path: '/statistics', icon: DataAnalysis, label: '统计' },
-  ]
-  
+    { path: "/expense/create", icon: Edit, label: "记账" },
+    { path: "/expense/history", icon: List, label: "记录" },
+    { path: "/gift", icon: Present, label: "人情" },
+    { path: "/statistics", icon: DataAnalysis, label: "统计" },
+  ];
+
   if (userStore.isAdmin) {
-    items.push({ path: '/budget', icon: Wallet, label: '预算' })
-    items.push({ path: '/member', icon: User, label: '成员' })
+    items.push({ path: "/budget", icon: Wallet, label: "预算" });
+    items.push({ path: "/member", icon: User, label: "成员" });
   }
-  
-  return items
-})
+
+  return items;
+});
 
 const isActive = (path: string) => {
-  return route.path === path || route.path.startsWith(path + '/')
-}
+  return route.path === path || route.path.startsWith(path + "/");
+};
 
 const navigateTo = (path: string) => {
-  router.push(path)
-}
+  router.push(path);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -73,30 +81,30 @@ const navigateTo = (path: string) => {
   transition: all $transition-fast;
   border-radius: $border-radius;
   min-width: 64px;
-  
+
   .el-icon {
     color: $text-muted;
     transition: color $transition-fast;
   }
-  
+
   .label {
     font-size: 11px;
     margin-top: 2px;
     color: $text-muted;
     transition: color $transition-fast;
   }
-  
+
   &.active {
     .el-icon {
       color: $primary;
     }
-    
+
     .label {
       color: $primary;
       font-weight: 600;
     }
   }
-  
+
   &:active {
     background: $bg-light;
   }
