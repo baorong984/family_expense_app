@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar" :class="{ collapsed: isCollapsed, 'is-mobile': isMobile }">
+  <div
+    class="sidebar"
+    :class="{ collapsed: isCollapsed, 'is-mobile': isMobile }"
+  >
     <!-- Logo 区域 -->
     <div class="sidebar-logo">
       <transition name="logo-fade" mode="out-in">
@@ -24,24 +27,24 @@
           <span>记账</span>
         </template>
       </el-menu-item>
-      
+
       <el-menu-item index="/expense/history" @click="handleSelect">
         <el-icon><List /></el-icon>
         <template #title>
           <span>消费记录</span>
         </template>
       </el-menu-item>
-      
+
       <el-menu-item index="/statistics" @click="handleSelect">
         <el-icon><DataAnalysis /></el-icon>
         <template #title>
           <span>统计分析</span>
         </template>
       </el-menu-item>
-      
+
       <!-- 人情管理 -->
       <div class="menu-divider"></div>
-      
+
       <el-menu-item index="/gift" @click="handleSelect">
         <el-icon><Present /></el-icon>
         <template #title>
@@ -55,25 +58,42 @@
           <span>人情统计</span>
         </template>
       </el-menu-item>
-      
+
+      <!-- 车辆管理 -->
+      <div class="menu-divider"></div>
+
+      <el-menu-item index="/vehicle/fuel" @click="handleSelect">
+        <el-icon><Van /></el-icon>
+        <template #title>
+          <span>加油/充电记录</span>
+        </template>
+      </el-menu-item>
+
+      <el-menu-item index="/vehicle" @click="handleSelect">
+        <el-icon><Setting /></el-icon>
+        <template #title>
+          <span>车辆管理</span>
+        </template>
+      </el-menu-item>
+
       <!-- 管理员菜单 -->
       <template v-if="userStore.isAdmin">
         <div class="menu-divider"></div>
-        
+
         <el-menu-item index="/budget" @click="handleSelect">
           <el-icon><Wallet /></el-icon>
           <template #title>
             <span>预算管理</span>
           </template>
         </el-menu-item>
-        
+
         <el-menu-item index="/category" @click="handleSelect">
           <el-icon><Grid /></el-icon>
           <template #title>
             <span>分类管理</span>
           </template>
         </el-menu-item>
-        
+
         <el-menu-item index="/member" @click="handleSelect">
           <el-icon><User /></el-icon>
           <template #title>
@@ -94,27 +114,38 @@
 </template>
 
 <script setup lang="ts">
-import { Edit, List, DataAnalysis, Wallet, Grid, User, Present, Document } from '@element-plus/icons-vue'
+import {
+  Edit,
+  List,
+  DataAnalysis,
+  Wallet,
+  Grid,
+  User,
+  Present,
+  Document,
+  Van,
+  Setting,
+} from "@element-plus/icons-vue";
 
 const props = defineProps<{
-  isCollapsed: boolean
-  isMobile?: boolean
-}>()
+  isCollapsed: boolean;
+  isMobile?: boolean;
+}>();
 
 const emit = defineEmits<{
-  select: []
-}>()
+  select: [];
+}>();
 
-const route = useRoute()
-const userStore = useUserStore()
+const route = useRoute();
+const userStore = useUserStore();
 
 const activeMenu = computed(() => {
-  return route.path
-})
+  return route.path;
+});
 
 const handleSelect = () => {
-  emit('select')
-}
+  emit("select");
+};
 </script>
 
 <style lang="scss" scoped>
@@ -127,14 +158,14 @@ const handleSelect = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  
+
   &.collapsed {
     width: $sidebar-collapsed-width;
-    
+
     .sidebar-logo {
       padding: $spacing-md $spacing-sm;
     }
-    
+
     .sidebar-menu {
       :deep(.el-menu-item) {
         margin: 4px 8px;
@@ -142,12 +173,12 @@ const handleSelect = () => {
         justify-content: center;
       }
     }
-    
+
     .menu-divider {
       margin: $spacing-md $spacing-md;
     }
   }
-  
+
   &.is-mobile {
     width: 100%;
     border-right: none;
@@ -171,11 +202,11 @@ const handleSelect = () => {
   align-items: center;
   gap: $spacing-sm;
   white-space: nowrap;
-  
+
   .logo-icon {
     font-size: 24px;
   }
-  
+
   .logo-name {
     font-family: $font-display;
     font-size: 18px;
@@ -198,43 +229,43 @@ const handleSelect = () => {
   padding: $spacing-md 0;
   overflow-y: auto;
   overflow-x: hidden;
-  
+
   :deep(.el-menu-item) {
     color: $text-secondary;
     border-radius: $border-radius;
     margin: 4px 12px;
     height: 44px;
     transition: all $transition-base;
-    
+
     .el-icon {
       font-size: 18px;
     }
-    
+
     &:hover {
       color: $primary;
       background: rgba(78, 205, 196, 0.08);
     }
-    
+
     &.is-active {
       color: white;
       background: $gradient-primary;
       box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
-      
+
       .el-icon {
         color: white;
       }
     }
-    
+
     // 移动端样式
     .is-mobile & {
       margin: 2px 16px;
       height: 48px;
     }
   }
-  
+
   :deep(.el-menu--collapse) {
     width: 100%;
-    
+
     .el-menu-item {
       padding: 0 !important;
       text-align: center;
@@ -247,7 +278,7 @@ const handleSelect = () => {
   background: $border-color;
   margin: $spacing-md $spacing-xl;
   transition: margin $transition-base;
-  
+
   .is-mobile & {
     margin: $spacing-sm $spacing-mobile-lg;
   }
@@ -257,19 +288,23 @@ const handleSelect = () => {
 .sidebar-footer {
   padding: $spacing-md;
   border-top: 1px solid $border-color;
-  
+
   .tip-card {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-md;
-    background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(69, 183, 209, 0.1) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(78, 205, 196, 0.1) 0%,
+      rgba(69, 183, 209, 0.1) 100%
+    );
     border-radius: $border-radius;
-    
+
     .tip-icon {
       font-size: 16px;
     }
-    
+
     .tip-text {
       font-size: 12px;
       color: $primary-dark;

@@ -59,6 +59,33 @@ export function formatPercentage(value: number, decimals = 1): string {
   return `${(value * 100).toFixed(decimals)}%`
 }
 
+/**
+ * 格式化数字（添加千分位分隔符）
+ * @param value 要格式化的数字
+ * @param decimals 小数位数（默认2位）
+ * @returns 格式化后的字符串，如：12,345.67
+ */
+export function formatNumber(value: number | string, decimals = 2): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value
+
+  if (isNaN(num)) {
+    return '0'
+  }
+
+  /** 处理整数部分和小数部分 */
+  const [intPart, decPart] = num.toFixed(decimals).split('.')
+
+  /** 为整数部分添加千分位分隔符 */
+  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  /** 如果有小数部分则拼接 */
+  if (decimals > 0 && decPart !== undefined) {
+    return `${formattedInt}.${decPart}`
+  }
+
+  return formattedInt
+}
+
 export function getMonthRange(year: number, month: number) {
   const start = dayjs(`${year}-${month.toString().padStart(2, '0')}-01`)
   const end = start.endOf('month')
