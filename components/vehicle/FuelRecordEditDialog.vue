@@ -243,9 +243,9 @@ const lastMileage = computed((): number => {
     return lastRecord.current_mileage;
   }
 
-  /** 没有历史记录，使用车辆初始里程或当前里程 */
+  /** 没有历史记录，使用车辆基准里程 */
   const vehicle = vehicleStore.getVehicleById(formData.vehicle_id);
-  return vehicle?.current_mileage || vehicle?.initial_mileage || 0;
+  return vehicle?.base_mileage || 0;
 });
 
 /** 当前里程数的最小允许值（必须大于上次） */

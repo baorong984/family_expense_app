@@ -236,12 +236,14 @@ export interface GiftStatistics {
     total_amount: number;
     total_count: number;
     cash_amount: number;
+    item_amount: number;
     item_count: number;
   };
   incoming: {
     total_amount: number;
     total_count: number;
     cash_amount: number;
+    item_amount: number;
     item_count: number;
   };
   net_outgoing: number;
@@ -288,8 +290,7 @@ export interface Vehicle {
   plate_number: string;
   brand_model: string;
   vehicle_type: "fuel" | "electric";
-  initial_mileage: number;
-  current_mileage: number;
+  base_mileage: number;
   is_active: number;
   created_by: number;
   created_at: string;
@@ -334,8 +335,7 @@ export interface VehicleForm {
   plate_number: string;
   brand_model: string;
   vehicle_type: "fuel" | "electric";
-  initial_mileage: number;
-  current_mileage?: number;
+  base_mileage: number;
   is_active?: number;
 }
 

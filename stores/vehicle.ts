@@ -81,13 +81,9 @@ export const useVehicleStore = defineStore("vehicle", {
           this.vehicles = (Array.isArray(res.data) ? res.data : []).map(
             (v) => ({
               ...v,
-              initial_mileage:
-                v.initial_mileage !== null
-                  ? parseFloat(String(v.initial_mileage))
-                  : 0,
-              current_mileage:
-                v.current_mileage !== null
-                  ? parseFloat(String(v.current_mileage))
+              base_mileage:
+                v.base_mileage !== null
+                  ? parseFloat(String(v.base_mileage))
                   : 0,
             }),
           );

@@ -8,7 +8,6 @@
       </el-button>
     </div>
 
-    <!-- 统计摘要 -->
     <el-card class="summary-card">
       <el-row :gutter="isMobile ? 8 : 16">
         <el-col :span="isMobile ? 12 : 6">
@@ -51,111 +50,29 @@
       </el-row>
     </el-card>
 
-    <!-- 桌面端：表格列表 -->
-    <el-card v-if="!isMobile" class="list-card">
-      <el-table
-        :data="vehicleStore.vehicles"
-        stripe
-        v-loading="vehicleStore.loading"
-      >
-        <el-table-column
-          prop="plate_number"
-          label="车牌号"
-          width="150"
-          align="center"
-        >
-          <template #default="{ row }">
-            <span class="plate-number">{{ row.plate_number }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="brand_model" label="品牌型号" min-width="200" />
-        <el-table-column label="车辆类型" width="120" align="center">
-          <template #default="{ row }">
-            <el-tag
-              :type="getVehicleTypeTagType(row.vehicle_type)"
-              size="small"
-            >
-              {{ getVehicleTypeLabel(row.vehicle_type) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="initial_mileage"
-          label="初始里程(km)"
-          width="130"
-          align="right"
-        >
-          <template #default="{ row }">
-            {{ formatNumber(row.initial_mileage) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="current_mileage"
-          label="当前里程(km)"
-          width="130"
-          align="right"
-        >
-          <template #default="{ row }">
-            <span class="current-mileage">{{
-              formatNumber(row.current_mileage || 0)
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" width="80" align="center">
-          <template #default="{ row }">
-            <el-tag
-              :type="row.is_active === 1 ? 'success' : 'info'"
-              size="small"
-            >
-              {{ row.is_active === 1 ? "启用" : "停用" }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="created_at"
-          label="创建时间"
-          width="160"
-          align="center"
-        >
-          <template #default="{ row }">
-            <span class="datetime-small">{{
-              formatDateTime(row.created_at)
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="editVehicle(row)"
-              >编辑</el-button
-            >
-            <el-button link type="danger" @click="deleteVehicle(row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div
-        v-if="vehicleStore.vehicles.length === 0 && !vehicleStore.loading"
-        class="empty-tip"
-      >
-        暂无车辆信息，请点击右上角"添加车辆"按钮添加
-      </div>
-    </el-card>
-
-    <!-- 移动端：卡片列表 -->
-    <div v-if="isMobile" class="mobile-list" v-loading="vehicleStore.loading">
-      <div
+    <div class="vehicle-grid" v-loading="vehicleStore.loading">
+      <el-card
         v-for="item in vehicleStore.vehicles"
         :key="item.id"
-        class="mobile-vehicle-card"
+        class="vehicle-card"
+        :class="{ 'is-disabled': item.is_active !== 1 }"
       >
-        <div class="card-top">
-          <div class="card-left">
-            <div class="card-plate">{{ item.plate_number }}</div>
-            <div class="card-model">{{ item.brand_model }}</div>
-          </div>
-          <div class="card-right">
+        <div class="card-icon">
+          <el-avatar
+            :size="64"
+            :style="{
+              backgroundColor: item.vehicle_type === 'fuel' ? '#F56C6C' : '#67C23A'
+            }"
+          >
+            <el-icon :size="32">
+              <component :is="item.vehicle_type === 'fuel' ? 'Van' : 'Promotion'" />
+            </el-icon>
+          </el-avatar>
+        </div>
+        <div class="card-info">
+          <h3 class="plate-number">{{ item.plate_number }}</h3>
+          <p class="brand-model">{{ item.brand_model }}</p>
+          <div class="card-tags">
             <el-tag
               :type="getVehicleTypeTagType(item.vehicle_type)"
               size="small"
@@ -165,53 +82,40 @@
             <el-tag
               :type="item.is_active === 1 ? 'success' : 'info'"
               size="small"
-              style="margin-left: 4px"
             >
               {{ item.is_active === 1 ? "启用" : "停用" }}
             </el-tag>
           </div>
-        </div>
-        <div class="card-info">
-          <span class="info-label">初始里程:</span>
-          <span class="info-value"
-            >{{ formatNumber(item.initial_mileage) }} km</span
-          >
-        </div>
-        <div class="card-info">
-          <span class="info-label">当前里程:</span>
-          <span class="info-value current-mileage"
-            >{{ formatNumber(item.current_mileage || 0) }} km</span
-          >
+          <div class="mileage-info">
+            <span class="label">基准里程:</span>
+            <span class="value">{{ formatNumber(item.base_mileage || 0) }} km</span>
+          </div>
         </div>
         <div class="card-actions">
-          <el-button
-            link
-            type="primary"
-            size="small"
-            @click="editVehicle(item)"
-          >
+          <el-button link type="primary" @click="editVehicle(item)">
             编辑
           </el-button>
-          <el-button
-            link
-            type="danger"
-            size="small"
-            @click="deleteVehicle(item)"
-          >
+          <el-button link type="danger" @click="deleteVehicle(item)">
             删除
           </el-button>
         </div>
-      </div>
+      </el-card>
 
-      <div
-        v-if="!vehicleStore.loading && vehicleStore.vehicles.length === 0"
-        class="mobile-empty"
-      >
-        暂无车辆信息
-      </div>
+      <el-card class="vehicle-card add-card" @click="openCreateDialog">
+        <div class="add-content">
+          <el-icon :size="48"><Plus /></el-icon>
+          <span>添加车辆</span>
+        </div>
+      </el-card>
     </div>
 
-    <!-- 新增/编辑弹窗 -->
+    <div
+      v-if="!vehicleStore.loading && vehicleStore.vehicles.length === 0"
+      class="empty-tip"
+    >
+      暂无车辆信息，请点击"添加车辆"按钮添加
+    </div>
+
     <VehicleEditDialog
       v-model="editDialogVisible"
       :vehicle="currentVehicle"
@@ -222,10 +126,10 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Plus } from "@element-plus/icons-vue";
-import type { Vehicle, VehicleForm } from "~/types";
+import { Plus, Van, Promotion } from "@element-plus/icons-vue";
+import type { Vehicle } from "~/types";
 import { VEHICLE_TYPE_OPTIONS } from "~/types";
-import { formatDate, formatDateTime, formatNumber } from "~/utils/format";
+import { formatNumber } from "~/utils/format";
 import VehicleEditDialog from "~/components/vehicle/VehicleEditDialog.vue";
 
 definePageMeta({
@@ -234,25 +138,30 @@ definePageMeta({
 
 const vehicleStore = useVehicleStore();
 
-/** 判断是否为移动端 */
 const isMobile = inject<Ref<boolean>>("isMobile", ref(false));
 
-// 编辑弹窗
 const editDialogVisible = ref(false);
 const currentVehicle = ref<Vehicle | null>(null);
 
-// 初始化
 onMounted(async () => {
   await vehicleStore.fetchVehicles();
 });
 
-/** 获取车辆类型标签文本 */
+/**
+ * 获取车辆类型标签文本
+ * @param type - 车辆类型
+ * @returns 标签文本
+ */
 const getVehicleTypeLabel = (type: string) => {
   const option = VEHICLE_TYPE_OPTIONS.find((opt) => opt.value === type);
   return option?.label || type;
 };
 
-/** 获取车辆类型标签颜色 */
+/**
+ * 获取车辆类型标签颜色
+ * @param type - 车辆类型
+ * @returns 标签颜色类型
+ */
 const getVehicleTypeTagType = (
   type: string,
 ): "success" | "warning" | "danger" | "info" | "primary" | "default" => {
@@ -266,24 +175,34 @@ const getVehicleTypeTagType = (
   return typeMap[type] || "info";
 };
 
-/** 打开新增弹窗 */
+/**
+ * 打开新增弹窗
+ */
 const openCreateDialog = () => {
   currentVehicle.value = null;
   editDialogVisible.value = true;
 };
 
-/** 编辑车辆 */
+/**
+ * 编辑车辆
+ * @param vehicle - 车辆信息
+ */
 const editVehicle = (vehicle: Vehicle) => {
   currentVehicle.value = { ...vehicle };
   editDialogVisible.value = true;
 };
 
-/** 保存成功后处理 */
+/**
+ * 保存成功后处理
+ */
 const handleVehicleSaved = async () => {
   await vehicleStore.fetchVehicles();
 };
 
-/** 删除车辆 */
+/**
+ * 删除车辆
+ * @param vehicle - 车辆信息
+ */
 const deleteVehicle = async (vehicle: Vehicle) => {
   try {
     await ElMessageBox.confirm(
@@ -304,12 +223,8 @@ const deleteVehicle = async (vehicle: Vehicle) => {
 
 <style lang="scss" scoped>
 .vehicle-page {
-  .plate-number {
-    font-size: 16px;
-    font-weight: 700;
-    color: $text-primary;
-    font-family: $font-mono;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
 
   .fuel {
     color: $danger;
@@ -323,20 +238,8 @@ const deleteVehicle = async (vehicle: Vehicle) => {
     color: $text-muted;
   }
 
-  .current-mileage {
-    color: $primary;
-    font-weight: 600;
-  }
-
-  .datetime-small {
-    font-size: 12px;
-    color: $text-muted;
-    font-family: $font-mono;
-    font-weight: 500;
-  }
-
   .summary-card {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
     box-shadow: $shadow-md;
     transition: all $transition-base;
 
@@ -354,20 +257,11 @@ const deleteVehicle = async (vehicle: Vehicle) => {
     }
   }
 
-  .list-card {
-    box-shadow: $shadow-md;
-    transition: all $transition-base;
-
-    &:hover {
-      box-shadow: $shadow-lg;
-    }
-
-    .empty-tip {
-      text-align: center;
-      padding: $spacing-xl;
-      color: $text-muted;
-      font-size: 14px;
-    }
+  .empty-tip {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-muted;
+    font-size: 14px;
   }
 }
 
@@ -422,7 +316,116 @@ const deleteVehicle = async (vehicle: Vehicle) => {
   }
 }
 
-// ==================== 移动端样式 ====================
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-lg;
+}
+
+.vehicle-card {
+  text-align: center;
+  transition: all $transition-base;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+
+    .plate-number,
+    .brand-model {
+      color: $text-muted;
+    }
+  }
+
+  .card-icon {
+    margin-bottom: $spacing-md;
+  }
+
+  .card-info {
+    .plate-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: $text-primary;
+      font-family: $font-mono;
+      margin-bottom: $spacing-xs;
+    }
+
+    .brand-model {
+      font-size: 14px;
+      color: $text-secondary;
+      margin-bottom: $spacing-sm;
+    }
+
+    .card-tags {
+      display: flex;
+      justify-content: center;
+      gap: $spacing-xs;
+      margin-bottom: $spacing-sm;
+    }
+
+    .mileage-info {
+      display: flex;
+      justify-content: center;
+      gap: $spacing-xs;
+      font-size: 13px;
+      padding-top: $spacing-sm;
+      border-top: 1px solid $border-light;
+
+      .label {
+        color: $text-muted;
+      }
+
+      .value {
+        color: $primary;
+        font-weight: 600;
+        font-family: $font-mono;
+      }
+    }
+  }
+
+  .card-actions {
+    margin-top: $spacing-md;
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+  }
+
+  &.add-card {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+
+    &:hover {
+      border-color: $primary;
+
+      .add-content {
+        color: $primary;
+      }
+    }
+
+    .add-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: $text-muted;
+      transition: color $transition-base;
+
+      .el-icon {
+        margin-bottom: $spacing-sm;
+      }
+
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+}
 
 .is-mobile {
   .page-header {
@@ -459,82 +462,57 @@ const deleteVehicle = async (vehicle: Vehicle) => {
       font-weight: 700;
     }
   }
-}
 
-.mobile-list {
-  padding: 0 $spacing-mobile-md;
-}
-
-.mobile-vehicle-card {
-  background: $bg-white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  margin-bottom: $spacing-sm;
-  box-shadow: $shadow-sm;
-  transition: all $transition-base;
-
-  &:active {
-    transform: scale(0.98);
+  .vehicle-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: $spacing-md;
+    padding: 0 $spacing-mobile-md;
   }
 
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: $spacing-sm;
-  }
+  .vehicle-card {
+    .card-icon {
+      :deep(.el-avatar) {
+        --el-avatar-size: 48px;
+      }
 
-  .card-left {
-    flex: 1;
-  }
+      :deep(.el-icon) {
+        font-size: 24px;
+      }
+    }
 
-  .card-plate {
-    font-size: 18px;
-    font-weight: 700;
-    color: $text-primary;
-    font-family: $font-mono;
-    margin-bottom: $spacing-xs;
-  }
+    .card-info {
+      .plate-number {
+        font-size: 16px;
+      }
 
-  .card-model {
-    font-size: 13px;
-    color: $text-secondary;
-  }
+      .brand-model {
+        font-size: 12px;
+      }
 
-  .card-right {
-    margin-left: $spacing-sm;
-  }
+      .mileage-info {
+        font-size: 12px;
+      }
+    }
 
-  .card-info {
-    display: flex;
-    gap: $spacing-xs;
-    font-size: 13px;
-    margin-bottom: $spacing-sm;
-    padding: $spacing-xs 0;
-    border-top: 1px solid $border-light;
-  }
+    &.add-card {
+      min-height: 160px;
 
-  .info-label {
-    color: $text-muted;
-  }
+      .add-content {
+        .el-icon {
+          font-size: 32px;
+        }
 
-  .info-value {
-    color: $text-primary;
-    font-weight: 500;
-  }
-
-  .card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: $spacing-sm;
+        span {
+          font-size: 12px;
+        }
+      }
+    }
   }
 }
 
-.mobile-empty {
-  text-align: center;
-  padding: $spacing-xl;
-  color: $text-muted;
-  font-size: 14px;
+@media (max-width: $breakpoint-sm) {
+  .vehicle-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

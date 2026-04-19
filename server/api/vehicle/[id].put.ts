@@ -16,8 +16,7 @@ const vehicleSchema = z.object({
     .max(100, "品牌型号长度不能超过100个字符")
     .optional(),
   vehicle_type: z.enum(["fuel", "electric"]).optional(),
-  initial_mileage: z.number().min(0, "初始里程数不能为负数").optional(),
-  current_mileage: z.number().min(0, "当前里程数不能为负数").optional(),
+  base_mileage: z.number().min(0, "基准里程数不能为负数").optional(),
   is_active: z.number().optional(),
 });
 
@@ -78,13 +77,9 @@ export default defineEventHandler(async (event) => {
       updateFields.push("vehicle_type = ?");
       params.push(validatedData.vehicle_type);
     }
-    if (validatedData.initial_mileage !== undefined) {
-      updateFields.push("initial_mileage = ?");
-      params.push(validatedData.initial_mileage);
-    }
-    if (validatedData.current_mileage !== undefined) {
-      updateFields.push("current_mileage = ?");
-      params.push(validatedData.current_mileage);
+    if (validatedData.base_mileage !== undefined) {
+      updateFields.push("base_mileage = ?");
+      params.push(validatedData.base_mileage);
     }
     if (validatedData.is_active !== undefined) {
       updateFields.push("is_active = ?");

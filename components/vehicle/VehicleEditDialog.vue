@@ -51,32 +51,18 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="初始里程" prop="initial_mileage">
+      <el-form-item label="基准里程" prop="base_mileage">
         <el-input-number
-          v-model="formData.initial_mileage"
+          v-model="formData.base_mileage"
           :min="0"
           :max="9999999.99"
           :precision="2"
           :step="100"
           controls-position="right"
           style="width: 100%"
-          placeholder="请输入初始里程数（公里）"
+          placeholder="请输入基准里程数（公里）"
         />
-        <div class="form-tip">首次记录时的基准里程，用于计算行驶里程</div>
-      </el-form-item>
-
-      <el-form-item v-if="vehicle" label="当前里程" prop="current_mileage">
-        <el-input-number
-          v-model="formData.current_mileage"
-          :min="0"
-          :max="9999999.99"
-          :precision="2"
-          :step="100"
-          controls-position="right"
-          style="width: 100%"
-          placeholder="请输入当前里程数（公里）"
-        />
-        <div class="form-tip">从记录端自动同步，可手动修正</div>
+        <div class="form-tip">记录录入后会根据当前里程自动更新此值</div>
       </el-form-item>
 
       <el-form-item v-if="vehicle" label="状态" prop="is_active">
@@ -135,8 +121,7 @@ const formData = reactive<VehicleForm>({
   plate_number: "",
   brand_model: "",
   vehicle_type: "fuel",
-  initial_mileage: 0,
-  current_mileage: 0,
+  base_mileage: 0,
   is_active: 1,
 });
 
@@ -158,20 +143,12 @@ const formRules: FormRules<VehicleForm> = {
   vehicle_type: [
     { required: true, message: "请选择车辆类型", trigger: "change" },
   ],
-  initial_mileage: [
-    { required: true, message: "请输入初始里程数", trigger: "blur" },
+  base_mileage: [
+    { required: true, message: "请输入基准里程数", trigger: "blur" },
     {
       type: "number",
       min: 0,
-      message: "初始里程数不能为负数",
-      trigger: "blur",
-    },
-  ],
-  current_mileage: [
-    {
-      type: "number",
-      min: 0,
-      message: "当前里程数不能为负数",
+      message: "基准里程数不能为负数",
       trigger: "blur",
     },
   ],
@@ -186,8 +163,7 @@ const resetForm = () => {
     plate_number: "",
     brand_model: "",
     vehicle_type: "fuel",
-    initial_mileage: 0,
-    current_mileage: 0,
+    base_mileage: 0,
     is_active: 1,
   });
 };
@@ -202,8 +178,7 @@ watch(
         plate_number: newVehicle.plate_number,
         brand_model: newVehicle.brand_model,
         vehicle_type: newVehicle.vehicle_type,
-        initial_mileage: newVehicle.initial_mileage,
-        current_mileage: newVehicle.current_mileage || 0,
+        base_mileage: newVehicle.base_mileage || 0,
         is_active: newVehicle.is_active,
       });
     } else {
