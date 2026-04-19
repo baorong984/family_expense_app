@@ -52,12 +52,9 @@ export default defineEventHandler(async (event) => {
     );
 
     const outgoing = {
-      total_amount: parseFloat(
-        String(
-          (outgoingStats[0]?.cash_amount || 0) +
-            (outgoingStats[0]?.item_amount || 0),
-        ),
-      ),
+      total_amount:
+        parseFloat(String(outgoingStats[0]?.cash_amount || 0)) +
+        parseFloat(String(outgoingStats[0]?.item_amount || 0)),
       total_count: outgoingStats[0]?.total_count || 0,
       cash_amount: parseFloat(String(outgoingStats[0]?.cash_amount || 0)),
       item_amount: parseFloat(String(outgoingStats[0]?.item_amount || 0)),
@@ -77,12 +74,9 @@ export default defineEventHandler(async (event) => {
     );
 
     const incoming = {
-      total_amount: parseFloat(
-        String(
-          (incomingStats[0]?.cash_amount || 0) +
-            (incomingStats[0]?.item_amount || 0),
-        ),
-      ),
+      total_amount:
+        parseFloat(String(incomingStats[0]?.cash_amount || 0)) +
+        parseFloat(String(incomingStats[0]?.item_amount || 0)),
       total_count: incomingStats[0]?.total_count || 0,
       cash_amount: parseFloat(String(incomingStats[0]?.cash_amount || 0)),
       item_amount: parseFloat(String(incomingStats[0]?.item_amount || 0)),
