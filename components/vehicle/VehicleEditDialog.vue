@@ -229,9 +229,12 @@ const handleSubmit = async () => {
 .vehicle-form {
   .form-tip {
     font-size: 12px;
-    color: $text-muted;
-    margin-top: $spacing-xs;
-    line-height: 1.4;
+    color: $text-secondary;
+    margin-top: $spacing-sm;
+    line-height: 1.5;
+    padding: $spacing-sm;
+    background: $bg-light;
+    border-radius: $border-radius;
   }
 
   :deep(.el-input-number) {
@@ -242,6 +245,58 @@ const handleSubmit = async () => {
 
   :deep(.el-switch) {
     margin-top: $spacing-xs;
+  }
+
+  :deep(.el-form-item__label) {
+    color: $text-primary;
+    font-weight: 500;
+  }
+}
+
+:deep(.el-dialog) {
+  background: #FFFFFF;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-lg;
+
+  .el-dialog__header {
+    background: #FFFFFF;
+    border-bottom: 1px solid $border-color;
+    padding: $spacing-lg $spacing-xl;
+    border-radius: $border-radius-xl $border-radius-xl 0 0;
+
+    .el-dialog__title {
+      color: $text-primary;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .el-dialog__headerbtn {
+      top: 18px;
+      right: 20px;
+
+      .el-dialog__close {
+        color: $text-secondary;
+        font-size: 18px;
+        font-weight: 600;
+
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  .el-dialog__body {
+    background: #FFFFFF;
+    padding: $spacing-xl;
+    color: $text-primary;
+  }
+
+  .el-dialog__footer {
+    background: #FFFFFF;
+    border-top: 1px solid $border-color;
+    padding: $spacing-md $spacing-xl;
+    border-radius: 0 0 $border-radius-xl $border-radius-xl;
   }
 }
 

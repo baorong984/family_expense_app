@@ -36,23 +36,39 @@ export const useGiftStore = defineStore("gift", {
     incomingGifts: (state) =>
       state.gifts.filter((g) => g.gift_type === "incoming"),
 
+    /**
+     * 计算出礼总金额
+     * 根据 payment_type 分类计算：cash 类型计算 amount，item 类型计算 item_value
+     * 与后端 API 统计接口保持一致
+     */
     totalOutgoingAmount: (state) =>
       state.gifts
         .filter((g) => g.gift_type === "outgoing")
-        .reduce(
-          (sum, g) =>
-            sum + (Number(g.amount) || 0) + (Number(g.item_value) || 0),
-          0,
-        ),
+        .reduce((sum, g) => {
+          if (g.payment_type === "cash") {
+            return sum + (Number(g.amount) || 0);
+          } else if (g.payment_type === "item") {
+            return sum + (Number(g.item_value) || 0);
+          }
+          return sum;
+        }, 0),
 
+    /**
+     * 计算收礼总金额
+     * 根据 payment_type 分类计算：cash 类型计算 amount，item 类型计算 item_value
+     * 与后端 API 统计接口保持一致
+     */
     totalIncomingAmount: (state) =>
       state.gifts
         .filter((g) => g.gift_type === "incoming")
-        .reduce(
-          (sum, g) =>
-            sum + (Number(g.amount) || 0) + (Number(g.item_value) || 0),
-          0,
-        ),
+        .reduce((sum, g) => {
+          if (g.payment_type === "cash") {
+            return sum + (Number(g.amount) || 0);
+          } else if (g.payment_type === "item") {
+            return sum + (Number(g.item_value) || 0);
+          }
+          return sum;
+        }, 0),
 
     netOutgoing: (state) =>
       state.totalOutgoingAmount - state.totalIncomingAmount,
