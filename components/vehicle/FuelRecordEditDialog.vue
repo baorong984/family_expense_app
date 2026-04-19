@@ -400,65 +400,85 @@ const handleSubmit = async () => {
     display: inline-flex;
     align-items: center;
     gap: $spacing-xs;
-    font-weight: 500;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: $border-radius;
+    transition: all $transition-fast;
 
     &.fuel {
-      color: $danger;
+      color: #e54a5a;
+      background: rgba(255, 107, 107, 0.08);
     }
 
     &.charge {
-      color: $success;
+      color: #2e9a8f;
+      background: rgba(78, 205, 196, 0.08);
     }
   }
 
   .calc-info {
     margin-top: $spacing-sm;
-    padding: $spacing-sm $spacing-md;
-    background: rgba(78, 205, 196, 0.05);
-    border: 1px solid rgba(78, 205, 196, 0.2);
-    border-radius: $border-radius;
+    padding: $spacing-md;
+    background: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
     font-size: 13px;
+    box-shadow: $shadow-sm;
 
     .calc-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: $spacing-xs 0;
+      padding: $spacing-sm 0;
 
       &:not(:last-child) {
-        border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+        border-bottom: 1px dashed $border-color;
       }
     }
 
     .calc-label {
       color: $text-secondary;
+      font-weight: 500;
     }
 
     .calc-value {
       color: $text-primary;
-      font-weight: 600;
+      font-weight: 700;
       font-family: $font-mono;
     }
 
     .highlight-positive {
-      color: $success;
+      color: #2e9a8f;
+      background: linear-gradient(
+        135deg,
+        rgba(78, 205, 196, 0.15) 0%,
+        rgba(69, 183, 209, 0.15) 100%
+      );
+      padding: 2px 8px;
+      border-radius: 4px;
     }
 
     .highlight-cost {
       color: $accent;
+      background: rgba(255, 107, 157, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
     }
   }
 
   .form-tip {
     font-size: 12px;
-    color: $text-muted;
-    margin-top: $spacing-xs;
-    line-height: 1.4;
+    color: $text-secondary;
+    margin-top: $spacing-sm;
+    line-height: 1.5;
+    padding: $spacing-sm;
+    background: $bg-light;
+    border-radius: $border-radius;
   }
 
   .type-hint {
     font-size: 12px;
-    color: $text-muted;
+    color: $text-secondary;
     margin-top: $spacing-xs;
     line-height: 1.4;
   }
@@ -467,6 +487,62 @@ const handleSubmit = async () => {
     .el-input__inner {
       text-align: left;
     }
+  }
+
+  :deep(.el-form-item__label) {
+    color: $text-primary;
+    font-weight: 500;
+  }
+
+  :deep(.el-radio__label) {
+    color: $text-primary;
+  }
+}
+
+:deep(.el-dialog) {
+  background: #ffffff;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-lg;
+
+  .el-dialog__header {
+    background: #ffffff;
+    border-bottom: 1px solid $border-color;
+    padding: $spacing-lg $spacing-xl;
+    border-radius: $border-radius-xl $border-radius-xl 0 0;
+
+    .el-dialog__title {
+      color: $text-primary;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .el-dialog__headerbtn {
+      top: 18px;
+      right: 20px;
+
+      .el-dialog__close {
+        color: $text-secondary;
+        font-size: 18px;
+        font-weight: 600;
+
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  .el-dialog__body {
+    background: #ffffff;
+    padding: $spacing-xl;
+    color: $text-primary;
+  }
+
+  .el-dialog__footer {
+    background: #ffffff;
+    border-top: 1px solid $border-color;
+    padding: $spacing-md $spacing-xl;
+    border-radius: 0 0 $border-radius-xl $border-radius-xl;
   }
 }
 
