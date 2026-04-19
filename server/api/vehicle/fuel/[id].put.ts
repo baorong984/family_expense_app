@@ -123,9 +123,9 @@ export default defineEventHandler(async (event) => {
         plate_number: string;
         brand_model: string;
         vehicle_type: string;
-        initial_mileage: number;
+        base_mileage: number;
       }>(
-        `SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
+        `SELECT id, plate_number, brand_model, vehicle_type, base_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
         [validatedData.vehicle_id],
       );
 
@@ -185,15 +185,16 @@ export default defineEventHandler(async (event) => {
         plate_number: string;
         brand_model: string;
         vehicle_type: string;
-        initial_mileage: number;
-      }>(`SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ?`, [
-        currentVehicleId,
-      ]);
+        base_mileage: number;
+      }>(
+        `SELECT id, plate_number, brand_model, vehicle_type, base_mileage FROM vehicles WHERE id = ?`,
+        [currentVehicleId],
+      );
     }
 
     const lastMileage = lastRecord
       ? parseFloat(String(lastRecord.current_mileage))
-      : vehicle?.initial_mileage || 0;
+      : vehicle?.base_mileage || 0;
 
     /** 计算本次行驶里程和每公里成本 */
     const mileageDiff = currentMileage - lastMileage;

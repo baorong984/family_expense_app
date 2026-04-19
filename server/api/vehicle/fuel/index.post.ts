@@ -96,9 +96,9 @@ export default defineEventHandler(async (event) => {
       plate_number: string;
       brand_model: string;
       vehicle_type: string;
-      initial_mileage: number;
+      base_mileage: number;
     }>(
-      `SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
+      `SELECT id, plate_number, brand_model, vehicle_type, base_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
       [validatedData.vehicle_id],
     );
 
@@ -133,7 +133,7 @@ export default defineEventHandler(async (event) => {
 
     const lastMileage = lastRecord
       ? parseFloat(String(lastRecord.current_mileage))
-      : vehicle.initial_mileage;
+      : vehicle.base_mileage;
 
     /** 计算本次行驶里程和每公里成本 */
     const mileageDiff = validatedData.current_mileage - lastMileage;
@@ -141,7 +141,8 @@ export default defineEventHandler(async (event) => {
       mileageDiff > 0 ? validatedData.amount / mileageDiff : null;
 
     /** 构建消费记录描述 */
-    const recordTypeText = validatedData.record_type === "fuel" ? "加油" : "充电";
+    const recordTypeText =
+      validatedData.record_type === "fuel" ? "加油" : "充电";
     const description = `${recordTypeText} - ${vehicle.plate_number} (${vehicle.brand_model})`;
 
     /** 创建消费记录 */
