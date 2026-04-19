@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { requireAuth } from "~/server/utils/auth";
 import { successResponse, errorResponse } from "~/server/utils/response";
-import { queryOne, update, query } from "~/server/utils/db";
+import { queryOne, update, query, insert } from "~/server/utils/db";
 
 /** 加油/充电记录验证schema */
 const fuelRecordSchema = z.object({
@@ -14,9 +14,72 @@ const fuelRecordSchema = z.object({
   remarks: z.string().nullable().optional(),
 });
 
+/**
+ * 查找交通分类的ID
+ * @returns 交通分类ID
+ */
+async function getTransportCategoryId(): Promise<number | null> {
+  const category = await queryOne<{ id: number }>(
+    `SELECT id FROM categories WHERE name = '交通' AND parent_id IS NULL LIMIT 1`,
+  );
+  return category?.id || null;
+}
+
+/**
+ * 创建消费记录
+ * @param amount - 金额
+ * @param expenseDate - 日期
+ * @param expenseTime - 时间
+ * @param description - 描述
+ * @param userId - 用户ID
+ * @returns 消费记录ID
+ */
+async function createExpenseRecord(
+  amount: number,
+  expenseDate: string,
+  expenseTime: string | null,
+  description: string,
+  userId: number,
+): Promise<number | null> {
+  const categoryId = await getTransportCategoryId();
+  if (!categoryId) {
+    console.error("未找到交通分类");
+    return null;
+  }
+
+  const expenseId = await insert(
+    `INSERT INTO expenses (amount, expense_date, expense_time, category_id, description, remarks, created_by)
+     VALUES (?, ?, ?, ?, ?, NULL, ?)`,
+    [amount, expenseDate, expenseTime, categoryId, description, userId],
+  );
+
+  return expenseId || null;
+}
+
+/**
+ * 更新消费记录
+ * @param expenseId - 消费记录ID
+ * @param amount - 金额
+ * @param expenseDate - 日期
+ * @param expenseTime - 时间
+ * @param description - 描述
+ */
+async function updateExpenseRecord(
+  expenseId: number,
+  amount: number,
+  expenseDate: string,
+  expenseTime: string | null,
+  description: string,
+): Promise<void> {
+  await update(
+    `UPDATE expenses SET amount = ?, expense_date = ?, expense_time = ?, description = ?, updated_at = NOW() WHERE id = ?`,
+    [amount, expenseDate, expenseTime, description, expenseId],
+  );
+}
+
 /** 更新加油/充电记录 */
 export default defineEventHandler(async (event) => {
-  await requireAuth(event);
+  const user = await requireAuth(event);
 
   try {
     const recordId = getRouterParam(event, "id");
@@ -26,8 +89,17 @@ export default defineEventHandler(async (event) => {
     }
 
     /** 检查记录是否存在 */
-    const existingRecord = await queryOne(
-      `SELECT * FROM vehicle_fuel_records WHERE id = ?`,
+    const existingRecord = await queryOne<{
+      id: number;
+      vehicle_id: number;
+      expense_id: number | null;
+      record_type: string;
+      record_date: string;
+      record_time: string | null;
+      amount: number;
+      current_mileage: number;
+    }>(
+      `SELECT id, vehicle_id, expense_id, record_type, record_date, record_time, amount, current_mileage FROM vehicle_fuel_records WHERE id = ?`,
       [Number(recordId)],
     );
 
@@ -46,8 +118,14 @@ export default defineEventHandler(async (event) => {
       validatedData.vehicle_id !== undefined &&
       validatedData.vehicle_id !== existingRecord.vehicle_id
     ) {
-      vehicle = await queryOne(
-        `SELECT * FROM vehicles WHERE id = ? AND is_active = 1`,
+      vehicle = await queryOne<{
+        id: number;
+        plate_number: string;
+        brand_model: string;
+        vehicle_type: string;
+        initial_mileage: number;
+      }>(
+        `SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
         [validatedData.vehicle_id],
       );
 
@@ -102,7 +180,13 @@ export default defineEventHandler(async (event) => {
 
     /** 获取车辆信息（用于获取初始里程数） */
     if (!vehicle) {
-      vehicle = await queryOne(`SELECT * FROM vehicles WHERE id = ?`, [
+      vehicle = await queryOne<{
+        id: number;
+        plate_number: string;
+        brand_model: string;
+        vehicle_type: string;
+        initial_mileage: number;
+      }>(`SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ?`, [
         currentVehicleId,
       ]);
     }
@@ -167,6 +251,37 @@ export default defineEventHandler(async (event) => {
       params,
     );
 
+    /** 同步更新消费记录 */
+    const recordType = validatedData.record_type || existingRecord.record_type;
+    const recordTypeText = recordType === "fuel" ? "加油" : "充电";
+    const description = `${recordTypeText} - ${vehicle?.plate_number || ""} (${vehicle?.brand_model || ""})`;
+
+    if (existingRecord.expense_id) {
+      /** 更新已有的消费记录 */
+      await updateExpenseRecord(
+        existingRecord.expense_id,
+        amount,
+        recordDate,
+        recordTime,
+        description,
+      );
+    } else {
+      /** 创建新的消费记录 */
+      const expenseId = await createExpenseRecord(
+        amount,
+        recordDate,
+        recordTime,
+        description,
+        user.id,
+      );
+      if (expenseId) {
+        await update(
+          `UPDATE vehicle_fuel_records SET expense_id = ? WHERE id = ?`,
+          [expenseId, Number(recordId)],
+        );
+      }
+    }
+
     /** 查询更新后的记录（包含车辆信息） */
     const updatedRecord = await queryOne(
       `SELECT r.*, v.plate_number, v.brand_model, v.vehicle_type
@@ -177,18 +292,18 @@ export default defineEventHandler(async (event) => {
     );
 
     if (!updatedRecord) {
-      return errorResponse('更新成功但查询失败', 500)
+      return errorResponse("更新成功但查询失败", 500);
     }
 
-    /** 同步更新车辆的当前里程数（如果里程数有变化） */
+    /** 同步更新车辆的基准里程数（如果里程数有变化） */
     if (validatedData.current_mileage !== undefined) {
       await update(
-        `UPDATE vehicles SET current_mileage = ?, updated_at = NOW() WHERE id = ?`,
-        [validatedData.current_mileage, currentVehicleId]
-      )
+        `UPDATE vehicles SET base_mileage = ?, updated_at = NOW() WHERE id = ?`,
+        [validatedData.current_mileage, currentVehicleId],
+      );
     }
 
-    return successResponse(updatedRecord, '更新成功')
+    return successResponse(updatedRecord, "更新成功");
   } catch (error: any) {
     console.error("更新加油/充电记录失败:", error);
 

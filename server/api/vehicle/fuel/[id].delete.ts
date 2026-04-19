@@ -14,13 +14,18 @@ export default defineEventHandler(async (event) => {
     }
 
     /** 检查记录是否存在 */
-    const existingRecord = await queryOne(
-      `SELECT * FROM vehicle_fuel_records WHERE id = ?`,
+    const existingRecord = await queryOne<{ id: number; expense_id: number | null }>(
+      `SELECT id, expense_id FROM vehicle_fuel_records WHERE id = ?`,
       [Number(recordId)],
     );
 
     if (!existingRecord) {
       return errorResponse("记录不存在", 404);
+    }
+
+    /** 删除关联的消费记录 */
+    if (existingRecord.expense_id) {
+      await remove(`DELETE FROM expenses WHERE id = ?`, [existingRecord.expense_id]);
     }
 
     /** 执行删除 */

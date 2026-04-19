@@ -173,14 +173,15 @@ export const useGiftStore = defineStore('gift', {
 
         if (res.success) {
           const data = res.data
-          // 确保数值类型正确转换
           if (data.outgoing) {
             data.outgoing.total_amount = parseFloat(String(data.outgoing.total_amount)) || 0
             data.outgoing.cash_amount = parseFloat(String(data.outgoing.cash_amount)) || 0
+            data.outgoing.item_amount = parseFloat(String(data.outgoing.item_amount)) || 0
           }
           if (data.incoming) {
             data.incoming.total_amount = parseFloat(String(data.incoming.total_amount)) || 0
             data.incoming.cash_amount = parseFloat(String(data.incoming.cash_amount)) || 0
+            data.incoming.item_amount = parseFloat(String(data.incoming.item_amount)) || 0
           }
           data.net_outgoing = parseFloat(String(data.net_outgoing)) || 0
           this.statistics = data

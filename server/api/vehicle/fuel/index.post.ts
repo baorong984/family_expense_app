@@ -16,6 +16,69 @@ const fuelRecordSchema = z.object({
   remarks: z.string().nullable().optional(),
 });
 
+/**
+ * 查找交通分类的ID
+ * @returns 交通分类ID
+ */
+async function getTransportCategoryId(): Promise<number | null> {
+  const category = await queryOne<{ id: number }>(
+    `SELECT id FROM categories WHERE name = '交通' AND parent_id IS NULL LIMIT 1`,
+  );
+  return category?.id || null;
+}
+
+/**
+ * 创建消费记录
+ * @param amount - 金额
+ * @param expenseDate - 日期
+ * @param expenseTime - 时间
+ * @param description - 描述
+ * @param userId - 用户ID
+ * @returns 消费记录ID
+ */
+async function createExpenseRecord(
+  amount: number,
+  expenseDate: string,
+  expenseTime: string | null,
+  description: string,
+  userId: number,
+): Promise<number | null> {
+  const categoryId = await getTransportCategoryId();
+  if (!categoryId) {
+    console.error("未找到交通分类");
+    return null;
+  }
+
+  const expenseId = await insert(
+    `INSERT INTO expenses (amount, expense_date, expense_time, category_id, description, remarks, created_by)
+     VALUES (?, ?, ?, ?, ?, NULL, ?)`,
+    [amount, expenseDate, expenseTime, categoryId, description, userId],
+  );
+
+  return expenseId || null;
+}
+
+/**
+ * 更新消费记录
+ * @param expenseId - 消费记录ID
+ * @param amount - 金额
+ * @param expenseDate - 日期
+ * @param expenseTime - 时间
+ * @param description - 描述
+ */
+async function updateExpenseRecord(
+  expenseId: number,
+  amount: number,
+  expenseDate: string,
+  expenseTime: string | null,
+  description: string,
+): Promise<void> {
+  await update(
+    `UPDATE expenses SET amount = ?, expense_date = ?, expense_time = ?, description = ?, updated_at = NOW() WHERE id = ?`,
+    [amount, expenseDate, expenseTime, description, expenseId],
+  );
+}
+
 /** 创建加油/充电记录 */
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event);
@@ -28,8 +91,14 @@ export default defineEventHandler(async (event) => {
     const userId = user.id;
 
     /** 检查车辆是否存在且启用 */
-    const vehicle = await queryOne(
-      `SELECT * FROM vehicles WHERE id = ? AND is_active = 1`,
+    const vehicle = await queryOne<{
+      id: number;
+      plate_number: string;
+      brand_model: string;
+      vehicle_type: string;
+      initial_mileage: number;
+    }>(
+      `SELECT id, plate_number, brand_model, vehicle_type, initial_mileage FROM vehicles WHERE id = ? AND is_active = 1`,
       [validatedData.vehicle_id],
     );
 
@@ -71,15 +140,29 @@ export default defineEventHandler(async (event) => {
     const costPerKm =
       mileageDiff > 0 ? validatedData.amount / mileageDiff : null;
 
-    /** 插入记录 */
+    /** 构建消费记录描述 */
+    const recordTypeText = validatedData.record_type === "fuel" ? "加油" : "充电";
+    const description = `${recordTypeText} - ${vehicle.plate_number} (${vehicle.brand_model})`;
+
+    /** 创建消费记录 */
+    const expenseId = await createExpenseRecord(
+      validatedData.amount,
+      recordDate,
+      recordTime,
+      description,
+      userId,
+    );
+
+    /** 插入加油/充电记录 */
     const recordId = await insert(
       `INSERT INTO vehicle_fuel_records (
-        vehicle_id, record_type, record_date, record_time,
+        vehicle_id, expense_id, record_type, record_date, record_time,
         amount, current_mileage, last_mileage,
         mileage_diff, cost_per_km, remarks, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         validatedData.vehicle_id,
+        expenseId,
         validatedData.record_type,
         recordDate,
         recordTime,
@@ -110,9 +193,9 @@ export default defineEventHandler(async (event) => {
       return errorResponse("创建成功但查询失败", 500);
     }
 
-    /** 同步更新车辆的当前里程数 */
+    /** 同步更新车辆的基准里程数 */
     await update(
-      `UPDATE vehicles SET current_mileage = ?, updated_at = NOW() WHERE id = ?`,
+      `UPDATE vehicles SET base_mileage = ?, updated_at = NOW() WHERE id = ?`,
       [validatedData.current_mileage, validatedData.vehicle_id],
     );
 

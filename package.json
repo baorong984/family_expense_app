@@ -1,7 +1,7 @@
 {
   "name": "family-expense-app",
   "version": "1.0.0",
-  "description": "家庭消费记账系统",
+  "description": "家庭财务管家 - 智能家庭消费记账系统",
   "private": true,
   "type": "module",
   "scripts": {

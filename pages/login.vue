@@ -13,8 +13,8 @@
         <div class="logo-container">
           <span class="logo-icon">🌿</span>
         </div>
-        <h1 class="title">家庭消费记账</h1>
-        <p class="description">AI智能记账 · 轻松管理家庭消费</p>
+        <h1 class="title">家庭财务管家</h1>
+        <p class="description">AI智能记账 · 轻松管理家庭财务</p>
       </div>
       
       <el-form ref="formRef" :model="form" :rules="rules" class="login-form" @submit.prevent="handleLogin">

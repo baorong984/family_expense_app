@@ -1,21 +1,20 @@
 -- =====================================================
--- 油费/充电费管理模块 - 数据库表结构添加脚本
--- 版本: v1.4.1 (兼容 MySQL 5.x/8.x)
+-- 油费/充电费管理模块 - 数据库表结构
+-- 版本: v2.0.0 (简化里程字段)
 -- 日期: 2026-04-18
 -- =====================================================
 
 USE `family_expense`;
 
 -- =====================================================
--- 1. 创建车辆信息表 (vehicles)
+-- 1. 创建车辆信息表 (vehicles) - 简化版
 -- =====================================================
 CREATE TABLE IF NOT EXISTS `vehicles` (
   `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '车辆ID（主键）',
   `plate_number` VARCHAR(20) NOT NULL COMMENT '车牌号（唯一标识，如：京A12345）',
   `brand_model` VARCHAR(100) NOT NULL COMMENT '品牌型号（如：比亚迪秦PLUS、丰田凯美瑞）',
   `vehicle_type` ENUM('fuel', 'electric') NOT NULL COMMENT '车辆类型：fuel=燃油车, electric=纯电动',
-  `initial_mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '初始里程数（公里）',
-  `current_mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '当前里程数（公里），从记录端同步',
+  `base_mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '基准里程（公里），可手动调整，记录录入后自动更新',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否启用（0=停用，1=启用）',
   `created_by` INT(11) NOT NULL COMMENT '创建者用户ID',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -29,24 +28,63 @@ CREATE TABLE IF NOT EXISTS `vehicles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='车辆信息表';
 
 -- =====================================================
--- 2. 给已有表添加 current_mileage 字段（兼容旧版 MySQL）
+-- 2. 迁移旧数据：合并 initial_mileage + current_mileage -> base_mileage
 -- =====================================================
 SET @dbname = DATABASE();
-SET @tablename = 'vehicles';
-SET @columnname = 'current_mileage';
-SET @preparedStatement = (SELECT IF(
-  (
-    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_SCHEMA = @dbname
-    AND TABLE_NAME = @tablename
-    AND COLUMN_NAME = @columnname
-  ) > 0,
-  'SELECT 1',
-  CONCAT('ALTER TABLE `', @tablename, '` ADD COLUMN `', @columnname, '` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT ''当前里程数（公里），从记录端同步'' AFTER `initial_mileage`')
-));
-PREPARE alterIfNotExists FROM @preparedStatement;
-EXECUTE alterIfNotExists;
-DEALLOCATE PREPARE alterIfNotExists;
+
+-- 检查是否有旧的 initial_mileage 字段
+SET @has_initial = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+  WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'vehicles' AND COLUMN_NAME = 'initial_mileage');
+
+-- 检查是否已有 base_mileage 字段
+SET @has_base = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+  WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'vehicles' AND COLUMN_NAME = 'base_mileage');
+
+-- 如果有旧字段且没有新字段，进行迁移
+SET @migration_sql = IF(
+  @has_initial > 0 AND @has_base = 0,
+  CONCAT(
+    'ALTER TABLE `vehicles` ',
+    'ADD COLUMN `base_mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER `vehicle_type`, ',
+    'DROP COLUMN `initial_mileage`, ',
+    'DROP COLUMN `current_mileage`;'
+  ),
+  'SELECT "无需迁移或已迁移" AS status'
+);
+
+PREPARE migrate FROM @migration_sql;
+EXECUTE migrate;
+DEALLOCATE PREPARE migrate;
+
+-- 如果没有 base_mileage 字段，添加它
+SET @add_sql = IF(
+  (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+   WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'vehicles' AND COLUMN_NAME = 'base_mileage') = 0,
+  'ALTER TABLE `vehicles` ADD COLUMN `base_mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER `vehicle_type`;',
+  'SELECT "base_mileage 已存在" AS status'
+);
+
+PREPARE addColumn FROM @add_sql;
+EXECUTE addColumn;
+DEALLOCATE PREPARE addColumn;
+
+-- 同步基准里程数据（取最大值）
+UPDATE vehicles v
+LEFT JOIN (
+  SELECT 
+    vehicle_id,
+    GREATEST(
+      COALESCE(v2.initial_mileage, 0),
+      COALESCE(v2.current_mileage, 0),
+      COALESCE(MAX(r.current_mileage), 0)
+    ) as max_mileage
+  FROM vehicle_fuel_records r
+  RIGHT JOIN vehicles v2 ON r.vehicle_id = v2.id
+  WHERE v2.id = v.id
+  GROUP BY v2.id
+) calc ON v.id = calc.vehicle_id
+SET v.base_mileage = COALESCE(calc.max_mileage, 0)
+WHERE v.base_mileage = 0 OR v.base_mileage IS NULL;
 
 -- =====================================================
 -- 3. 更新 vehicle_type 枚举值（移除 hybrid）
@@ -83,22 +121,9 @@ CREATE TABLE IF NOT EXISTS `vehicle_fuel_records` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='加油/充电记录表';
 
 -- =====================================================
--- 5. 同步现有车辆的当前里程数（从最新记录获取）
+-- 5. 完成验证
 -- =====================================================
-UPDATE vehicles v
-LEFT JOIN (
-  SELECT 
-    vehicle_id,
-    MAX(current_mileage) as max_mileage
-  FROM vehicle_fuel_records
-  GROUP BY vehicle_id
-) latest ON v.id = latest.vehicle_id
-SET v.current_mileage = COALESCE(latest.max_mileage, v.initial_mileage);
-
--- =====================================================
--- 6. 完成验证
--- =====================================================
-SELECT '油费/充电费管理模块数据库表结构添加完成!' AS message;
+SELECT '油费/充电费管理模块数据库更新完成!' AS message;
 
 -- 显示表结构信息
 SELECT 

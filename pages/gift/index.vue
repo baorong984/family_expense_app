@@ -15,7 +15,11 @@
           <div class="stat-item">
             <span class="label">出礼总额</span>
             <span class="value expense">
-              ¥{{ Number(giftStore.statistics?.outgoing?.total_amount || 0).toFixed(2) }}
+              ¥{{
+                Number(
+                  giftStore.statistics?.outgoing?.total_amount || 0,
+                ).toFixed(2)
+              }}
             </span>
           </div>
         </el-col>
@@ -23,7 +27,11 @@
           <div class="stat-item">
             <span class="label">收礼总额</span>
             <span class="value income">
-              ¥{{ Number(giftStore.statistics?.incoming?.total_amount || 0).toFixed(2) }}
+              ¥{{
+                Number(
+                  giftStore.statistics?.incoming?.total_amount || 0,
+                ).toFixed(2)
+              }}
             </span>
           </div>
         </el-col>
@@ -32,18 +40,24 @@
             <span class="label">净支出</span>
             <span
               class="value"
-              :class="Number(giftStore.statistics?.net_outgoing || 0) > 0 ? 'expense' : 'income'"
+              :class="
+                Number(giftStore.statistics?.net_outgoing || 0) > 0
+                  ? 'expense'
+                  : 'income'
+              "
             >
-              ¥{{ Math.abs(Number(giftStore.statistics?.net_outgoing || 0)).toFixed(2) }}
+              ¥{{
+                Math.abs(
+                  Number(giftStore.statistics?.net_outgoing || 0),
+                ).toFixed(2)
+              }}
             </span>
           </div>
         </el-col>
         <el-col :span="isMobile ? 12 : 6">
           <div class="stat-item">
             <span class="label">记录数</span>
-            <span class="value">
-              {{ giftStore.pagination.total }}条
-            </span>
+            <span class="value"> {{ giftStore.pagination.total }}条 </span>
           </div>
         </el-col>
       </el-row>
@@ -148,12 +162,8 @@
             </el-button>
           </el-form-item>
           <div v-if="!isMobile" class="filter-actions">
-            <el-button type="primary" @click="handleQuery">
-              查询
-            </el-button>
-            <el-button @click="resetFilters">
-              重置
-            </el-button>
+            <el-button type="primary" @click="handleQuery"> 查询 </el-button>
+            <el-button @click="resetFilters"> 重置 </el-button>
           </div>
         </el-form>
       </div>
@@ -162,15 +172,23 @@
     <!-- 桌面端：表格列表 -->
     <el-card v-if="!isMobile" class="list-card">
       <el-table :data="giftStore.gifts" stripe v-loading="giftStore.loading">
-        <el-table-column prop="expense_date" label="日期" width="120" align="center">
+        <el-table-column
+          prop="expense_date"
+          label="日期"
+          width="120"
+          align="center"
+        >
           <template #default="{ row }">
             <span class="date">{{ formatDate(row.expense_date) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="类型" width="80" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.gift_type === 'outgoing' ? 'danger' : 'success'" size="small">
-              {{ row.gift_type === 'outgoing' ? '出礼' : '收礼' }}
+            <el-tag
+              :type="row.gift_type === 'outgoing' ? 'danger' : 'success'"
+              size="small"
+            >
+              {{ row.gift_type === "outgoing" ? "出礼" : "收礼" }}
             </el-tag>
           </template>
         </el-table-column>
@@ -191,22 +209,42 @@
         </el-table-column>
         <el-table-column label="状态" width="100" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.gift_type === 'outgoing'" :type="row.is_returned ? 'success' : 'info'" size="small">
-              {{ row.is_returned ? '已回礼' : '未回礼' }}
+            <el-tag
+              v-if="row.gift_type === 'outgoing'"
+              :type="row.is_returned ? 'success' : 'info'"
+              size="small"
+            >
+              {{ row.is_returned ? "已回礼" : "未回礼" }}
             </el-tag>
             <span v-else class="text-muted">-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remarks" label="备注" min-width="150" show-overflow-tooltip />
-        <el-table-column prop="created_at" label="创建时间" width="160" align="center">
+        <el-table-column
+          prop="remarks"
+          label="备注"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
+          width="160"
+          align="center"
+        >
           <template #default="{ row }">
-            <span class="datetime-small">{{ formatDateTime(row.created_at) }}</span>
+            <span class="datetime-small">{{
+              formatDateTime(row.created_at)
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="editGift(row)">编辑</el-button>
-            <el-button link type="danger" @click="deleteGift(row)">删除</el-button>
+            <el-button link type="primary" @click="editGift(row)"
+              >编辑</el-button
+            >
+            <el-button link type="danger" @click="deleteGift(row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -233,8 +271,11 @@
         <div class="card-top">
           <div class="card-left">
             <div class="card-amount">
-              <el-tag :type="item.gift_type === 'outgoing' ? 'danger' : 'success'" size="small">
-                {{ item.gift_type === 'outgoing' ? '出礼' : '收礼' }}
+              <el-tag
+                :type="item.gift_type === 'outgoing' ? 'danger' : 'success'"
+                size="small"
+              >
+                {{ item.gift_type === "outgoing" ? "出礼" : "收礼" }}
               </el-tag>
             </div>
             <div class="card-amount-item">
@@ -249,7 +290,7 @@
           <div class="card-right">
             <div class="card-date">{{ formatDate(item.expense_date) }}</div>
             <div v-if="item.gift_type === 'outgoing'" class="card-status">
-              {{ item.is_returned ? '已回礼' : '未回礼' }}
+              {{ item.is_returned ? "已回礼" : "未回礼" }}
             </div>
           </div>
         </div>
@@ -272,7 +313,10 @@
         </div>
       </div>
 
-      <div v-if="!giftStore.loading && giftStore.gifts.length === 0" class="mobile-empty">
+      <div
+        v-if="!giftStore.loading && giftStore.gifts.length === 0"
+        class="mobile-empty"
+      >
         暂无人情记录
       </div>
 
@@ -315,12 +359,12 @@ const categoryStore = useCategoryStore();
 /** 事由选项（从分类表中动态读取） */
 const occasionOptions = computed(() => {
   const occasions: { label: string; value: string }[] = [];
-  categoryStore.tree.forEach(cat => {
-    if (cat.name === '出礼' || cat.name === '收礼') {
-      cat.children?.forEach(sub => {
+  categoryStore.tree.forEach((cat) => {
+    if (cat.name === "出礼" || cat.name === "收礼") {
+      cat.children?.forEach((sub) => {
         occasions.push({
           label: sub.name,
-          value: sub.name
+          value: sub.name,
         });
       });
     }
@@ -356,14 +400,6 @@ const currentGift = ref<Gift | null>(null);
 
 // 初始化
 onMounted(async () => {
-  const { year, month } = getCurrentMonth();
-  const range = getMonthRange(year, month);
-  dateRange.value = [range.start, range.end];
-  filters.start_date = range.start;
-  filters.end_date = range.end;
-  startDateTemp.value = range.start;
-  endDateTemp.value = range.end;
-
   await Promise.all([
     categoryStore.fetchCategories(),
     fetchData(),
@@ -398,53 +434,33 @@ const handleEndDateChange = (val: string) => {
 
 /** 处理查询按钮点击 */
 const handleQuery = async () => {
-  await Promise.all([
-    fetchData(),
-    fetchStatistics(),
-  ]);
+  await Promise.all([fetchData(), fetchStatistics()]);
 };
 
 /** 获取数据 */
 
 const fetchData = async () => {
-
   await giftStore.fetchGifts(
-
     filters,
 
     giftStore.pagination.page,
 
-    giftStore.pagination.pageSize
-
+    giftStore.pagination.pageSize,
   );
-
 };
-
-
 
 /** 获取统计数据 */
-
 const fetchStatistics = async () => {
-
-  if (filters.start_date && filters.end_date) {
-
-    await giftStore.fetchStatistics(filters.start_date, filters.end_date);
-
-  }
-
+  await giftStore.fetchStatistics(filters.start_date, filters.end_date);
 };
-
-
 
 /** 重置筛选条件 */
 const resetFilters = () => {
-  const { year, month } = getCurrentMonth();
-  const range = getMonthRange(year, month);
-  dateRange.value = [range.start, range.end];
-  filters.start_date = range.start;
-  filters.end_date = range.end;
-  startDateTemp.value = range.start;
-  endDateTemp.value = range.end;
+  dateRange.value = null;
+  filters.start_date = "";
+  filters.end_date = "";
+  startDateTemp.value = "";
+  endDateTemp.value = "";
   filters.gift_type = "";
   filters.related_person = "";
   filters.occasion = "";
@@ -545,7 +561,7 @@ const deleteGift = async (gift: Gift) => {
 
     :deep(.el-card__body) {
       padding: $spacing-lg;
-      background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFC 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
     }
 
     .filter-form {
@@ -603,7 +619,11 @@ const deleteGift = async (gift: Gift) => {
     }
 
     :deep(.el-card__body) {
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.03) 0%, rgba(69, 183, 209, 0.03) 100%);
+      background: linear-gradient(
+        135deg,
+        rgba(78, 205, 196, 0.03) 0%,
+        rgba(69, 183, 209, 0.03) 100%
+      );
     }
   }
 
@@ -634,7 +654,7 @@ const deleteGift = async (gift: Gift) => {
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -688,7 +708,7 @@ const deleteGift = async (gift: Gift) => {
 
     :deep(.el-card__body) {
       padding: 0;
-      background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFC 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
     }
   }
 
@@ -782,7 +802,11 @@ const deleteGift = async (gift: Gift) => {
 
     :deep(.el-card__body) {
       padding: $spacing-sm $spacing-md;
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.03) 0%, rgba(69, 183, 209, 0.03) 100%);
+      background: linear-gradient(
+        135deg,
+        rgba(78, 205, 196, 0.03) 0%,
+        rgba(69, 183, 209, 0.03) 100%
+      );
     }
   }
 }

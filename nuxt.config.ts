@@ -75,11 +75,11 @@ export default defineNuxtConfig({
   // 配置页面过渡动画
   app: {
     head: {
-      title: '家庭消费记账',
+      title: '家庭财务管家',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: '家庭消费记账系统 - AI智能记账' },
+        { name: 'description', content: '家庭财务管家 - 智能家庭消费记账系统，支持AI智能记账、预算管理、人情往来、车辆管理等功能' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

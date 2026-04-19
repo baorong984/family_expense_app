@@ -4,19 +4,10 @@
       <h2>人情统计</h2>
     </div>
 
-    <!-- 时间选择器 -->
     <el-card class="time-selector-card">
       <div class="time-selector">
-        <el-button-group>
-          <el-button @click="prevMonth">
-            <el-icon><ArrowLeft /></el-icon>
-          </el-button>
-          <el-button disabled>{{ currentMonthLabel }}</el-button>
-          <el-button @click="nextMonth">
-            <el-icon><ArrowRight /></el-icon>
-          </el-button>
-        </el-button-group>
         <el-radio-group v-model="quickSelect" @change="handleQuickSelect">
+          <el-radio-button value="all">全部</el-radio-button>
           <el-radio-button value="thisMonth">本月</el-radio-button>
           <el-radio-button value="lastMonth">上月</el-radio-button>
           <el-radio-button value="custom">自定义</el-radio-button>
@@ -31,10 +22,20 @@
           value-format="YYYY-MM-DD"
           @change="handleDateChange"
         />
+        <div v-if="quickSelect !== 'all' && quickSelect !== 'custom'" class="month-nav">
+          <el-button-group>
+            <el-button @click="prevMonth">
+              <el-icon><ArrowLeft /></el-icon>
+            </el-button>
+            <el-button disabled>{{ currentMonthLabel }}</el-button>
+            <el-button @click="nextMonth">
+              <el-icon><ArrowRight /></el-icon>
+            </el-button>
+          </el-button-group>
+        </div>
       </div>
     </el-card>
 
-    <!-- 统计摘要 -->
     <el-card class="summary-card">
       <el-row :gutter="isMobile ? 8 : 16">
         <el-col :span="isMobile ? 12 : 6">
@@ -43,6 +44,10 @@
             <span class="value expense">
               ¥{{ Number(statistics?.outgoing?.total_amount || 0).toFixed(2) }}
             </span>
+            <div class="sub-info">
+              <span>现金: ¥{{ Number(statistics?.outgoing?.cash_amount || 0).toFixed(2) }}</span>
+              <span>实物: ¥{{ Number(statistics?.outgoing?.item_amount || 0).toFixed(2) }}</span>
+            </div>
           </div>
         </el-col>
         <el-col :span="isMobile ? 12 : 6">
@@ -51,6 +56,10 @@
             <span class="value income">
               ¥{{ Number(statistics?.incoming?.total_amount || 0).toFixed(2) }}
             </span>
+            <div class="sub-info">
+              <span>现金: ¥{{ Number(statistics?.incoming?.cash_amount || 0).toFixed(2) }}</span>
+              <span>实物: ¥{{ Number(statistics?.incoming?.item_amount || 0).toFixed(2) }}</span>
+            </div>
           </div>
         </el-col>
         <el-col :span="isMobile ? 12 : 6">
@@ -70,18 +79,20 @@
             <span class="value">
               {{ (statistics?.outgoing?.total_count || 0) + (statistics?.incoming?.total_count || 0) }}条
             </span>
+            <div class="sub-info">
+              <span>出礼: {{ statistics?.outgoing?.total_count || 0 }}条</span>
+              <span>收礼: {{ statistics?.incoming?.total_count || 0 }}条</span>
+            </div>
           </div>
         </el-col>
       </el-row>
     </el-card>
 
-    <!-- 事由分布 -->
     <el-card class="chart-card">
       <template #header>事由分布</template>
       <div ref="occasionChartRef" class="chart" style="height: 300px"></div>
     </el-card>
 
-    <!-- 关联人明细 -->
     <el-card class="list-card">
       <template #header>关联人明细</template>
       <el-table :data="statistics?.person_breakdown || []" stripe>
@@ -134,24 +145,18 @@ definePageMeta({
 
 const giftStore = useGiftStore();
 
-/** 判断是否为移动端 */
 const isMobile = inject<Ref<boolean>>("isMobile", ref(false));
 
-// 时间选择
-const quickSelect = ref("thisMonth");
+const quickSelect = ref("all");
 const dateRange = ref<[string, string] | null>(null);
 const currentMonthLabel = ref("");
 
-// 统计数据
 const statistics = ref(giftStore.statistics);
 
-// 图表
 const occasionChartRef = ref<HTMLElement>();
 let occasionChart: echarts.ECharts | null = null;
 
-// 初始化
 onMounted(async () => {
-  await initMonth();
   await fetchStatistics();
   initChart();
 });
@@ -162,18 +167,19 @@ onUnmounted(() => {
   }
 });
 
-/** 初始化月份 */
-const initMonth = () => {
-  const { year, month } = getCurrentMonth();
-  currentMonthLabel.value = `${year}年${month}月`;
-  const range = getMonthRange(year, month);
-  dateRange.value = [range.start, range.end];
-};
-
-/** 快速选择 */
+/**
+ * 快速选择时间范围
+ * @param value - 选择类型：all/thisMonth/lastMonth/custom
+ */
 const handleQuickSelect = async (value: string) => {
-  if (value === "thisMonth") {
-    initMonth();
+  if (value === "all") {
+    dateRange.value = null;
+    currentMonthLabel.value = "";
+  } else if (value === "thisMonth") {
+    const { year, month } = getCurrentMonth();
+    currentMonthLabel.value = `${year}年${month}月`;
+    const range = getMonthRange(year, month);
+    dateRange.value = [range.start, range.end];
   } else if (value === "lastMonth") {
     const { year, month } = getCurrentMonth();
     const lastMonth = month === 1 ? 12 : month - 1;
@@ -185,7 +191,9 @@ const handleQuickSelect = async (value: string) => {
   await fetchStatistics();
 };
 
-/** 日期范围变化 */
+/**
+ * 日期范围变化处理
+ */
 const handleDateChange = async () => {
   if (dateRange.value) {
     quickSelect.value = "custom";
@@ -193,7 +201,9 @@ const handleDateChange = async () => {
   }
 };
 
-/** 上个月 */
+/**
+ * 上个月
+ */
 const prevMonth = async () => {
   if (!dateRange.value) return;
 
@@ -213,7 +223,9 @@ const prevMonth = async () => {
   await fetchStatistics();
 };
 
-/** 下个月 */
+/**
+ * 下个月
+ */
 const nextMonth = async () => {
   if (!dateRange.value) return;
 
@@ -233,20 +245,24 @@ const nextMonth = async () => {
   await fetchStatistics();
 };
 
-/** 获取统计数据 */
+/**
+ * 获取统计数据
+ */
 const fetchStatistics = async () => {
-  if (!dateRange.value) return;
+  const startDate = dateRange.value?.[0] || "";
+  const endDate = dateRange.value?.[1] || "";
 
-  await giftStore.fetchStatistics(dateRange.value[0], dateRange.value[1]);
+  await giftStore.fetchStatistics(startDate, endDate);
   statistics.value = giftStore.statistics;
 
-  // 更新图表
   if (statistics.value) {
     updateChart();
   }
 };
 
-/** 初始化图表 */
+/**
+ * 初始化图表
+ */
 const initChart = () => {
   if (!occasionChartRef.value) return;
 
@@ -258,7 +274,9 @@ const initChart = () => {
   });
 };
 
-/** 更新图表 */
+/**
+ * 更新图表数据
+ */
 const updateChart = () => {
   if (!occasionChart || !statistics.value) return;
 
@@ -348,6 +366,11 @@ const updateChart = () => {
     flex-wrap: wrap;
   }
 
+  .month-nav {
+    display: flex;
+    align-items: center;
+  }
+
   .summary-card {
     margin-bottom: $spacing-md;
     box-shadow: $shadow-md;
@@ -432,9 +455,20 @@ const updateChart = () => {
     color: $text-primary;
     font-family: $font-mono;
   }
-}
 
-// ==================== 移动端样式 ====================
+  .sub-info {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-xs;
+    font-size: 11px;
+    color: $text-secondary;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+}
 
 .is-mobile {
   .page-header {
@@ -476,6 +510,12 @@ const updateChart = () => {
     .value {
       font-size: 18px;
       font-weight: 700;
+    }
+
+    .sub-info {
+      font-size: 10px;
+      gap: $spacing-sm;
+      flex-wrap: wrap;
     }
   }
 

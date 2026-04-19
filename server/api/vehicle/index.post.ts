@@ -16,7 +16,7 @@ const vehicleSchema = z.object({
   vehicle_type: z.enum(["fuel", "electric"], {
     errorMap: () => ({ message: "车辆类型必须是燃油车或纯电动" }),
   }),
-  initial_mileage: z.number().min(0, "初始里程数不能为负数"),
+  base_mileage: z.number().min(0, "基准里程数不能为负数"),
   is_active: z.number().default(1),
 });
 
@@ -45,14 +45,13 @@ export default defineEventHandler(async (event) => {
     const vehicleId = await insert(
       `INSERT INTO vehicles (
         plate_number, brand_model, vehicle_type,
-        initial_mileage, current_mileage, is_active, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        base_mileage, is_active, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?)`,
       [
         validatedData.plate_number.trim(),
         validatedData.brand_model.trim(),
         validatedData.vehicle_type,
-        validatedData.initial_mileage,
-        validatedData.initial_mileage,
+        validatedData.base_mileage,
         validatedData.is_active || 1,
         userId,
       ],
