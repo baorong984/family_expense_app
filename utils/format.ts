@@ -118,3 +118,33 @@ export function getNextMonth(year: number, month: number) {
     month: next.month() + 1,
   }
 }
+
+/**
+ * 格式化日期范围为友好显示格式
+ * @param startDate 开始日期 YYYY-MM-DD
+ * @param endDate 结束日期 YYYY-MM-DD
+ * @returns 格式化后的日期范围字符串，如：2026年4月1日 - 4月19日
+ */
+export function formatDateRange(startDate: string, endDate: string): string {
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
+  
+  if (!start.isValid() || !end.isValid()) {
+    return `${startDate} 至 ${endDate}`
+  }
+  
+  const startYear = start.year()
+  const endYear = end.year()
+  const startMonth = start.month() + 1
+  const endMonth = end.month() + 1
+  const startDay = start.date()
+  const endDay = end.date()
+  
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${startYear}年${startMonth}月${startDay}日 - ${endDay}日`
+  } else if (startYear === endYear) {
+    return `${startYear}年${startMonth}月${startDay}日 - ${endMonth}月${endDay}日`
+  } else {
+    return `${startYear}年${startMonth}月${startDay}日 - ${endYear}年${endMonth}月${endDay}日`
+  }
+}
