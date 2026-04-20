@@ -109,26 +109,74 @@ export interface ClassifyResult {
   recommendations: CategoryRecommendation[];
 }
 
-// AI分析结果
+// AI分析结果 - 异常检测项
+export interface AnalysisAnomaly {
+  type: string;
+  amount: number;
+  category: string;
+  subcategory?: string;
+  member?: string;
+  description: string;
+  date?: string;
+}
+
+// AI分析结果 - 节省建议项
+export interface SavingSuggestion {
+  category: string;
+  suggestion: string;
+  potential_saving: number | string;
+}
+
+// AI分析结果 - 分类明细项
+export interface CategoryBreakdownItem {
+  category: string;
+  amount: number;
+  percentage: number;
+  transaction_count: number;
+}
+
+// AI分析结果 - 趋势预测
+export interface TrendPrediction {
+  has_enough_data: boolean;
+  reason?: string;
+  predicted_amount: number | null;
+  trend: string;
+  confidence: number | null;
+}
+
+// AI分析结果 - 同比分析
+export interface YearOverYear {
+  has_data: boolean;
+  reason?: string;
+  current_month?: number;
+  last_year_month?: number;
+  change?: number;
+  change_rate?: number;
+}
+
+// AI分析结果（新结构）
 export interface AnalysisResult {
-  monthOverMonth: {
-    currentMonth: number;
-    lastMonth: number;
-    change: number;
-    changeRate: number;
-  } | null;
-  anomalies: Array<{
-    type: string;
-    category: string;
-    amount: number;
-    budget: number;
-    message: string;
-  }>;
-  suggestions: string[];
-  prediction: {
-    nextMonth: number;
-    trend: string;
-  } | null;
+  analysis_date: string;
+  month: string;
+  total_spent: number;
+  budget_total: number;
+  budget_remaining: number;
+  budget_usage_rate: number;
+  year_over_year: YearOverYear;
+  category_breakdown: CategoryBreakdownItem[];
+  anomalies: AnalysisAnomaly[];
+  saving_suggestions: SavingSuggestion[];
+  trend_prediction: TrendPrediction;
+}
+
+// AI分析记录（用于保存历史）
+export interface AIAnalysisRecord {
+  id: number;
+  start_date: string;
+  end_date: string;
+  analysis_data: AnalysisResult;
+  created_by: number;
+  created_at: string;
 }
 
 // 统计汇总

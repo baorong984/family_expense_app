@@ -8,8 +8,8 @@ const schema = z.object({
   start_date: z.string(),
   end_date: z.string(),
   budget: z.object({
-    total: z.number(),
-    categories: z.record(z.number()).optional(),
+    total: z.coerce.number(),
+    categories: z.record(z.coerce.number()).optional(),
   }).optional(),
 })
 
@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
   }
   
   const { start_date, end_date, budget } = result.data
+  const budgetTotal = budget?.total || 0
 
   // 将ISO格式日期转换为YYYY-MM-DD格式
   const formatSQLDate = (isoDate: string) => {
@@ -67,6 +68,13 @@ export default defineEventHandler(async (event) => {
     { start: startDate, end: endDate },
     budget || { total: 0, categories: {} }
   )
+  
+  // 确保预算值使用传入的值
+  analysis.budget_total = budgetTotal
+  analysis.budget_remaining = budgetTotal - analysis.total_spent
+  analysis.budget_usage_rate = budgetTotal > 0 
+    ? Number((analysis.total_spent / budgetTotal * 100).toFixed(2))
+    : 0
   
   return successResponse(analysis)
 })
