@@ -118,18 +118,14 @@
         </el-row>
 
         <el-form-item label="分类" required>
-          <el-cascader
+          <el-tree-select
             v-model="expenseForm.category_id"
-            :options="categoryCascaderData"
-            :props="{
-              value: 'id',
-              label: 'name',
-              children: 'children',
-              emitPath: false,
-            }"
+            :data="categoryTreeData"
+            :props="{ value: 'id', label: 'name', children: 'children' }"
             placeholder="选择分类"
             clearable
             filterable
+            check-strictly
             style="width: 100%"
           />
         </el-form-item>
@@ -344,18 +340,14 @@
           </el-form-item>
 
           <el-form-item label="分类" required>
-            <el-cascader
+            <el-tree-select
               v-model="expenseForm.category_id"
-              :options="categoryCascaderData"
-              :props="{
-                value: 'id',
-                label: 'name',
-                children: 'children',
-                emitPath: false,
-              }"
+              :data="categoryTreeData"
+              :props="{ value: 'id', label: 'name', children: 'children' }"
               placeholder="选择分类"
               clearable
               filterable
+              check-strictly
               style="width: 100%"
             />
           </el-form-item>
@@ -561,7 +553,6 @@ import type {
   CategoryRecommendation,
   Category,
 } from "~/types";
-import { categoryTreeToCascaderData } from "~/utils/tree";
 import { formatDate } from "~/utils/format";
 
 definePageMeta({
@@ -815,9 +806,11 @@ const reset_form_to_now = () => {
   clearInput();
 };
 
-// 分类级联数据
-const categoryCascaderData = computed(() => {
-  return categoryTreeToCascaderData(categoryStore.tree);
+/**
+ * 分类树形数据（支持选择父项或子项）
+ */
+const categoryTreeData = computed(() => {
+  return categoryStore.tree || [];
 });
 
 /** 生成小时选项 0-23 */
