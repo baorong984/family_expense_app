@@ -42,6 +42,34 @@
         </template>
       </el-menu-item>
 
+      <!-- 物品资产 -->
+      <div class="menu-divider"></div>
+
+      <el-sub-menu index="item">
+        <template #title>
+          <el-icon><Box /></el-icon>
+          <span>物品资产</span>
+        </template>
+        <el-menu-item index="/item" @click="handleSelect">
+          <el-icon><List /></el-icon>
+          <template #title>
+            <span>物品列表</span>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/item/category" @click="handleSelect">
+          <el-icon><Grid /></el-icon>
+          <template #title>
+            <span>分类管理</span>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/item/stats" @click="handleSelect">
+          <el-icon><DataAnalysis /></el-icon>
+          <template #title>
+            <span>统计分析</span>
+          </template>
+        </el-menu-item>
+      </el-sub-menu>
+
       <!-- 人情管理 -->
       <div class="menu-divider"></div>
 
@@ -125,6 +153,7 @@ import {
   Document,
   Van,
   Setting,
+  Box,
 } from "@element-plus/icons-vue";
 
 const props = defineProps<{
@@ -230,7 +259,8 @@ const handleSelect = () => {
   overflow-y: auto;
   overflow-x: hidden;
 
-  :deep(.el-menu-item) {
+  :deep(.el-menu-item),
+  :deep(.el-sub-menu__title) {
     color: $text-secondary;
     border-radius: $border-radius;
     margin: 4px 12px;
@@ -245,19 +275,33 @@ const handleSelect = () => {
       color: $primary;
       background: rgba(78, 205, 196, 0.08);
     }
+  }
 
-    &.is-active {
+  :deep(.el-menu-item.is-active) {
+    color: white;
+    background: $gradient-primary;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
+
+    .el-icon {
       color: white;
-      background: $gradient-primary;
-      box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
-
-      .el-icon {
-        color: white;
-      }
     }
+  }
 
-    // 移动端样式
-    .is-mobile & {
+  :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+    color: $primary;
+  }
+
+  :deep(.el-sub-menu .el-menu-item) {
+    min-width: auto;
+    margin: 2px 12px 2px 24px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  // 移动端样式
+  .is-mobile & {
+    :deep(.el-menu-item),
+    :deep(.el-sub-menu__title) {
       margin: 2px 16px;
       height: 48px;
     }
