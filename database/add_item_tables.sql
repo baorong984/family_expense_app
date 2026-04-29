@@ -2,6 +2,7 @@
 -- 物品资产管理模块 - 数据库迁移脚本
 -- 版本: v1.3
 -- 日期: 2026-04-20
+-- 更新: 2026-04-27 - 调整分类结构，使用emoji图标
 -- =====================================================
 
 USE `family_expense`;
@@ -12,7 +13,7 @@ USE `family_expense`;
 CREATE TABLE IF NOT EXISTS `item_categories` (
   `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `name` VARCHAR(50) NOT NULL COMMENT '分类名称',
-  `icon` VARCHAR(50) DEFAULT NULL COMMENT '图标名称',
+  `icon` VARCHAR(50) DEFAULT NULL COMMENT '图标(emoji)',
   `parent_id` INT(11) DEFAULT NULL COMMENT '父分类ID',
   `sort_order` INT(11) NOT NULL DEFAULT 0 COMMENT '排序顺序',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -91,74 +92,62 @@ CREATE TABLE IF NOT EXISTS `item_events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物品事件表';
 
 -- =====================================================
--- 4. 预设物品分类数据
+-- 4. 预设物品分类数据（使用emoji图标）
 -- =====================================================
 
--- 一级分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('电子产品', 'Monitor', NULL, 1),
-('家电', 'House', NULL, 2),
-('服饰', 'Shirt', NULL, 3),
-('书籍', 'Notebook', NULL, 4),
-('收藏品', 'Trophy', NULL, 5),
-('运动户外', 'Basketball', NULL, 6),
-('乐器', 'Headset', NULL, 7),
-('家具', 'Grid', NULL, 8),
-('珠宝首饰', 'Star', NULL, 9),
-('其他', 'More', NULL, 99);
+-- 一级分类（3个）
+INSERT INTO `item_categories` (`id`, `name`, `icon`, `parent_id`, `sort_order`) VALUES
+(1, '电子产品', 0xF09F93B1, NULL, 1),  -- 📱
+(2, '家电', 0xF09F8EA0, NULL, 2),      -- 🏠
+(44, '机械大件', 0xF09F9A97, NULL, 3); -- 🚗
 
--- 电子产品子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('手机', 'Iphone', 1, 1),
-('电脑', 'Monitor', 1, 2),
-('平板', 'Grid', 1, 3),
-('相机', 'Camera', 1, 4),
-('耳机', 'Headset', 1, 5),
-('手表', 'Clock', 1, 6),
-('游戏机', 'Gamepad', 1, 7),
-('键盘鼠标', 'Keyboard', 1, 8),
-('显示器', 'Monitor', 1, 9);
+-- 电子产品子分类（9个）
+INSERT INTO `item_categories` (`id`, `name`, `icon`, `parent_id`, `sort_order`) VALUES
+(11, '手机', 0xF09F93B1, 1, 1),      -- 📱
+(12, '电脑', 0xF09F92BB, 1, 2),      -- 💻
+(13, '平板', 0xF09F93B2, 1, 3),      -- 📲
+(14, '相机', 0xF09F93B7, 1, 4),      -- 📷
+(15, '耳机', 0xF09F8EA7, 1, 5),      -- 🎧
+(16, '手表', 0xE28C9A, 1, 6),        -- ⌚
+(17, '游戏机', 0xF09F8EAE, 1, 7),    -- 🎮
+(18, '键盘鼠标', 0xE28CA3, 1, 8),    -- ⌨️
+(19, '显示器', 0xF09F96A5, 1, 9);    -- 🖥️
 
--- 家电子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('冰箱', 'House', 2, 1),
-('洗衣机', 'House', 2, 2),
-('空调', 'House', 2, 3),
-('电视', 'Monitor', 2, 4),
-('微波炉', 'House', 2, 5),
-('烤箱', 'House', 2, 6),
-('吸尘器', 'House', 2, 7),
-('空气净化器', 'House', 2, 8);
+-- 家电子分类（8个）
+INSERT INTO `item_categories` (`id`, `name`, `icon`, `parent_id`, `sort_order`) VALUES
+(20, '冰箱', 0xE29D84, 2, 1),        -- ❄️
+(21, '洗衣机', 0xF09FA7BA, 2, 2),    -- 🧺
+(22, '空调', 0xF09F8CA1, 2, 3),      -- 🌡️
+(23, '电视', 0xF09F93BA, 2, 4),      -- 📺
+(24, '微波炉', 0xF09F8DB3, 2, 5),    -- 🍳
+(25, '烤箱', 0xF09FA7A7, 2, 6),      -- 🥧
+(26, '吸尘器', 0xF09FA7B9, 2, 7),    -- 🧹
+(27, '空气净化器', 0xF09F8CAC, 2, 8); -- 🌬️
 
--- 服饰子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('外套', 'Shirt', 3, 1),
-('鞋靴', 'Shirt', 3, 2),
-('包包', 'Shirt', 3, 3),
-('配饰', 'Shirt', 3, 4),
-('眼镜', 'View', 3, 5);
+-- 机械大件子分类（5个）
+INSERT INTO `item_categories` (`id`, `name`, `icon`, `parent_id`, `sort_order`) VALUES
+(45, '汽车', 0xF09F9A97, 44, 1),     -- 🚗
+(46, '电动车', 0xF09F9A93, 44, 2),   -- 🚓
+(47, '自行车', 0xF09F9AB4, 44, 3),   -- 🚴
+(48, '摩托车', 0xF09F8F8F, 44, 4),   -- 🏍️
+(49, '三轮车', 0xF09F9B97, 44, 5);   -- 🛗
 
--- 运动户外子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('健身器材', 'Basketball', 6, 1),
-('户外装备', 'Basketball', 6, 2),
-('运动鞋服', 'Basketball', 6, 3),
-('自行车', 'Bicycle', 6, 4);
-
--- 乐器子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('吉他', 'Headset', 7, 1),
-('钢琴', 'Headset', 7, 2),
-('其他乐器', 'Headset', 7, 3);
-
--- 家具子分类
-INSERT INTO `item_categories` (`name`, `icon`, `parent_id`, `sort_order`) VALUES
-('沙发', 'Grid', 8, 1),
-('床', 'Grid', 8, 2),
-('桌椅', 'Grid', 8, 3),
-('柜子', 'Grid', 8, 4);
+-- =====================================================
+-- 5. 验证数据
+-- =====================================================
+SELECT '分类数据统计' as info;
+SELECT 
+    '一级分类' as type, COUNT(*) as count 
+FROM item_categories 
+WHERE parent_id IS NULL
+UNION ALL
+SELECT 
+    '子分类' as type, COUNT(*) as count 
+FROM item_categories 
+WHERE parent_id IS NOT NULL;
 
 -- =====================================================
 -- 完成
 -- =====================================================
 SELECT '物品资产管理模块数据库迁移完成' AS message;
+SELECT '包含3个一级分类和22个子分类，所有图标使用emoji' AS note;
