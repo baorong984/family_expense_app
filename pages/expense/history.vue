@@ -2,11 +2,37 @@
   <div class="expense-history-page" :class="{ 'is-mobile': isMobile }">
     <div class="page-header">
       <h2>消费记录</h2>
-      <el-button type="primary" @click="goToCreate">
-        <el-icon><Plus /></el-icon>
-        <span v-if="!isMobile">新增记账</span>
-      </el-button>
+      <div class="header-actions">
+        <el-input
+          v-model="smartSearchQuery"
+          placeholder="智能搜索，如'上个月吃的火锅'"
+          clearable
+          style="width: 280px"
+          @keyup.enter="handleSmartSearch"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+        <el-button type="primary" :loading="smartSearchLoading" @click="handleSmartSearch">
+          搜索
+        </el-button>
+        <el-button type="primary" @click="goToCreate">
+          <el-icon><Plus /></el-icon>
+          <span v-if="!isMobile">新增记账</span>
+        </el-button>
+      </div>
     </div>
+    
+    <!-- 智能搜索结果提示 -->
+    <el-alert
+      v-if="smartSearchResult"
+      :title="smartSearchResult.answer"
+      type="success"
+      :closable="true"
+      @close="clearSmartSearch"
+      class="smart-search-alert"
+    />
 
     <!-- 筛选条件 -->
     <el-card class="filter-card">
@@ -331,7 +357,7 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Plus, Filter, ArrowDown } from "@element-plus/icons-vue";
+import { Plus, Filter, ArrowDown, Search } from "@element-plus/icons-vue";
 import type { Expense, StatisticsSummary } from "~/types";
 import { categoryTreeToCascaderData } from "~/utils/tree";
 import {
@@ -383,6 +409,11 @@ const filters = reactive({
   member_id: null as number | null,
   keyword: "",
 });
+
+// 智能搜索
+const smartSearchQuery = ref("");
+const smartSearchLoading = ref(false);
+const smartSearchResult = ref<any>(null);
 
 // 分页
 const pagination = reactive({
@@ -541,6 +572,67 @@ const deleteExpense = async (expense: Expense) => {
 const goToCreate = () => {
   router.push("/expense/create");
 };
+
+/** 智能搜索 */
+const handleSmartSearch = async () => {
+  if (!smartSearchQuery.value.trim()) {
+    ElMessage.warning("请输入搜索内容");
+    return;
+  }
+  
+  smartSearchLoading.value = true;
+  try {
+    const res = await api.post("/api/ai/search", {
+      query_text: smartSearchQuery.value,
+      limit: 100
+    });
+    
+    if (res.success && res.data) {
+      smartSearchResult.value = res.data;
+      
+      if (res.data.results && res.data.results.length > 0) {
+        expenseList.value = res.data.results.map((item: any) => ({
+          id: item.id,
+          amount: item.amount,
+          expense_date: item.date,
+          expense_time: null,
+          category_id: null,
+          category_name: item.category,
+          member_id: null,
+          member_name: item.member,
+          member_color: null,
+          description: item.description,
+          created_at: null,
+          updated_at: null,
+          created_by: null
+        }));
+        pagination.total = res.data.summary.total_count;
+        summary.value = {
+          total_amount: res.data.summary.total_amount,
+          total_count: res.data.summary.total_count,
+          avg_amount: res.data.summary.avg_amount,
+          max_amount: 0,
+          min_amount: 0,
+          category_summary: [],
+          member_summary: []
+        };
+      } else {
+        ElMessage.info("没有找到符合条件的记录");
+      }
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || "搜索失败");
+  } finally {
+    smartSearchLoading.value = false;
+  }
+};
+
+/** 清除智能搜索结果 */
+const clearSmartSearch = () => {
+  smartSearchResult.value = null;
+  smartSearchQuery.value = "";
+  fetchData();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -553,6 +645,16 @@ const goToCreate = () => {
     font-size: 12px;
     font-weight: 500;
     color: white;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .smart-search-alert {
+    margin-bottom: $spacing-md;
   }
 
   .filter-card {

@@ -225,6 +225,20 @@
                   <el-descriptions-item label="日期">{{
                     msg.result.date || "-"
                   }}</el-descriptions-item>
+                  <el-descriptions-item label="成员">
+                    <template v-if="msg.result.members && msg.result.members.length > 0">
+                      <el-tag
+                        v-for="(memberName, idx) in msg.result.members"
+                        :key="idx"
+                        size="small"
+                        type="info"
+                        class="member-tag"
+                      >
+                        {{ memberName }}
+                      </el-tag>
+                    </template>
+                    <template v-else>-</template>
+                  </el-descriptions-item>
                   <el-descriptions-item label="置信度">
                     <el-progress
                       :percentage="(msg.result.confidence || 0) * 100"
@@ -951,6 +965,9 @@ const sendChatMessage = async () => {
             replyContent += ` → ${result.subcategory}`;
           }
         }
+        if (result.members && result.members.length > 0) {
+          replyContent += `\n**成员**: ${result.members.join("、")}`;
+        }
         if (result.date) {
           replyContent += `\n**日期**: ${result.date}`;
         }
@@ -1204,7 +1221,10 @@ const fillFormFromResult = (result: RecognizeResult) => {
 
   expenseForm.description = result.description || "";
 
-  if (result.members && result.members.length > 0) {
+  // 优先使用 member_ids
+  if (result.member_ids && result.member_ids.length > 0) {
+    expenseForm.member_id = result.member_ids[0];
+  } else if (result.members && result.members.length > 0) {
     const memberName = result.members[0];
     const member = memberStore.members.find(
       (m) =>
@@ -1217,8 +1237,10 @@ const fillFormFromResult = (result: RecognizeResult) => {
     }
   }
 
-  // 匹配分类
-  if (result.subcategory) {
+  // 优先使用 category_id
+  if (result.category_id) {
+    expenseForm.category_id = result.category_id;
+  } else if (result.subcategory) {
     let category: Category | undefined;
 
     // 1. 精确匹配：子分类名 + 父分类名
@@ -1758,6 +1780,11 @@ const handleExcelImport = async (file: File) => {
       color: $accent;
       font-weight: 600;
       font-size: 16px;
+    }
+
+    .member-tag {
+      margin-right: $spacing-xs;
+      margin-bottom: 2px;
     }
 
     .result-actions {
