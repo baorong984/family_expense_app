@@ -96,11 +96,13 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
    - 计算变化金额和变化率
    - 如果数据不足，设置has_data为false并说明原因
 
-2. 异常检测：
+2. 异常检测（重要：同类异常必须合并）：
    - 识别超出平均值30%的消费
    - 识别超出预算的消费
    - 识别异常大额消费
-   - 为每个异常生成说明
+   - **合并规则**：同一分类的多个异常必须合并为一条记录，用列表形式展示
+   - 例如：餐饮有3笔大额消费，应合并为一条，description中列出每笔详情
+   - 合并后的amount为该分类异常消费的总金额
 
 3. 节省建议：
    - 基于消费习惯生成具体建议
@@ -141,12 +143,12 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
   "anomalies": [
     {
       "type": "大额消费或超出平均值30%",
-      "amount": 金额（数字），
+      "amount": 该分类异常消费总金额（数字），
       "category": "分类名称",
       "subcategory": "子分类名称（可选，可为null）",
       "member": "消费成员（可选，可为null）",
-      "description": "异常说明",
-      "date": "消费日期，格式YYYY-MM-DD（可选）"
+      "description": "合并说明：列出该分类下所有异常消费的详情，格式如'共3笔：火锅259元（5月10日）、正餐249元（5月12日）、外卖160元（5月15日）'",
+      "date": null
     }
   ],
   "saving_suggestions": [
@@ -176,7 +178,8 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
 - budget_remaining = budget_total - total_spent
 - budget_usage_rate = (total_spent / budget_total) * 100，如果budget_total为0则设为0
 - 如果数据不足（少于1个月），year_over_year.has_data设为false
-- 预测基于最近3个月的数据，数据不足时trend设为"未知"`;
+- 预测基于最近3个月的数据，数据不足时trend设为"未知"
+- **异常检测必须合并同类项**：同一分类的多笔异常消费合并为一条记录，不要重复列出`;
 
 export async function recognizeExpense(text: string): Promise<RecognizeResult> {
   const client = getOpenAI();
@@ -268,16 +271,21 @@ export async function analyzeExpense(
       },
     ],
     temperature: 0.2,
-    max_tokens: 2048,
+    max_tokens: 4096,
   });
 
   const content = response.choices[0]?.message?.content || "{}";
+  console.log("AI Response length:", content.length, "First 500 chars:", content.substring(0, 500));
   const json = extractJSON(content);
 
   try {
-    return JSON.parse(json) as AnalysisResult;
+    const result = JSON.parse(json) as AnalysisResult;
+    console.log("AI Analysis parsed successfully");
+    return result;
   } catch (e) {
-    console.error("JSON parse error:", e, "Content:", content);
+    console.error("JSON parse error:", e);
+    console.error("Extracted JSON (first 1000 chars):", json.substring(0, 1000));
+    console.error("Original content (first 1000 chars):", content.substring(0, 1000));
     return {
       analysis_date: timeRange.start,
       month: timeRange.start.substring(0, 7),
