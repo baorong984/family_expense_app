@@ -95,6 +95,17 @@ export interface RecognizeResult {
   members: string[];
   description: string | null;
   confidence: number;
+  category_id: number | null;
+  member_ids: number[];
+  suggestions?: CategorySuggestion[];
+}
+
+// AI分类候选建议
+export interface CategorySuggestion {
+  category_id: number;
+  category_name: string;
+  subcategory_name: string;
+  confidence: number;
 }
 
 // AI分类推荐
