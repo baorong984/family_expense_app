@@ -620,8 +620,8 @@ definePageMeta({
 const api = useApi();
 
 const quickSelect = ref<"thisMonth" | "lastMonth" | "custom">("thisMonth");
-const currentYear = ref(2024);
-const currentMonth = ref(1);
+const currentYear = ref(new Date().getFullYear());
+const currentMonth = ref(new Date().getMonth() + 1);
 const customDateRange = ref<[string, string] | null>(null);
 
 const currentMonthLabel = computed(
