@@ -164,7 +164,7 @@ export default defineEventHandler(async (event) => {
         category_name: cat.category_name,
         suggested_budget: suggestedBudget,
         avg_spent: cat.avg_spent,
-        trend: cat.trend,
+        trend: cat.trend as 'up' | 'down' | 'stable',
         reason: `月均消费${cat.avg_spent.toFixed(2)}元，建议预算略高于均值`
       }
     })

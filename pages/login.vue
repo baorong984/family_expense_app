@@ -119,12 +119,25 @@ const handleLogin = async () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #F0F5F7 0%, #E8F4F8 50%, #F5F9FA 100%);
+  background: linear-gradient(135deg, #F0FDF4 0%, #E0F2FE 50%, #F5F3FF 100%);
   position: relative;
   overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(16, 185, 129, 0.12) 1.5px, transparent 1.5px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
-// 背景装饰
+// 背景装饰 (Vibrant Glowing Spheres)
 .background-decoration {
   position: fixed;
   top: 0;
@@ -137,64 +150,69 @@ const handleLogin = async () => {
   .circle {
     position: absolute;
     border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.65;
   }
   
   .circle-1 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(78, 205, 196, 0.15) 0%, transparent 70%);
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(14, 165, 233, 0.1) 70%);
     top: -100px;
     right: -100px;
-    animation: float1 20s ease-in-out infinite;
+    animation: float1 18s ease-in-out infinite;
   }
   
   .circle-2 {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(69, 183, 209, 0.12) 0%, transparent 70%);
-    bottom: -50px;
-    left: -50px;
-    animation: float2 25s ease-in-out infinite;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(236, 72, 153, 0.08) 70%);
+    bottom: -80px;
+    left: -80px;
+    animation: float2 22s ease-in-out infinite;
   }
   
   .circle-3 {
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255, 107, 157, 0.1) 0%, transparent 70%);
-    top: 50%;
-    left: 20%;
-    animation: float3 18s ease-in-out infinite;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(99, 102, 241, 0.05) 70%);
+    top: 45%;
+    left: 15%;
+    animation: float3 16s ease-in-out infinite;
   }
 }
 
 @keyframes float1 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-30px, 20px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(1.1); }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(20px, -30px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -40px) scale(1.05); }
 }
 
 @keyframes float3 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-20px, -20px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, -30px) scale(1.15); }
 }
 
-// 登录卡片
+// 登录卡片 (Layered Glassmorphism)
 .login-card {
-  width: 420px;
+  width: 440px;
   padding: $spacing-2xl;
-  background: $bg-white;
-  border: 1px solid $border-color;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: $border-radius-xl;
   box-shadow: 
-    0 4px 6px rgba(45, 55, 72, 0.04),
-    0 10px 40px rgba(45, 55, 72, 0.08);
+    0 10px 30px rgba(15, 23, 42, 0.04),
+    0 20px 50px rgba(15, 23, 42, 0.06),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
   position: relative;
   z-index: 1;
-  animation: cardAppear 0.5s ease-out;
+  animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   
   &::before {
     content: '';
@@ -211,7 +229,7 @@ const handleLogin = async () => {
 @keyframes cardAppear {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -225,31 +243,36 @@ const handleLogin = async () => {
   margin-bottom: $spacing-2xl;
   
   .logo-container {
-    margin-bottom: $spacing-lg;
+    margin-bottom: $spacing-md;
     
     .logo-icon {
-      font-size: 48px;
+      font-size: 52px;
       display: inline-block;
-      animation: bounce 2s ease-in-out infinite;
+      animation: bounce 2.5s ease-in-out infinite;
     }
   }
   
   @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-8px) rotate(4deg); }
   }
   
   .title {
     font-family: $font-display;
-    font-size: 24px;
-    font-weight: 700;
-    color: $text-primary;
-    margin: 0 0 $spacing-sm 0;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 $spacing-xs 0;
   }
   
   .description {
     font-size: 14px;
-    color: $text-muted;
+    color: $text-secondary;
+    font-weight: 500;
   }
 }
 
@@ -262,12 +285,26 @@ const handleLogin = async () => {
   :deep(.el-input__wrapper) {
     padding: 12px 16px;
     border-radius: $border-radius;
+    background: rgba(248, 250, 252, 0.7);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      border-color: $primary-light;
+      background: white;
+    }
+    
+    &.is-focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+      background: white;
+    }
   }
   
   :deep(.el-input__prefix) {
     .el-icon {
       color: $text-muted;
-      font-size: 18px;
+      font-size: 19px;
     }
   }
   
@@ -275,23 +312,29 @@ const handleLogin = async () => {
     width: 100%;
     height: 48px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     margin-top: $spacing-md;
     border-radius: $border-radius;
     background: $gradient-primary;
     border: none;
-    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    transition: all $transition-base;
+    color: white;
     
     &:hover {
-      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
       transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }
 
 @media (max-width: $breakpoint-sm) {
   .login-card {
-    width: 90%;
+    width: 92%;
     padding: $spacing-xl;
   }
 }
