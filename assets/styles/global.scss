@@ -1,9 +1,9 @@
 // ============================================
-// 🌿 FRESH & LIGHT GLOBAL STYLES - 小清新风格
+// 🌿 PREMIUM FRESH & GLASS GLOBAL STYLES
 // ============================================
 
 // 字体引入
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -29,7 +29,7 @@ html, body {
 }
 
 // ============================================
-// 🌈 清新背景
+// 🌈 Premium Backgrounds & Dynamic Grid
 // ============================================
 
 body {
@@ -44,18 +44,34 @@ body {
     bottom: 0;
     background: $gradient-bg-light;
     pointer-events: none;
+    z-index: -2;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(rgba(16, 185, 129, 0.08) 1.5px, transparent 1.5px),
+      radial-gradient(rgba(14, 165, 233, 0.06) 1.5px, transparent 1.5px);
+    background-size: 32px 32px;
+    background-position: 0 0, 16px 16px;
+    pointer-events: none;
     z-index: -1;
   }
 }
 
 // ============================================
-// 🌊 动画
+// 🌊 Micro-Animations
 // ============================================
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -66,9 +82,11 @@ body {
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
   }
   50% {
     transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
   }
 }
 
@@ -86,12 +104,21 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    border-color: $primary-light;
+  }
+  50% {
+    border-color: $secondary-light;
   }
 }
 
 // ============================================
-// 📜 页面过渡动画
+// 📜 Page Transitions
 // ============================================
 
 .page-enter-active,
@@ -101,16 +128,16 @@ body {
 
 .page-enter-from {
   opacity: 0;
-  transform: translateY(15px);
+  transform: translateY(12px);
 }
 
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-15px);
+  transform: translateY(-12px);
 }
 
 // ============================================
-// 🖱️ 滚动条样式
+// 🖱️ Scrollbars
 // ============================================
 
 ::-webkit-scrollbar {
@@ -119,44 +146,47 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: $bg-light;
-  border-radius: 3px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, $primary, $secondary);
+  background: linear-gradient(180deg, rgba($primary, 0.4), rgba($secondary, 0.4));
   border-radius: 3px;
   
   &:hover {
-    background: linear-gradient(180deg, $primary-dark, $secondary-dark);
+    background: linear-gradient(180deg, $primary, $secondary);
   }
 }
 
 // ============================================
-// 💎 卡片样式
+// 💎 Card & Panels (Glassmorphism)
 // ============================================
 
 .glass-card {
-  background: $bg-card;
-  border: 1px solid $border-color;
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-card;
+  box-shadow: $glass-shadow;
   transition: all $transition-base;
   
   &:hover {
-    border-color: rgba(78, 205, 196, 0.3);
-    box-shadow: $shadow-hover;
-    transform: translateY(-2px);
+    border-color: $glass-border-hover;
+    box-shadow: $glass-shadow-hover;
+    transform: translateY(-4px);
   }
 }
 
 .page-card {
-  background: $bg-card;
-  border: 1px solid $border-color;
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
   border-radius: $border-radius-lg;
   padding: $spacing-xl;
   margin-bottom: $spacing-lg;
-  box-shadow: $shadow-card;
+  box-shadow: $glass-shadow;
   position: relative;
   overflow: hidden;
   transition: all $transition-base;
@@ -167,23 +197,26 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
     background: $gradient-primary;
-    opacity: 0;
-    transition: opacity $transition-base;
+    opacity: 0.7;
+    transition: opacity $transition-base, height $transition-base;
   }
   
   &:hover {
-    box-shadow: $shadow-lg;
+    box-shadow: $glass-shadow-hover;
+    transform: translateY(-3px);
+    border-color: rgba($primary, 0.35);
     
     &::before {
       opacity: 1;
+      height: 6px;
     }
   }
 }
 
 // ============================================
-// 📄 页面头部
+// 📄 Page Header Styling
 // ============================================
 
 .page-header {
@@ -197,10 +230,11 @@ body {
   h2 {
     font-family: $font-display;
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 800;
     color: $text-primary;
     margin: 0;
     position: relative;
+    letter-spacing: -0.5px;
     
     &::before {
       content: '';
@@ -211,39 +245,53 @@ body {
       width: 4px;
       height: 24px;
       background: $gradient-primary;
-      border-radius: 2px;
+      border-radius: 4px;
     }
   }
   
   .header-actions {
     display: flex;
     gap: $spacing-md;
+    align-items: center;
   }
 }
 
 // ============================================
-// 🔘 按钮样式
+// 🔘 Element Plus Button Refinement
 // ============================================
 
 .el-button {
   font-family: $font-body;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: $border-radius;
   transition: all $transition-base;
+  letter-spacing: 0.3px;
+  height: 38px;
+  padding: 8px 16px;
   
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
   
   &.el-button--primary {
     background: $gradient-primary;
     border: none;
     color: white;
-    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22);
     
     &:hover {
-      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.32);
+      background: $gradient-primary;
+      opacity: 0.95;
+    }
+    
+    &:focus {
+      background: $gradient-primary;
     }
   }
   
@@ -251,10 +299,11 @@ body {
     background: linear-gradient(135deg, $success 0%, $primary-light 100%);
     border: none;
     color: white;
-    box-shadow: 0 4px 12px rgba(149, 230, 163, 0.3);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
     
     &:hover {
-      box-shadow: 0 6px 20px rgba(149, 230, 163, 0.4);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
+      opacity: 0.95;
     }
   }
   
@@ -262,55 +311,79 @@ body {
     background: linear-gradient(135deg, $danger 0%, $accent 100%);
     border: none;
     color: white;
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18);
     
     &:hover {
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.28);
+      opacity: 0.95;
     }
   }
   
   &.el-button--warning {
-    background: linear-gradient(135deg, $warning 0%, #FFE066 100%);
+    background: linear-gradient(135deg, $warning 0%, #FBBF24 100%);
     border: none;
-    color: #5A4A00;
+    color: white;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
+    
+    &:hover {
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.28);
+      opacity: 0.95;
+    }
   }
   
-  // 默认按钮
-  background: $bg-card;
+  // Default button style
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid $border-color;
   color: $text-secondary;
+  backdrop-filter: blur(8px);
   
   &:hover {
-    background: $bg-light;
-    border-color: $primary;
+    background: rgba(255, 255, 255, 0.9);
+    border-color: $primary-light;
     color: $primary;
+  }
+  
+  &.is-link {
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+    box-shadow: none !important;
+    padding: 0;
+    height: auto;
+    
+    &:hover {
+      transform: none;
+    }
   }
 }
 
 // ============================================
-// 💻 输入框样式
+// 💻 Element Plus Input Overrides
 // ============================================
 
 .el-input__wrapper {
   background: $bg-input;
   border: 1px solid $border-color;
   border-radius: $border-radius;
-  box-shadow: none;
+  box-shadow: none !important;
   transition: all $transition-base;
   color: $text-primary;
+  padding: 8px 12px;
 
   &:hover {
-    border-color: $border-color-hover;
+    border-color: $primary-light;
+    background: $bg-white;
   }
 
   &.is-focus {
     border-color: $primary;
-    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
-    background: $bg-card;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    background: $bg-white;
   }
 
   .el-input__inner {
     color: $text-primary;
+    font-family: $font-body;
   }
 }
 
@@ -319,28 +392,35 @@ body {
   border: 1px solid $border-color;
   border-radius: $border-radius;
   color: $text-primary;
+  font-family: $font-body;
+  padding: 10px 14px;
+  box-shadow: none !important;
+  transition: all $transition-base;
   
   &:focus {
     border-color: $primary;
-    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
-    background: $bg-card;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    background: $bg-white;
   }
 }
 
 // ============================================
-// 🎨 Element Plus 卡片样式
+// 🎨 Element Plus Card (Glassmorphism Defaults)
 // ============================================
 
 .el-card {
-  background: $bg-card;
-  border: 1px solid $border-color;
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-card;
+  box-shadow: $glass-shadow;
   transition: all $transition-base;
   color: $text-primary;
 
   &:hover {
-    box-shadow: $shadow-md;
+    box-shadow: $glass-shadow-hover;
+    border-color: rgba($primary, 0.25);
   }
 
   .el-card__header {
@@ -349,8 +429,9 @@ body {
 
     .card-title {
       font-family: $font-display;
-      font-weight: 600;
+      font-weight: 700;
       color: $text-primary;
+      font-size: 16px;
     }
   }
 
@@ -361,7 +442,7 @@ body {
 }
 
 // ============================================
-// 💰 金额样式
+// 💰 Premium Money Styles
 // ============================================
 
 .amount {
@@ -374,27 +455,32 @@ body {
   }
   
   &.large {
-    font-size: 28px;
+    font-size: 32px;
     background: $gradient-primary;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 10px rgba(16, 185, 129, 0.05);
   }
 }
 
 // ============================================
-// 📊 统计项
+// 📊 Dashboard Stats Grid
 // ============================================
 
 .stat-item {
   text-align: center;
   padding: $spacing-lg;
-  background: $bg-card;
-  border: 1px solid $border-color;
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
   border-radius: $border-radius-lg;
   transition: all $transition-base;
   position: relative;
   overflow: hidden;
+  box-shadow: $glass-shadow;
   
   &::before {
     content: '';
@@ -402,16 +488,16 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
     background: $gradient-primary;
     opacity: 0;
     transition: opacity $transition-base;
   }
   
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-lg;
-    border-color: $primary-light;
+    transform: translateY(-5px);
+    box-shadow: $glass-shadow-hover;
+    border-color: rgba($primary, 0.3);
     
     &::before {
       opacity: 1;
@@ -422,134 +508,150 @@ body {
     display: block;
     font-size: 12px;
     color: $text-muted;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: $spacing-sm;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
   
   .value {
     display: block;
     font-family: $font-mono;
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 30px;
+    font-weight: 800;
     color: $text-primary;
+    letter-spacing: -0.5px;
   }
   
   .value-accent {
-    color: $primary;
+    background: $gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
 // ============================================
-// 📈 趋势指示器
+// 📈 Trend Indicators
 // ============================================
 
 .trend-indicator {
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
   
   &.up {
-    color: #2E9A8F;
-    background: rgba(78, 205, 196, 0.1);
+    color: $primary-dark;
+    background: rgba($primary, 0.12);
+    border: 1px solid rgba($primary, 0.15);
   }
   
   &.down {
-    color: #E54A7D;
-    background: rgba(255, 107, 157, 0.1);
+    color: $accent-dark;
+    background: rgba($accent, 0.12);
+    border: 1px solid rgba($accent, 0.15);
   }
 }
 
 // ============================================
-// 🏷️ 标签样式
+// 🏷️ Modern Badges & Tags
 // ============================================
 
 .el-tag {
-  border-radius: $border-radius;
-  font-weight: 500;
+  border-radius: 20px;
+  font-weight: 600;
+  padding: 2px 10px;
+  height: auto;
+  border: 1px solid transparent;
   
   &.el-tag--success {
-    background: rgba(78, 205, 196, 0.1);
-    border-color: rgba(78, 205, 196, 0.2);
-    color: #2E9A8F;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+    color: $primary-dark;
   }
   
   &.el-tag--warning {
-    background: rgba(255, 217, 61, 0.15);
-    border-color: rgba(255, 217, 61, 0.3);
-    color: #9A7B00;
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.2);
+    color: #C27803;
   }
   
   &.el-tag--danger {
-    background: rgba(255, 107, 107, 0.1);
-    border-color: rgba(255, 107, 107, 0.2);
-    color: #E54A5A;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: $danger;
   }
   
   &.el-tag--info {
-    background: rgba(116, 185, 255, 0.1);
-    border-color: rgba(116, 185, 255, 0.2);
-    color: #2E7BB8;
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #4F46E5;
   }
 }
 
 // ============================================
-// 📱 表格样式
+// 📋 Tables (Modern clean list look)
 // ============================================
 
 .el-table {
-  background: transparent;
+  background: transparent !important;
+  --el-table-bg-color: transparent !important;
+  --el-table-row-hover-bg-color: rgba(16, 185, 129, 0.04) !important;
+  --el-table-border-color: #{$border-color} !important;
+  --el-table-header-bg-color: rgba(248, 250, 252, 0.6) !important;
 
   th.el-table__cell {
-    background: $bg-light;
+    background: rgba(248, 250, 252, 0.6) !important;
     color: $text-secondary;
-    font-weight: 600;
+    font-weight: 700;
     border-bottom: 1px solid $border-color;
+    padding: 12px 8px;
+    font-size: 13px;
   }
 
   td.el-table__cell {
     border-bottom: 1px solid $border-light;
     color: $text-primary;
+    padding: 14px 8px;
   }
 
-  tr:hover td {
-    background: $bg-light !important;
+  tr {
+    background: transparent !important;
+    transition: background-color $transition-fast;
+    
+    &:hover td {
+      background: rgba(16, 185, 129, 0.04) !important;
+    }
   }
-
-  --el-table-border-color: #{$border-color};
-  --el-table-header-bg-color: #{$bg-light};
-  --el-table-tr-hover-bg-color: #{$bg-light};
 }
 
 // ============================================
-// 📱 响应式
+// 📱 Responsive Refinements
 // ============================================
 
-// 平板端
+// iPad / Tablet
 @media (max-width: $breakpoint-md) {
   .page-header {
     h2 {
-      font-size: 22px;
+      font-size: 20px;
     }
   }
   
   .stat-item {
     .value {
-      font-size: 24px;
+      font-size: 26px;
     }
   }
 }
 
-// 移动端 (iPhone 14 Pro Max 及更小)
+// Mobile (iPhone 14 Pro Max & smaller)
 @media (max-width: $breakpoint-sm) {
   html, body {
-    font-size: 14px;
-    // 防止iOS Safari橡皮筋效果
+    font-size: 13px;
     overscroll-behavior: none;
   }
   
@@ -571,6 +673,9 @@ body {
     }
     
     .header-actions {
+      width: 100%;
+      justify-content: flex-start;
+      flex-wrap: wrap;
       gap: $spacing-sm;
     }
   }
@@ -579,21 +684,19 @@ body {
     padding: $spacing-mobile-sm;
     
     .label {
-      font-size: 11px;
+      font-size: 10px;
     }
     
     .value {
-      font-size: 20px;
+      font-size: 22px;
     }
   }
   
-  // 卡片移动端适配
   .el-card {
     border-radius: $border-radius;
     
     .el-card__header {
       padding: $spacing-mobile-md;
-      font-size: 14px;
     }
     
     .el-card__body {
@@ -601,57 +704,38 @@ body {
     }
   }
   
-  // 表格移动端适配
   .el-table {
-    font-size: 13px;
+    font-size: 12px;
     
     th.el-table__cell,
     td.el-table__cell {
-      padding: 8px 4px;
+      padding: 10px 4px;
     }
   }
   
-  // 按钮移动端适配
   .el-button {
-    padding: 8px 12px;
-    
-    &.el-button--large {
-      padding: 10px 16px;
-    }
+    padding: 6px 12px;
+    height: 34px;
+    font-size: 13px;
   }
   
-  // 表单移动端适配
   .el-form-item {
     margin-bottom: $spacing-mobile-md;
     
     .el-form-item__label {
-      font-size: 13px;
+      font-size: 12px;
       padding-bottom: 4px;
     }
   }
   
-  // 输入框移动端适配
-  .el-input__wrapper {
-    padding: 8px 12px;
-  }
-  
-  // 分页移动端适配
-  .el-pagination {
-    .el-pagination__sizes {
-      display: none;
-    }
-  }
-  
-  // 金额移动端适配
   .amount.large {
-    font-size: 22px;
+    font-size: 24px;
   }
   
-  // 对话框移动端适配
   .el-dialog {
-    margin: 0 !important;
-    max-width: calc(100vw - 32px);
-    max-height: calc(100vh - 32px);
+    margin: 16px auto !important;
+    max-width: calc(100vw - 24px);
+    border-radius: $border-radius-lg;
     
     .el-dialog__header {
       padding: $spacing-mobile-md;
@@ -659,7 +743,7 @@ body {
     
     .el-dialog__body {
       padding: $spacing-mobile-md;
-      max-height: calc(100vh - 200px);
+      max-height: calc(100vh - 180px);
       overflow-y: auto;
     }
     
@@ -668,70 +752,44 @@ body {
     }
   }
   
-  // 抽屉移动端适配
-  .el-drawer {
-    .el-drawer__body {
-      padding: $spacing-mobile-md;
-    }
-  }
-  
-  // 下拉框移动端适配
-  .el-select {
-    width: 100%;
-  }
-  
-  // 日期选择器移动端适配
-  .el-date-editor {
-    width: 100%;
-  }
-  
-  // 级联选择器移动端适配
-  .el-cascader {
-    width: 100%;
+  .el-select, .el-date-editor, .el-cascader {
+    width: 100% !important;
   }
 }
 
-// 超小屏幕 (< 375px)
+// Ultra small devices
 @media (max-width: 374px) {
-  .page-header {
-    h2 {
-      font-size: 16px;
-    }
+  .page-header h2 {
+    font-size: 16px;
   }
   
-  .stat-item {
-    .value {
-      font-size: 18px;
-    }
+  .stat-item .value {
+    font-size: 18px;
   }
 }
 
 // ============================================
-// 📱 移动端专用工具类
+// 📱 Mobile Helpers
 // ============================================
 
-// 移动端隐藏
 .hide-mobile {
   @media (max-width: $breakpoint-sm) {
     display: none !important;
   }
 }
 
-// 桌面端隐藏
 .hide-desktop {
   @media (min-width: $breakpoint-sm) {
     display: none !important;
   }
 }
 
-// 移动端全宽
 .full-width-mobile {
   @media (max-width: $breakpoint-sm) {
     width: 100% !important;
   }
 }
 
-// 移动端堆叠布局
 .stack-mobile {
   @media (max-width: $breakpoint-sm) {
     flex-direction: column !important;
@@ -739,7 +797,6 @@ body {
   }
 }
 
-// 移动端紧凑间距
 .compact-mobile {
   @media (max-width: $breakpoint-sm) {
     padding: $spacing-mobile-sm !important;
@@ -747,13 +804,12 @@ body {
   }
 }
 
-// 安全区域适配 (iOS)
 .safe-area-bottom {
   padding-bottom: $safe-area-inset-bottom;
 }
 
 // ============================================
-// 📝 表单组件文字颜色统一
+// 📝 Form controls aesthetics
 // ============================================
 
 .el-select,
@@ -763,6 +819,24 @@ body {
   .el-select__wrapper,
   .el-cascader__wrapper {
     color: $text-primary;
+    box-shadow: none !important;
+    background: $bg-input;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    transition: all $transition-base;
+    padding: 8px 12px;
+    height: 38px;
+
+    &:hover {
+      border-color: $primary-light;
+      background: $bg-white;
+    }
+
+    &.is-focused, &.is-focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+      background: $bg-white;
+    }
   }
 
   .el-select__placeholder,
@@ -773,19 +847,28 @@ body {
 
 .el-select-dropdown__item {
   color: $text-primary;
-
+  font-family: $font-body;
+  border-radius: 6px;
+  margin: 2px 4px;
+  
   &.is-selected {
-    color: $primary;
+    color: $primary-dark;
+    background: rgba($primary, 0.08) !important;
+    font-weight: 700;
   }
 
-  &:hover {
-    background: $bg-light;
+  &:hover, &.is-hovering {
+    background: rgba($primary, 0.05) !important;
+    color: $primary-dark;
   }
 }
 
 .el-descriptions {
+  background: transparent !important;
+  
   .el-descriptions__label {
     color: $text-secondary;
+    font-weight: 600;
   }
 
   .el-descriptions__content {
@@ -794,10 +877,18 @@ body {
 }
 
 .el-dialog {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: $border-radius-lg;
+  box-shadow: $glass-shadow-hover;
   color: $text-primary;
 
   .el-dialog__title {
     color: $text-primary;
+    font-weight: 700;
+    font-family: $font-display;
   }
 
   .el-dialog__body {
@@ -806,20 +897,34 @@ body {
 }
 
 .el-message {
-  color: $text-primary;
+  border-radius: $border-radius !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
 }
 
 .el-notification {
-  color: $text-primary;
+  border-radius: $border-radius !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
 }
 
 .el-dropdown-menu {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  padding: 4px !important;
+
   .el-dropdown-menu__item {
     color: $text-primary;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
 
     &:hover {
-      background: $bg-light;
-      color: $primary;
+      background: rgba($primary, 0.08);
+      color: $primary-dark;
     }
   }
 }

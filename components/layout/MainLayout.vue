@@ -100,21 +100,21 @@ onUnmounted(() => {
 
 .main-content {
   flex: 1;
-  padding: $spacing-xl;
+  padding: $spacing-md $spacing-lg;
   overflow-y: auto;
   overflow-x: hidden;
   
   .content-wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    animation: fadeInUp 0.4s ease-out;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -129,8 +129,8 @@ onUnmounted(() => {
   }
   
   .main-content {
-    padding: $spacing-mobile-sm;
-    padding-bottom: calc(#{$bottom-nav-height} + #{$safe-area-inset-bottom} + #{$spacing-mobile-sm});
+    padding: $spacing-mobile-md;
+    padding-bottom: calc(#{$bottom-nav-height} + #{$safe-area-inset-bottom} + #{$spacing-mobile-md});
     
     .content-wrapper {
       max-width: 100%;
@@ -141,14 +141,14 @@ onUnmounted(() => {
 // 平板端样式
 @media (min-width: 768px) and (max-width: 1023px) {
   .main-content {
-    padding: $spacing-lg;
+    padding: $spacing-md;
   }
 }
 
 // 桌面端保持原样
 @media (min-width: 1024px) {
   .main-content {
-    padding: $spacing-xl;
+    padding: $spacing-md $spacing-lg;
   }
 }
 </style>

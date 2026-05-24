@@ -80,13 +80,15 @@ const updateTime = () => {
   })
 }
 
+let timer: any = null
+
 onMounted(() => {
   updateTime()
-  setInterval(updateTime, 1000)
+  timer = setInterval(updateTime, 1000)
 })
 
 onUnmounted(() => {
-  clearInterval(updateTime)
+  if (timer) clearInterval(timer)
 })
 
 const toggleCollapse = () => {
@@ -110,9 +112,13 @@ const handleCommand = async (command: string) => {
   align-items: center;
   height: $header-height;
   padding: 0 $spacing-xl;
-  background: $bg-white;
-  border-bottom: 1px solid $border-color;
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border-bottom: 1px solid $glass-border;
   position: relative;
+  z-index: 20;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   
   &::after {
     content: '';
@@ -120,7 +126,7 @@ const handleCommand = async (command: string) => {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 2px;
     background: $gradient-header;
     opacity: 0.8;
   }
@@ -141,7 +147,7 @@ const handleCommand = async (command: string) => {
     
     &:hover {
       color: $primary;
-      background: rgba(78, 205, 196, 0.1);
+      background: rgba($primary, 0.1);
     }
   }
   
@@ -151,10 +157,14 @@ const handleCommand = async (command: string) => {
     
     .title {
       font-family: $font-display;
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       color: $text-primary;
       letter-spacing: 0.5px;
+      background: linear-gradient(120deg, $text-primary 0%, $text-secondary 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
   }
 }
@@ -169,20 +179,22 @@ const handleCommand = async (command: string) => {
 .time-display {
   text-align: right;
   font-family: $font-mono;
-  padding: $spacing-sm $spacing-md;
-  background: $bg-light;
+  padding: 6px $spacing-md;
+  background: rgba($primary, 0.05);
+  border: 1px solid rgba($primary, 0.08);
   border-radius: $border-radius;
   
   .time {
-    font-size: 16px;
-    font-weight: 600;
-    color: $primary;
+    font-size: 15px;
+    font-weight: 700;
+    color: $primary-dark;
   }
   
   .date {
     font-size: 11px;
     color: $text-muted;
-    margin-top: 2px;
+    margin-top: 1px;
+    font-weight: 500;
   }
 }
 
@@ -191,15 +203,16 @@ const handleCommand = async (command: string) => {
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  padding: $spacing-sm $spacing-md;
-  background: $bg-light;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.5);
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   cursor: pointer;
+  backdrop-filter: blur(4px);
   transition: all $transition-base;
   
   &:hover {
-    border-color: $primary;
+    border-color: $primary-light;
     box-shadow: $shadow-sm;
     background: $bg-white;
   }
@@ -207,24 +220,26 @@ const handleCommand = async (command: string) => {
   .avatar {
     background: $gradient-primary;
     color: white;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba($primary, 0.2);
   }
   
   .user-details {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     
     .username {
-      font-weight: 600;
+      font-weight: 700;
       color: $text-primary;
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .user-role {
       font-size: 11px;
-      color: $primary;
+      color: $primary-dark;
+      font-weight: 600;
     }
   }
   
@@ -242,9 +257,10 @@ const handleCommand = async (command: string) => {
 
 // 下拉菜单
 :deep(.user-dropdown) {
-  background: $bg-white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
   border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border-radius: $border-radius-lg;
   box-shadow: $shadow-lg;
   padding: $spacing-xs;
   
@@ -253,10 +269,11 @@ const handleCommand = async (command: string) => {
     border-radius: $border-radius;
     padding: $spacing-sm $spacing-md;
     transition: all $transition-base;
+    font-weight: 500;
     
     &:hover {
-      background: $bg-light;
-      color: $text-primary;
+      background: rgba($primary, 0.08);
+      color: $primary-dark;
     }
     
     .el-icon {
@@ -273,6 +290,7 @@ const handleCommand = async (command: string) => {
 // 移动端适配
 @media (max-width: $breakpoint-sm) {
   .header {
+    height: $header-height-mobile;
     padding: 0 $spacing-mobile-md;
   }
   
@@ -289,13 +307,12 @@ const handleCommand = async (command: string) => {
   }
   
   .user-info {
-    padding: $spacing-xs $spacing-sm;
+    padding: 4px 8px;
     
     .avatar {
-      :deep(.el-avatar) {
-        width: 32px !important;
-        height: 32px !important;
-      }
+      width: 30px !important;
+      height: 30px !important;
+      font-size: 13px;
     }
   }
 }
