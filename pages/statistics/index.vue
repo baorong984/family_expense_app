@@ -601,7 +601,7 @@ import {
   PieChart,
   Clock,
 } from "@element-plus/icons-vue";
-import * as echarts from "echarts";
+import echarts from "~/utils/echarts";
 import type { AnalysisResult, TrendData, AIAnalysisRecord } from "~/types";
 import {
   getMonthRange,

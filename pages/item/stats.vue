@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
-import * as echarts from "echarts";
+import echarts from "~/utils/echarts";
 
 definePageMeta({
   layout: "default",

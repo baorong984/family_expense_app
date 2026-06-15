@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise'
+import mysql, { type ResultSetHeader } from 'mysql2/promise'
 
 let pool: mysql.Pool | null = null
 
@@ -51,17 +51,17 @@ export async function insert(sql: string, params?: any[]): Promise<number> {
   const pool = getPool()
   console.log('执行插入:', sql)
   const [result] = await pool.execute(sql, normalizeParams(params))
-  return (result as any).insertId
+  return (result as ResultSetHeader).insertId
 }
 
 export async function update(sql: string, params?: any[]): Promise<number> {
   const pool = getPool()
   const [result] = await pool.execute(sql, normalizeParams(params))
-  return (result as any).affectedRows
+  return (result as ResultSetHeader).affectedRows
 }
 
 export async function remove(sql: string, params?: any[]): Promise<number> {
   const pool = getPool()
   const [result] = await pool.execute(sql, normalizeParams(params))
-  return (result as any).affectedRows
+  return (result as ResultSetHeader).affectedRows
 }

@@ -135,7 +135,7 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import * as echarts from "echarts";
+import echarts from "~/utils/echarts";
 import type { EChartsOption } from "echarts";
 import { getMonthRange, getCurrentMonth, formatDate } from "~/utils/format";
 

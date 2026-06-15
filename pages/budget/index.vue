@@ -117,7 +117,7 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
 import { MagicStick } from "@element-plus/icons-vue";
-import * as echarts from "echarts";
+import echarts from "~/utils/echarts";
 import type { CategoryBudget, BudgetProgress } from "~/types";
 import { getCurrentMonth } from "~/utils/format";
 
