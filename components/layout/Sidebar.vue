@@ -316,12 +316,10 @@ const handleSelect = () => {
       }
     }
   }
-
-    // 移动端样式
-    .is-mobile & {
-      margin: 4px 16px;
-      height: 48px;
-    }
+  // 移动端样式
+  .is-mobile & {
+    margin: 4px 16px;
+    height: 48px;
   }
 
   :deep(.el-menu--collapse) {
