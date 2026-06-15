@@ -3,7 +3,7 @@ import type { RecognizeResult, ClassifyResult, AnalysisResult } from "~/types";
 
 let openai: OpenAI | null = null;
 
-function getOpenAI(): OpenAI {
+export function getOpenAI(): OpenAI {
   if (!openai) {
     const config = useRuntimeConfig();
     openai = new OpenAI({
@@ -15,7 +15,7 @@ function getOpenAI(): OpenAI {
 }
 
 // 从AI响应中提取JSON（处理markdown代码块）
-function extractJSON(content: string): string {
+export function extractJSON(content: string): string {
   // 移除markdown代码块标记
   let json = content.trim();
 
@@ -38,25 +38,47 @@ function extractJSON(content: string): string {
 const RECOGNIZE_SYSTEM_PROMPT = `你是一个专业的消费信息提取助手。你的任务是从用户的消费描述中提取关键信息。
 
 提取规则：
-1. 金额：识别数字金额，支持"30块"、"30元"、"30"等格式
-2. 日期：识别时间表达，如"今天"、"昨天"、"1月15日"等，转换为YYYY-MM-DD格式，使用当前日期作为基准
-3. 时间：识别时间表达，如"中午"、"12:30"等，转换为HH:MM格式
-4. 类别：根据消费内容推断消费大类（餐饮、交通、购物、娱乐、医疗、教育、居住、其他）
-5. 子类别：根据消费内容推断具体子类别（火锅、打车、超市、电影等）
-6. 成员：识别消费参与人员，如"和老婆一起"、"和同事"等，提取为成员名称数组
-7. 描述：保留原始描述或生成简洁描述
+1. 金额：识别数字金额
+   - 支持"30块"、"30元"、"30"、"两百"、"200"等格式
+   - 中文数字转换：两百=200，三百=300，一千=1000
+   - 必须返回数字类型，不能是字符串
+2. 日期：识别时间表达，如"今天"、"昨天"、"前天"、"上周一"、"5月1日"等，转换为YYYY-MM-DD格式
+3. 时间：识别时间表达，如"中午"→12:00、"晚上"→18:00、"12:30"等，转换为HH:MM格式
+4. 分类：根据消费内容推断分类，返回分类ID和名称
+5. 成员：识别消费参与人员，返回成员ID和名称
+
+成员识别规则：
+- "我"、"自己" → 当前用户
+- "老婆"、"媳妇"、"妻子" → 对应成员
+- "老公"、"丈夫" → 对应成员
+- "孩子"、"儿子"、"女儿" → 需用户确认
 
 输出格式：纯JSON（不要包含markdown代码块）
-置信度：基于提取的准确性，返回0-1之间的数值
+
+示例输入："中午和老婆吃火锅花了200"
+示例输出：
+{
+  "amount": 200,
+  "category": "餐饮",
+  "subcategory": "火锅",
+  "category_id": 10,
+  "date": "2026-05-23",
+  "time": "12:00",
+  "members": ["BoBo"],
+  "member_ids": [2],
+  "description": "和老婆吃火锅",
+  "confidence": 0.9,
+  "suggestions": [
+    {"category_id": 10, "category_name": "餐饮", "subcategory_name": "火锅", "confidence": 0.9}
+  ]
+}
 
 注意事项：
 - 如果信息缺失，对应字段返回null
-- 如果日期时间未明确，使用当前日期时间
-- 置信度低于0.8时，需要用户确认
+- 如果无法确定分类，提供多个suggestions
+- 置信度基于提取准确性，范围0-1
 - 金额必须是有效数字，不能为负数
-
-直接返回JSON，格式如：
-{"amount": 30, "category": "餐饮", "subcategory": "火锅", "date": "2025-01-15", "time": "12:30", "members": [], "description": "午饭火锅", "confidence": 0.9}`;
+- 重要：必须识别金额，如"花了200"、"200元"、"200块"都应识别为金额200`;
 
 const CLASSIFY_SYSTEM_PROMPT = `你是一个专业的消费分类助手。你的任务是根据消费描述推荐合适的分类。
 
@@ -96,11 +118,13 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
    - 计算变化金额和变化率
    - 如果数据不足，设置has_data为false并说明原因
 
-2. 异常检测：
+2. 异常检测（重要：同类异常必须合并）：
    - 识别超出平均值30%的消费
    - 识别超出预算的消费
    - 识别异常大额消费
-   - 为每个异常生成说明
+   - **合并规则**：同一分类的多个异常必须合并为一条记录，用列表形式展示
+   - 例如：餐饮有3笔大额消费，应合并为一条，description中列出每笔详情
+   - 合并后的amount为该分类异常消费的总金额
 
 3. 节省建议：
    - 基于消费习惯生成具体建议
@@ -141,12 +165,12 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
   "anomalies": [
     {
       "type": "大额消费或超出平均值30%",
-      "amount": 金额（数字），
+      "amount": 该分类异常消费总金额（数字），
       "category": "分类名称",
       "subcategory": "子分类名称（可选，可为null）",
       "member": "消费成员（可选，可为null）",
-      "description": "异常说明",
-      "date": "消费日期，格式YYYY-MM-DD（可选）"
+      "description": "合并说明：列出该分类下所有异常消费的详情，格式如'共3笔：火锅259元（5月10日）、正餐249元（5月12日）、外卖160元（5月15日）'",
+      "date": null
     }
   ],
   "saving_suggestions": [
@@ -176,44 +200,81 @@ const ANALYZE_SYSTEM_PROMPT = `你是一个专业的消费分析助手。你的�
 - budget_remaining = budget_total - total_spent
 - budget_usage_rate = (total_spent / budget_total) * 100，如果budget_total为0则设为0
 - 如果数据不足（少于1个月），year_over_year.has_data设为false
-- 预测基于最近3个月的数据，数据不足时trend设为"未知"`;
+- 预测基于最近3个月的数据，数据不足时trend设为"未知"
+- **异常检测必须合并同类项**：同一分类的多笔异常消费合并为一条记录，不要重复列出`;
 
-export async function recognizeExpense(text: string): Promise<RecognizeResult> {
+export async function recognizeExpense(text: string, context?: { members?: { id: number; name: string }[]; categories?: { id: number; name: string; parent_id: number | null }[] }): Promise<RecognizeResult> {
   const client = getOpenAI();
   const config = useRuntimeConfig();
 
   const today = new Date().toISOString().split("T")[0];
   const now = new Date().toTimeString().slice(0, 5);
 
+  let userContent = `当前日期: ${today}\n当前时间: ${now}\n用户输入: ${text}`;
+  
+  if (context?.members && context.members.length > 0) {
+    userContent += `\n\n家庭成员列表：\n${context.members.map(m => `- ID: ${m.id}, 名称: ${m.name}`).join('\n')}`;
+  }
+  
+  if (context?.categories && context.categories.length > 0) {
+    const parentCategories = context.categories.filter(c => c.parent_id === null);
+    const subCategories = context.categories.filter(c => c.parent_id !== null);
+    
+    userContent += `\n\n分类体系：`;
+    for (const parent of parentCategories) {
+      const children = subCategories.filter(c => c.parent_id === parent.id);
+      if (children.length > 0) {
+        userContent += `\n- ${parent.name}（ID: ${parent.id}）：${children.map(c => `${c.name}(ID: ${c.id})`).join('、')}`;
+      } else {
+        userContent += `\n- ${parent.name}（ID: ${parent.id}）`;
+      }
+    }
+  }
+
   const response = await client.chat.completions.create({
     model: config.scnetModel,
     messages: [
       { role: "system", content: RECOGNIZE_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: `当前日期: ${today}\n当前时间: ${now}\n用户输入: ${text}`,
-      },
+      { role: "user", content: userContent },
     ],
     temperature: 0.1,
     max_tokens: 1024,
   });
 
   const content = response.choices[0]?.message?.content || "{}";
+  console.log("AI识别响应:", content);
   const json = extractJSON(content);
+  console.log("提取的JSON:", json);
 
   try {
-    return JSON.parse(json) as RecognizeResult;
+    const result = JSON.parse(json) as RecognizeResult;
+    return {
+      amount: result.amount ?? null,
+      category: result.category ?? null,
+      subcategory: result.subcategory ?? null,
+      category_id: result.category_id ?? null,
+      date: result.date ?? null,
+      time: result.time ?? null,
+      members: result.members ?? [],
+      member_ids: result.member_ids ?? [],
+      description: result.description ?? text,
+      confidence: result.confidence ?? 0,
+      suggestions: result.suggestions ?? [],
+    };
   } catch (e) {
     console.error("JSON parse error:", e, "Content:", content);
     return {
       amount: null,
       category: null,
       subcategory: null,
+      category_id: null,
       date: null,
       time: null,
       members: [],
+      member_ids: [],
       description: text,
       confidence: 0,
+      suggestions: [],
     };
   }
 }
@@ -268,16 +329,21 @@ export async function analyzeExpense(
       },
     ],
     temperature: 0.2,
-    max_tokens: 2048,
+    max_tokens: 4096,
   });
 
   const content = response.choices[0]?.message?.content || "{}";
+  console.log("AI Response length:", content.length, "First 500 chars:", content.substring(0, 500));
   const json = extractJSON(content);
 
   try {
-    return JSON.parse(json) as AnalysisResult;
+    const result = JSON.parse(json) as AnalysisResult;
+    console.log("AI Analysis parsed successfully");
+    return result;
   } catch (e) {
-    console.error("JSON parse error:", e, "Content:", content);
+    console.error("JSON parse error:", e);
+    console.error("Extracted JSON (first 1000 chars):", json.substring(0, 1000));
+    console.error("Original content (first 1000 chars):", content.substring(0, 1000));
     return {
       analysis_date: timeRange.start,
       month: timeRange.start.substring(0, 7),

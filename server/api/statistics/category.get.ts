@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     return successResponse({ categories: [] })
   }
   
-  // 获取大类统计
+  // 获取大类统计（包含子分类汇总）
   const categories = await query<{
     category_id: number
     category_name: string
@@ -24,9 +24,12 @@ export default defineEventHandler(async (event) => {
       c.id as category_id,
       c.name as category_name,
       COALESCE(SUM(e.amount), 0) as total_amount,
-      COUNT(e.id) as count
+      COUNT(DISTINCT e.id) as count
      FROM categories c
-     LEFT JOIN expenses e ON c.id = e.category_id AND e.expense_date BETWEEN ? AND ?
+     LEFT JOIN expenses e ON (
+       e.category_id = c.id 
+       OR e.category_id IN (SELECT id FROM categories WHERE parent_id = c.id)
+     ) AND e.expense_date BETWEEN ? AND ?
      WHERE c.parent_id IS NULL
      GROUP BY c.id, c.name
      HAVING total_amount > 0

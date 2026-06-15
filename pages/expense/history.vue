@@ -2,11 +2,37 @@
   <div class="expense-history-page" :class="{ 'is-mobile': isMobile }">
     <div class="page-header">
       <h2>消费记录</h2>
-      <el-button type="primary" @click="goToCreate">
-        <el-icon><Plus /></el-icon>
-        <span v-if="!isMobile">新增记账</span>
-      </el-button>
+      <div class="header-actions">
+        <el-input
+          v-model="smartSearchQuery"
+          placeholder="智能搜索，如'上个月吃的火锅'"
+          clearable
+          style="width: 280px"
+          @keyup.enter="handleSmartSearch"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+        <el-button type="primary" :loading="smartSearchLoading" @click="handleSmartSearch">
+          搜索
+        </el-button>
+        <el-button type="primary" @click="goToCreate">
+          <el-icon><Plus /></el-icon>
+          <span v-if="!isMobile">新增记账</span>
+        </el-button>
+      </div>
     </div>
+    
+    <!-- 智能搜索结果提示 -->
+    <el-alert
+      v-if="smartSearchResult"
+      :title="smartSearchResult.answer"
+      type="success"
+      :closable="true"
+      @close="clearSmartSearch"
+      class="smart-search-alert"
+    />
 
     <!-- 筛选条件 -->
     <el-card class="filter-card">
@@ -331,7 +357,7 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Plus, Filter, ArrowDown } from "@element-plus/icons-vue";
+import { Plus, Filter, ArrowDown, Search } from "@element-plus/icons-vue";
 import type { Expense, StatisticsSummary } from "~/types";
 import { categoryTreeToCascaderData } from "~/utils/tree";
 import {
@@ -383,6 +409,11 @@ const filters = reactive({
   member_id: null as number | null,
   keyword: "",
 });
+
+// 智能搜索
+const smartSearchQuery = ref("");
+const smartSearchLoading = ref(false);
+const smartSearchResult = ref<any>(null);
 
 // 分页
 const pagination = reactive({
@@ -541,6 +572,67 @@ const deleteExpense = async (expense: Expense) => {
 const goToCreate = () => {
   router.push("/expense/create");
 };
+
+/** 智能搜索 */
+const handleSmartSearch = async () => {
+  if (!smartSearchQuery.value.trim()) {
+    ElMessage.warning("请输入搜索内容");
+    return;
+  }
+  
+  smartSearchLoading.value = true;
+  try {
+    const res = await api.post("/api/ai/search", {
+      query_text: smartSearchQuery.value,
+      limit: 100
+    });
+    
+    if (res.success && res.data) {
+      smartSearchResult.value = res.data;
+      
+      if (res.data.results && res.data.results.length > 0) {
+        expenseList.value = res.data.results.map((item: any) => ({
+          id: item.id,
+          amount: item.amount,
+          expense_date: item.date,
+          expense_time: null,
+          category_id: null,
+          category_name: item.category,
+          member_id: null,
+          member_name: item.member,
+          member_color: null,
+          description: item.description,
+          created_at: null,
+          updated_at: null,
+          created_by: null
+        }));
+        pagination.total = res.data.summary.total_count;
+        summary.value = {
+          total_amount: res.data.summary.total_amount,
+          total_count: res.data.summary.total_count,
+          avg_amount: res.data.summary.avg_amount,
+          max_amount: 0,
+          min_amount: 0,
+          category_summary: [],
+          member_summary: []
+        };
+      } else {
+        ElMessage.info("没有找到符合条件的记录");
+      }
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || "搜索失败");
+  } finally {
+    smartSearchLoading.value = false;
+  }
+};
+
+/** 清除智能搜索结果 */
+const clearSmartSearch = () => {
+  smartSearchResult.value = null;
+  smartSearchQuery.value = "";
+  fetchData();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -548,26 +640,42 @@ const goToCreate = () => {
   // 成员标签样式
   .member-tag {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
     color: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .smart-search-alert {
+    margin-bottom: $spacing-md;
+    border: 1px solid rgba($primary, 0.2);
+    box-shadow: 0 4px 12px rgba($primary, 0.05);
   }
 
   .filter-card {
-    margin-bottom: $spacing-md;
-    box-shadow: $shadow-md;
+    margin-bottom: $spacing-lg;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    box-shadow: $glass-shadow;
     transition: all $transition-base;
 
     &:hover {
-      box-shadow: $shadow-lg;
+      box-shadow: $glass-shadow-hover;
       transform: translateY(-2px);
+      border-color: rgba($primary, 0.2);
     }
 
     :deep(.el-card__body) {
       padding: $spacing-lg;
-      background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFC 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(248, 250, 252, 0.3) 100%);
     }
 
     .filter-form {
@@ -588,8 +696,8 @@ const goToCreate = () => {
       }
 
       :deep(.el-form-item__label) {
-        font-weight: 500;
-        color: $text-primary;
+        font-weight: 600;
+        color: $text-secondary;
         min-width: 70px;
         text-align: right;
         padding-right: $spacing-md;
@@ -611,12 +719,12 @@ const goToCreate = () => {
       :deep(.el-input__wrapper):hover,
       :deep(.el-select__wrapper):hover,
       :deep(.el-cascader__wrapper):hover {
-        border-color: $primary;
+        border-color: $primary-light;
       }
 
       :deep(.el-button) {
-        font-weight: 500;
-        min-height: 32px;
+        font-weight: 600;
+        min-height: 34px;
       }
 
       .filter-actions {
@@ -633,32 +741,37 @@ const goToCreate = () => {
   }
 
   .summary-card {
-    margin-bottom: $spacing-md;
-    box-shadow: $shadow-md;
+    margin-bottom: $spacing-lg;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    box-shadow: $glass-shadow;
     transition: all $transition-base;
 
     &:hover {
-      box-shadow: $shadow-lg;
+      box-shadow: $glass-shadow-hover;
       transform: translateY(-2px);
+      border-color: rgba($primary, 0.2);
     }
 
     :deep(.el-card__body) {
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.03) 0%, rgba(69, 183, 209, 0.03) 100%);
+      background: linear-gradient(135deg, rgba($primary, 0.04) 0%, rgba($secondary, 0.04) 100%);
     }
   }
 
   .list-card {
-    box-shadow: $shadow-md;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    box-shadow: $glass-shadow;
     transition: all $transition-base;
 
     &:hover {
-      box-shadow: $shadow-lg;
+      box-shadow: $glass-shadow-hover;
     }
 
     .pagination {
       display: flex;
       justify-content: flex-end;
-      margin-top: $spacing-md;
+      margin-top: $spacing-lg;
     }
   }
 }
@@ -666,9 +779,9 @@ const goToCreate = () => {
 .stat-item {
   text-align: center;
   padding: $spacing-lg $spacing-md;
-  background: $bg-white;
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border-radius: $border-radius-lg;
   transition: all $transition-base;
   position: relative;
   overflow: hidden;
@@ -679,7 +792,7 @@ const goToCreate = () => {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
     background: $gradient-primary;
     opacity: 0;
     transition: opacity $transition-base;
@@ -688,7 +801,8 @@ const goToCreate = () => {
   &:hover {
     transform: translateY(-4px);
     box-shadow: $shadow-lg;
-    border-color: rgba(78, 205, 196, 0.3);
+    border-color: rgba($primary, 0.3);
+    background: white;
 
     &::before {
       opacity: 1;
@@ -697,20 +811,21 @@ const goToCreate = () => {
 
   .label {
     display: block;
-    font-size: 12px;
-    color: $text-secondary;
+    font-size: 11px;
+    color: $text-muted;
     margin-bottom: $spacing-sm;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
 
   .value {
     display: block;
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 26px;
+    font-weight: 800;
     color: $text-primary;
     font-family: $font-mono;
+    letter-spacing: -0.5px;
 
     &.accent {
       background: $gradient-accent;
@@ -736,21 +851,21 @@ const goToCreate = () => {
 }
 
 .time {
-  font-size: 13px;
+  font-size: 12px;
   color: $text-secondary;
   font-family: $font-mono;
   font-weight: 500;
 }
 
 .datetime-small {
-  font-size: 12px;
+  font-size: 11px;
   color: $text-muted;
   font-family: $font-mono;
   font-weight: 500;
 }
 
 .text-placeholder {
-  color: $text-muted;
+  color: $text-light;
 }
 
 .text-muted {
@@ -760,12 +875,10 @@ const goToCreate = () => {
 
 .description {
   color: $text-primary;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-// ==================== 移动端样式 ====================
-
-// 桌面端响应式优化
+// ==================== 桌面端响应式优化 ====================
 @media (min-width: $breakpoint-lg) {
   .expense-history-page {
     .filter-card {
@@ -783,7 +896,6 @@ const goToCreate = () => {
 }
 
 // ==================== 移动端样式 ====================
-
 .is-mobile {
   .page-header {
     h2 {
@@ -796,7 +908,7 @@ const goToCreate = () => {
 
     :deep(.el-card__body) {
       padding: 0;
-      background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFC 100%);
+      background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
     }
   }
 
@@ -806,7 +918,7 @@ const goToCreate = () => {
     align-items: center;
     padding: $spacing-md $spacing-mobile-md;
     cursor: pointer;
-    background: rgba(78, 205, 196, 0.05);
+    background: rgba($primary, 0.05);
     border-bottom: 1px solid $border-color;
 
     .filter-title {
@@ -814,7 +926,7 @@ const goToCreate = () => {
       align-items: center;
       gap: $spacing-xs;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: $text-primary;
     }
 
@@ -859,7 +971,7 @@ const goToCreate = () => {
     }
 
     :deep(.el-button) {
-      font-weight: 500;
+      font-weight: 600;
       width: 100%;
     }
   }
@@ -876,15 +988,15 @@ const goToCreate = () => {
     }
 
     .label {
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .value {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
 
       &.accent {
-        font-size: 19px;
+        font-size: 20px;
         background: $gradient-accent;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -898,7 +1010,7 @@ const goToCreate = () => {
 
     :deep(.el-card__body) {
       padding: $spacing-sm $spacing-md;
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.03) 0%, rgba(69, 183, 209, 0.03) 100%);
+      background: linear-gradient(135deg, rgba($primary, 0.04) 0%, rgba($secondary, 0.04) 100%);
     }
   }
 
@@ -915,9 +1027,9 @@ const goToCreate = () => {
 }
 
 .mobile-expense-card {
-  background: $bg-white;
+  background: white;
   border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border-radius: $border-radius-lg;
   padding: $spacing-md $spacing-mobile-md;
   transition: all $transition-base;
   box-shadow: $shadow-card;
@@ -939,8 +1051,8 @@ const goToCreate = () => {
   }
 
   .card-amount {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     color: $accent;
     margin-bottom: $spacing-xs;
     font-family: $font-mono;
@@ -963,18 +1075,18 @@ const goToCreate = () => {
   }
 
   .card-date {
-    font-size: 14px;
+    font-size: 13px;
     color: $text-primary;
-    font-weight: 600;
+    font-weight: 700;
     font-family: $font-mono;
   }
 
   .card-time {
-    font-size: 13px;
+    font-size: 11px;
     color: $text-secondary;
     font-family: $font-mono;
     font-weight: 500;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   .card-desc {
@@ -983,7 +1095,7 @@ const goToCreate = () => {
     border-top: 1px solid $border-light;
     font-size: 13px;
     color: $text-primary;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;

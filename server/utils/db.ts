@@ -33,7 +33,12 @@ function normalizeParams(params?: any[]): any[] | undefined {
 export async function query<T = any>(sql: string, params?: any[]): Promise<T[]> {
   const pool = getPool()
   console.log('执行查询:', sql)
-  const [rows] = await pool.execute(sql, normalizeParams(params))
+  const normalizedParams = normalizeParams(params)
+  if (normalizedParams && normalizedParams.length > 0) {
+    const [rows] = await pool.query(sql, normalizedParams)
+    return rows as T[]
+  }
+  const [rows] = await pool.query(sql)
   return rows as T[]
 }
 

@@ -50,8 +50,8 @@ export default defineEventHandler(async (event) => {
     `SELECT
       e.expense_date as date,
       e.amount,
-      pc.name as category,
-      c.name as subcategory,
+      COALESCE(pc.name, c.name) as category,
+      CASE WHEN c.parent_id IS NOT NULL THEN c.name ELSE NULL END as subcategory,
       m.name as member
      FROM expenses e
      LEFT JOIN categories c ON e.category_id = c.id
@@ -62,6 +62,30 @@ export default defineEventHandler(async (event) => {
     [startDate, endDate]
   )
 
+  // 计算准确的统计数据
+  const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0)
+  const transactionCount = expenses.length
+  
+  // 按分类汇总
+  const categoryMap = new Map<string, { amount: number; count: number }>()
+  for (const e of expenses) {
+    const cat = e.category || '其他'
+    const existing = categoryMap.get(cat) || { amount: 0, count: 0 }
+    categoryMap.set(cat, {
+      amount: existing.amount + Number(e.amount),
+      count: existing.count + 1
+    })
+  }
+  
+  const categoryBreakdown = Array.from(categoryMap.entries())
+    .map(([category, data]) => ({
+      category,
+      amount: data.amount,
+      percentage: totalSpent > 0 ? Number((data.amount / totalSpent * 100).toFixed(2)) : 0,
+      transaction_count: data.count
+    }))
+    .sort((a, b) => b.amount - a.amount)
+
   // 调用AI分析
   const analysis = await analyzeExpense(
     expenses,
@@ -69,11 +93,13 @@ export default defineEventHandler(async (event) => {
     budget || { total: 0, categories: {} }
   )
   
-  // 确保预算值使用传入的值
+  // 使用后端计算的准确数据覆盖AI返回的数据
+  analysis.total_spent = totalSpent
+  analysis.category_breakdown = categoryBreakdown
   analysis.budget_total = budgetTotal
-  analysis.budget_remaining = budgetTotal - analysis.total_spent
+  analysis.budget_remaining = budgetTotal - totalSpent
   analysis.budget_usage_rate = budgetTotal > 0 
-    ? Number((analysis.total_spent / budgetTotal * 100).toFixed(2))
+    ? Number((totalSpent / budgetTotal * 100).toFixed(2))
     : 0
   
   return successResponse(analysis)
