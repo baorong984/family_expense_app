@@ -225,6 +225,20 @@
                   <el-descriptions-item label="日期">{{
                     msg.result.date || "-"
                   }}</el-descriptions-item>
+                  <el-descriptions-item label="成员">
+                    <template v-if="msg.result.members && msg.result.members.length > 0">
+                      <el-tag
+                        v-for="(memberName, idx) in msg.result.members"
+                        :key="idx"
+                        size="small"
+                        type="info"
+                        class="member-tag"
+                      >
+                        {{ memberName }}
+                      </el-tag>
+                    </template>
+                    <template v-else>-</template>
+                  </el-descriptions-item>
                   <el-descriptions-item label="置信度">
                     <el-progress
                       :percentage="(msg.result.confidence || 0) * 100"
@@ -951,6 +965,9 @@ const sendChatMessage = async () => {
             replyContent += ` → ${result.subcategory}`;
           }
         }
+        if (result.members && result.members.length > 0) {
+          replyContent += `\n**成员**: ${result.members.join("、")}`;
+        }
         if (result.date) {
           replyContent += `\n**日期**: ${result.date}`;
         }
@@ -961,7 +978,7 @@ const sendChatMessage = async () => {
       }
 
       // 直接设置 result，不做额外判断
-      const messageData = {
+      const messageData: ChatMessage = {
         role: "assistant",
         content: replyContent,
         result: result,
@@ -1204,7 +1221,10 @@ const fillFormFromResult = (result: RecognizeResult) => {
 
   expenseForm.description = result.description || "";
 
-  if (result.members && result.members.length > 0) {
+  // 优先使用 member_ids
+  if (result.member_ids && result.member_ids.length > 0) {
+    expenseForm.member_id = result.member_ids[0];
+  } else if (result.members && result.members.length > 0) {
     const memberName = result.members[0];
     const member = memberStore.members.find(
       (m) =>
@@ -1217,8 +1237,10 @@ const fillFormFromResult = (result: RecognizeResult) => {
     }
   }
 
-  // 匹配分类
-  if (result.subcategory) {
+  // 优先使用 category_id
+  if (result.category_id) {
+    expenseForm.category_id = result.category_id;
+  } else if (result.subcategory) {
     let category: Category | undefined;
 
     // 1. 精确匹配：子分类名 + 父分类名
@@ -1514,7 +1536,7 @@ const handleExcelImport = async (file: File) => {
 
 <style lang="scss" scoped>
 .expense-create-page {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -1529,75 +1551,122 @@ const handleExcelImport = async (file: File) => {
     height: 12px;
     border-radius: 50%;
     flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   }
 
   .member-name {
     font-size: 14px;
+    font-weight: 500;
   }
 }
 
 .input-mode-card {
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-lg;
+  background: $glass-bg;
+  border: 1px solid $glass-border;
+  box-shadow: $glass-shadow;
 
   :deep(.el-card__body) {
     display: flex;
     justify-content: center;
+    padding: $spacing-sm;
+  }
+
+  :deep(.el-radio-group) {
+    background: rgba($primary, 0.04);
+    border: 1px solid $border-color;
+    padding: 4px;
+    border-radius: 30px;
+    display: flex;
+    gap: 2px;
+    
+    .el-radio-button {
+      .el-radio-button__inner {
+        border: none !important;
+        background: transparent !important;
+        border-radius: 20px !important;
+        box-shadow: none !important;
+        color: $text-secondary;
+        font-weight: 600;
+        padding: 8px 18px;
+        transition: all $transition-base;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        height: auto;
+      }
+      
+      &.is-active, .el-radio-button__original-radio:checked + .el-radio-button__inner {
+        background: $gradient-primary !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba($primary, 0.25) !important;
+      }
+    }
   }
 }
 
 // 对话模式样式 - 左右布局
 .chat-layout {
   display: flex;
-  gap: $spacing-md;
-  margin-bottom: $spacing-md;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
   color: $text-primary;
+  align-items: flex-start;
 
   .chat-left-panel {
     flex: 1;
-    min-width: 400px;
+    min-width: 450px;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    box-shadow: $glass-shadow;
 
     .chat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0;
+      padding: 2px 0;
 
       span {
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 700;
         color: $text-primary;
       }
 
       .el-button {
-        padding: 8px 16px;
-        min-height: 32px;
-        line-height: 1.2;
-        font-size: 14px;
+        padding: 6px 14px;
+        height: 32px;
+        font-size: 13px;
       }
     }
   }
 
   .chat-right-panel {
-    width: 380px;
+    width: 400px;
     flex-shrink: 0;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    box-shadow: $glass-shadow;
 
     .edit-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 700;
     }
 
     .chat-edit-form {
       .result {
-        color: $success;
-        font-weight: 600;
+        color: $primary-dark;
+        font-weight: 700;
       }
     }
 
     .ai-recommend {
-      margin-bottom: $spacing-md;
-      padding: $spacing-sm;
-      background: $bg-input;
+      margin-bottom: $spacing-lg;
+      padding: $spacing-md;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid $border-color;
       border-radius: $border-radius;
 
       .label {
@@ -1605,6 +1674,7 @@ const handleExcelImport = async (file: File) => {
         margin-bottom: $spacing-sm;
         font-size: 12px;
         color: $text-secondary;
+        font-weight: 600;
       }
 
       .recommend-list {
@@ -1614,32 +1684,37 @@ const handleExcelImport = async (file: File) => {
       }
 
       .recommend-item {
-        padding: $spacing-xs $spacing-sm;
+        padding: 6px 12px;
         border: 2px solid $border-color;
-        border-radius: $border-radius;
+        border-radius: 20px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all $transition-base;
         display: flex;
         align-items: center;
         gap: $spacing-xs;
+        background: white;
 
         &:hover {
-          border-color: $primary;
+          border-color: $primary-light;
+          transform: translateY(-1px);
         }
 
         &.active {
           border-color: $primary;
-          background: rgba($primary, 0.1);
+          background: rgba($primary, 0.08);
+          box-shadow: 0 2px 8px rgba($primary, 0.1);
         }
 
         .name {
-          font-weight: 500;
+          font-weight: 600;
           color: $text-primary;
+          font-size: 13px;
         }
 
         .confidence {
-          font-size: 12px;
-          color: $text-secondary;
+          font-size: 11px;
+          color: $primary-dark;
+          font-weight: 700;
         }
       }
     }
@@ -1647,12 +1722,13 @@ const handleExcelImport = async (file: File) => {
 }
 
 .chat-history {
-  height: 400px;
+  height: 420px;
   overflow-y: auto;
-  padding: $spacing-md;
-  background: $bg-input;
+  padding: $spacing-lg;
+  background: rgba($bg-light, 0.5);
+  border: 1px solid $border-color;
   border-radius: $border-radius;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-lg;
   color: $text-primary;
 }
 
@@ -1664,11 +1740,13 @@ const handleExcelImport = async (file: File) => {
   h3 {
     margin: $spacing-md 0;
     color: $text-primary;
+    font-weight: 800;
   }
 
   p {
     color: $text-secondary;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
+    font-weight: 500;
   }
 
   .example-list {
@@ -1679,10 +1757,20 @@ const handleExcelImport = async (file: File) => {
 
     .example-tag {
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all $transition-base;
+      border-radius: 20px;
+      padding: 4px 12px;
+      height: auto;
+      border: 1px solid rgba($primary, 0.15);
+      background: rgba($primary, 0.04);
+      color: $primary-dark;
+      font-weight: 600;
 
       &:hover {
-        transform: scale(1.05);
+        transform: translateY(-2px) scale(1.02);
+        background: rgba($primary, 0.08);
+        border-color: $primary-light;
+        box-shadow: 0 4px 10px rgba($primary, 0.1);
       }
     }
   }
@@ -1694,18 +1782,27 @@ const handleExcelImport = async (file: File) => {
   margin-bottom: $spacing-lg;
 
   &.user {
+    flex-direction: row-reverse;
+    
     .message-content {
       background: $gradient-primary;
       color: white;
-      border-radius: $border-radius $border-radius 0 $border-radius;
+      border-radius: $border-radius-lg $border-radius-lg 0 $border-radius-lg;
+      box-shadow: 0 4px 12px rgba($primary, 0.15);
+      
+      .message-text {
+        font-weight: 500;
+      }
     }
   }
 
   &.assistant {
     .message-content {
       background: white;
-      border-radius: $border-radius $border-radius $border-radius 0;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-lg $border-radius-lg $border-radius-lg 0;
       color: $text-primary;
+      box-shadow: $shadow-sm;
 
       .message-text {
         color: $text-primary;
@@ -1713,28 +1810,38 @@ const handleExcelImport = async (file: File) => {
     }
 
     .ai-avatar {
-      background: $success;
+      background: $gradient-primary;
+      color: white;
+      box-shadow: 0 2px 8px rgba($primary, 0.2);
     }
   }
 
   &.thinking {
     .message-text {
-      color: $text-secondary;
+      color: $text-muted;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
 
       .el-icon {
         margin-right: $spacing-sm;
+        font-size: 16px;
       }
     }
   }
 }
 
+.message-avatar {
+  flex-shrink: 0;
+}
+
 .message-content {
   max-width: 80%;
   padding: $spacing-md;
-  box-shadow: $shadow-card;
 
   .message-text {
     line-height: 1.6;
+    font-size: 14px;
   }
 
   .message-result {
@@ -1743,33 +1850,45 @@ const handleExcelImport = async (file: File) => {
     border-top: 1px solid $border-color;
 
     :deep(.el-descriptions) {
-      .el-descriptions__label,
-      .el-descriptions__content {
-        color: $text-primary;
+      margin-bottom: $spacing-md;
+      
+      .el-descriptions__cell {
+        background: transparent !important;
       }
 
       .el-descriptions__label {
-        color: $text-secondary;
+        color: $text-secondary !important;
+        font-weight: 600;
+      }
+      
+      .el-descriptions__content {
+        color: $text-primary !important;
         font-weight: 500;
       }
     }
 
     .amount {
       color: $accent;
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: 800;
+      font-size: 18px;
+      font-family: $font-mono;
+    }
+
+    .member-tag {
+      margin-right: $spacing-xs;
+      margin-bottom: 2px;
     }
 
     .result-actions {
-      margin-top: $spacing-md;
       display: flex;
       gap: $spacing-sm;
+      margin-top: $spacing-md;
     }
   }
 }
 
 .chat-input-area {
-  color: $text-primary;
+  margin-top: $spacing-md;
 
   .chat-input-actions {
     display: flex;
@@ -1780,6 +1899,7 @@ const handleExcelImport = async (file: File) => {
     .tip {
       font-size: 12px;
       color: $text-muted;
+      font-weight: 500;
     }
   }
 }
@@ -1787,33 +1907,50 @@ const handleExcelImport = async (file: File) => {
 // 快捷记账样式
 .quick-input-card,
 .form-input-card {
-  margin-bottom: $spacing-md;
-  color: $text-primary;
+  margin-bottom: $spacing-lg;
+  background: $glass-bg;
+  border: 1px solid $glass-border;
+  box-shadow: $glass-shadow;
 
   .expression-input {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
 
     .currency {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 800;
       color: $text-primary;
     }
 
     .result {
-      color: $success;
-      font-weight: 600;
+      color: $primary-dark;
+      font-weight: 700;
+      font-size: 15px;
     }
   }
 
   .quick-amounts {
     display: flex;
     gap: $spacing-sm;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
     flex-wrap: wrap;
+
+    .el-button {
+      border-radius: 20px;
+      background: white;
+      font-weight: 600;
+      transition: all $transition-base;
+
+      &:hover {
+        border-color: $primary;
+        color: $primary;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba($primary, 0.1);
+      }
+    }
   }
 
   .description-input {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
   }
 
   .quick-categories {
@@ -1824,17 +1961,19 @@ const handleExcelImport = async (file: File) => {
       margin-bottom: $spacing-sm;
       font-size: 12px;
       color: $text-secondary;
+      font-weight: 600;
     }
 
     .category-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: $spacing-xs;
+      gap: $spacing-sm;
     }
 
     .empty-tip {
       color: $text-muted;
       font-size: 12px;
+      font-weight: 500;
     }
   }
 
@@ -1847,46 +1986,120 @@ const handleExcelImport = async (file: File) => {
 
 // 录入表单样式
 .expense-form {
-  color: $text-primary;
-
   .result {
-    color: $success;
-    font-weight: 600;
+    color: $primary-dark;
+    font-weight: 700;
+    font-size: 15px;
   }
 }
 
 // 语音和图片模式
+.voice-card, .image-card {
+  background: $glass-bg;
+  border: 1px solid $glass-border;
+  box-shadow: $glass-shadow;
+}
+
 .voice-area {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: $spacing-lg;
+  padding: $spacing-xl;
   color: $text-primary;
+
+  .el-button--large {
+    width: 80px;
+    height: 80px;
+    box-shadow: 0 4px 15px rgba($primary, 0.2);
+    font-size: 28px;
+    transition: all $transition-base;
+
+    &:hover {
+      transform: scale(1.05) translateY(-2px);
+    }
+    
+    &.el-button--danger {
+      box-shadow: 0 4px 15px rgba($danger, 0.3);
+      animation: pulseRecord 1.5s infinite;
+    }
+  }
 
   p {
     margin-top: $spacing-md;
     color: $text-secondary;
+    font-weight: 600;
+    font-size: 15px;
   }
 
   .transcript {
-    margin-top: $spacing-lg;
-    padding: $spacing-md;
-    background: $bg-input;
-    border-radius: $border-radius;
+    margin-top: $spacing-xl;
+    padding: $spacing-md $spacing-lg;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
     width: 100%;
     text-align: center;
     color: $text-primary;
+    box-shadow: $shadow-sm;
+
+    p:first-child {
+      font-size: 12px;
+      color: $text-muted;
+      margin: 0 0 6px 0;
+    }
+
+    p:nth-child(2) {
+      font-size: 16px;
+      color: $text-primary;
+      font-weight: 600;
+      margin: 0 0 $spacing-md 0;
+    }
+  }
+}
+
+@keyframes pulseRecord {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.image-card {
+  :deep(.el-upload-dragger) {
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px dashed $border-color;
+    border-radius: $border-radius-lg;
+    transition: all $transition-base;
+    
+    &:hover {
+      border-color: $primary;
+      background: rgba($primary, 0.02);
+    }
   }
 }
 
 .image-preview {
-  margin-top: $spacing-md;
+  margin-top: $spacing-lg;
   text-align: center;
+  padding: $spacing-md;
+  background: white;
+  border-radius: $border-radius-lg;
+  border: 1px solid $border-color;
+  box-shadow: $shadow-sm;
 
   img {
     max-width: 100%;
     max-height: 300px;
     border-radius: $border-radius;
+    box-shadow: $shadow-sm;
   }
 
   .el-button {
@@ -1901,7 +2114,7 @@ const handleExcelImport = async (file: File) => {
 @media (max-width: $breakpoint-sm) {
   .expense-create-page {
     max-width: 100%;
-    padding: 0 $spacing-mobile-sm;
+    padding: 0;
   }
 
   .page-header {
@@ -1930,6 +2143,9 @@ const handleExcelImport = async (file: File) => {
       flex-wrap: wrap;
       gap: $spacing-xs;
       width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0;
 
       .el-radio-button {
         flex: 1 0 calc(50% - #{$spacing-xs});

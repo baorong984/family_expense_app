@@ -1,70 +1,79 @@
 // ============================================
-// 🌿 FRESH & LIGHT THEME - 小清新风格
+// 🌿 PREMIUM FRESH & GLASS THEME
 // ============================================
 
-// 主色调 - 薄荷绿 / 天空蓝 / 淡粉
-$primary: #4ECDC4;        // 薄荷绿
-$primary-light: #7EE8E2;
-$primary-dark: #3AB8B0;
+// Brand Colors (Optimized for modern screen rendering)
+$primary: #10B981;        // Emerald Green (more premium than #4ECDC4)
+$primary-light: #34D399;
+$primary-dark: #059669;
 
-$secondary: #45B7D1;      // 天空蓝
-$secondary-light: #6DD5ED;
-$secondary-dark: #2E9AB8;
+$secondary: #0EA5E9;      // Deep Sky Blue (more vibrant than #45B7D1)
+$secondary-light: #38BDF8;
+$secondary-dark: #0284C7;
 
-$accent: #FF6B9D;         // 樱花粉
-$accent-light: #FF8FB3;
-$accent-dark: #E54A7D;
+$accent: #EC4899;         // Orchid Pink
+$accent-light: #F472B6;
+$accent-dark: #DB2777;
 
-$success: #95E6A3;        // 清新绿
-$warning: #FFD93D;        // 暖阳黄
-$danger: #FF6B6B;         // 珊瑚红
-$info: #74B9FF;           // 浅蓝
+$success: #10B981;        // Emerald Success
+$warning: #F59E0B;        // Amber Warning
+$danger: #EF4444;         // Rose Danger
+$info: #6366F1;           // Indigo Info
 
-// 浅色背景
+// Premium Backgrounds (Slightly translucent for glassmorphism)
 $bg-white: #FFFFFF;
-$bg-light: #F8FBFC;
-$bg-page: #F0F5F7;
-$bg-card: #FFFFFF;
-$bg-card-hover: #F8FBFC;
-$bg-input: #F5F9FA;
-$bg-input-focus: #EEF4F5;
+$bg-light: #F8FAFC;
+$bg-page: #F1F5F9;
+$bg-card: rgba(255, 255, 255, 0.8);
+$bg-card-hover: rgba(255, 255, 255, 0.95);
+$bg-input: rgba(248, 250, 252, 0.8);
+$bg-input-focus: #FFFFFF;
 
-// 文字颜色
-$text-primary: #2D3748;
-$text-secondary: #5A6B7A;
-$text-muted: #94A3B8;
-$text-light: #CBD5E1;
-$text-accent: #4ECDC4;
+// Glassmorphism System
+$glass-bg: rgba(255, 255, 255, 0.45);
+$glass-bg-hover: rgba(255, 255, 255, 0.6);
+$glass-border: rgba(255, 255, 255, 0.5);
+$glass-border-hover: rgba(255, 255, 255, 0.8);
+$glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
+$glass-shadow-hover: 0 12px 40px 0 rgba(16, 185, 129, 0.12);
+$glass-blur: blur(20px);
 
-// 边框
-$border-color: #E2EAF0;
-$border-color-hover: #D0DAE2;
-$border-light: #F0F5F7;
-$border-radius: 8px;
-$border-radius-lg: 12px;
-$border-radius-xl: 16px;
+// Text Color Hierarchy
+$text-primary: #0F172A;   // Slate 900
+$text-secondary: #475569; // Slate 600
+$text-muted: #64748B;     // Slate 500
+$text-light: #94A3B8;     // Slate 400
+$text-accent: #10B981;
 
-// 阴影
-$shadow-sm: 0 1px 3px rgba(45, 55, 72, 0.08);
-$shadow-md: 0 4px 12px rgba(45, 55, 72, 0.08);
-$shadow-lg: 0 8px 24px rgba(45, 55, 72, 0.1);
-$shadow-card: 0 2px 8px rgba(45, 55, 72, 0.06);
-$shadow-hover: 0 6px 20px rgba(78, 205, 196, 0.15);
+// Borders & Radius
+$border-color: rgba(226, 232, 240, 0.8); // Slate 200
+$border-color-hover: rgba(203, 213, 225, 0.9);
+$border-light: rgba(241, 245, 249, 0.6);
+$border-radius: 12px;     // More rounded for modern feel
+$border-radius-lg: 16px;
+$border-radius-xl: 24px;
 
-// 渐变
-$gradient-primary: linear-gradient(135deg, #4ECDC4 0%, #45B7D1 100%);
-$gradient-accent: linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%);
-$gradient-success: linear-gradient(135deg, #95E6A3 0%, #7EE8E2 100%);
-$gradient-header: linear-gradient(135deg, #4ECDC4 0%, #45B7D1 50%, #74B9FF 100%);
-$gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F8FBFC 100%);
+// Shadows (Modern soft shadow layers)
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+$shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+$shadow-hover: 0 20px 25px -5px rgba(16, 185, 129, 0.12), 0 8px 10px -6px rgba(16, 185, 129, 0.08);
 
-// 装饰渐变（用于背景）
+// Gradients (Super smooth 3-stop or refined 2-stop angles)
+$gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+$gradient-accent: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+$gradient-success: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+$gradient-header: linear-gradient(135deg, #10B981 0%, #0EA5E9 50%, #6366F1 100%);
+$gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+
+// Decorative Backgrounds
 $gradient-bg-light: 
-  radial-gradient(circle at 20% 50%, rgba(78, 205, 196, 0.05) 0%, transparent 50%),
-  radial-gradient(circle at 80% 80%, rgba(69, 183, 209, 0.05) 0%, transparent 50%),
-  radial-gradient(circle at 60% 20%, rgba(255, 107, 157, 0.03) 0%, transparent 50%);
+  radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 45%),
+  radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 45%),
+  radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
 
-// 间距
+// Spacing
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -72,43 +81,39 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
-// 布局 - 桌面端
-$sidebar-width: 240px;
-$sidebar-collapsed-width: 80px;
-$header-height: 64px;
+// Layout
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 88px;
+$header-height: 72px; // slightly taller for breathing room
 
-// 布局 - 移动端 (iPhone 14 Pro Max: 430px)
-$header-height-mobile: 56px;
-$bottom-nav-height: 60px;
+$header-height-mobile: 60px;
+$bottom-nav-height: 64px;
 $safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 
-// 字体
-$font-display: 'Nunito', 'PingFang SC', sans-serif;
-$font-body: 'Inter', 'PingFang SC', -apple-system, sans-serif;
-$font-mono: 'SF Mono', 'Consolas', monospace;
+// Typography (Fallback to modern system fonts)
+$font-display: 'Nunito', 'Outfit', 'PingFang SC', sans-serif;
+$font-body: 'Inter', 'Plus Jakarta Sans', 'PingFang SC', -apple-system, sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
 
-// 响应式断点
-// iPhone 14 Pro Max: 430px (移动端基准)
-// iPad Mini: 768px
-// iPad Pro: 1024px
-$breakpoint-xs: 430px;    // 移动端基准 (iPhone 14 Pro Max)
-$breakpoint-sm: 768px;    // 平板端
-$breakpoint-md: 1024px;   // 小桌面
-$breakpoint-lg: 1280px;   // 桌面
-$breakpoint-xl: 1536px;   // 大桌面
+// Breakpoints
+$breakpoint-xs: 430px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1536px;
 
-// 移动端专用间距
+// Mobile Spacings
 $spacing-mobile-xs: 8px;
 $spacing-mobile-sm: 12px;
 $spacing-mobile-md: 16px;
 $spacing-mobile-lg: 20px;
 
-// 动画
-$transition-fast: 0.15s ease;
-$transition-base: 0.25s ease;
-$transition-slow: 0.4s ease;
+// Transitions
+$transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-// Z-index层级
+// Z-index
 $z-dropdown: 1000;
 $z-sticky: 1020;
 $z-fixed: 1030;

@@ -180,13 +180,19 @@ const handleSelect = () => {
 <style lang="scss" scoped>
 .sidebar {
   width: $sidebar-width;
-  height: 100%;
-  background: $bg-white;
-  border-right: 1px solid $border-color;
-  transition: width $transition-base;
+  height: calc(100% - #{$spacing-xl});
+  background: $glass-bg;
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-lg;
+  box-shadow: $glass-shadow;
+  margin: $spacing-md 0 $spacing-md $spacing-md;
+  transition: width $transition-base, all $transition-base;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 10;
 
   &.collapsed {
     width: $sidebar-collapsed-width;
@@ -197,7 +203,7 @@ const handleSelect = () => {
 
     .sidebar-menu {
       :deep(.el-menu-item) {
-        margin: 4px 8px;
+        margin: 6px 8px;
         padding: 0 !important;
         justify-content: center;
       }
@@ -210,7 +216,12 @@ const handleSelect = () => {
 
   &.is-mobile {
     width: 100%;
-    border-right: none;
+    height: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: $bg-white;
   }
 }
 
@@ -218,9 +229,9 @@ const handleSelect = () => {
 .sidebar-logo {
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
-  background: linear-gradient(180deg, $bg-light 0%, $bg-white 100%);
+  background: linear-gradient(180deg, rgba($bg-light, 0.4) 0%, rgba($bg-white, 0) 100%);
   transition: padding $transition-base;
-  min-height: 65px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,13 +245,18 @@ const handleSelect = () => {
 
   .logo-icon {
     font-size: 24px;
+    animation: bounce 3s ease-in-out infinite;
   }
 
   .logo-name {
     font-family: $font-display;
-    font-size: 18px;
-    font-weight: 700;
-    color: $text-primary;
+    font-size: 19px;
+    font-weight: 800;
+    background: $gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -263,17 +279,23 @@ const handleSelect = () => {
   :deep(.el-sub-menu__title) {
     color: $text-secondary;
     border-radius: $border-radius;
-    margin: 4px 12px;
-    height: 44px;
+    margin: 6px 14px;
+    height: 46px;
     transition: all $transition-base;
+    font-weight: 500;
 
     .el-icon {
       font-size: 18px;
+      transition: transform $transition-base;
     }
 
     &:hover {
-      color: $primary;
-      background: rgba(78, 205, 196, 0.08);
+      color: $primary-dark;
+      background: rgba($primary, 0.08);
+      
+      .el-icon {
+        transform: scale(1.1);
+      }
     }
   }
 
@@ -284,25 +306,20 @@ const handleSelect = () => {
 
     .el-icon {
       color: white;
+      background: $gradient-primary;
+      box-shadow: 0 4px 14px rgba($primary, 0.25);
+      font-weight: 600;
+
+      .el-icon {
+        color: white;
+        transform: scale(1.1);
+      }
     }
   }
 
-  :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
-    color: $primary;
-  }
-
-  :deep(.el-sub-menu .el-menu-item) {
-    min-width: auto;
-    margin: 2px 12px 2px 24px;
-    height: 40px;
-    font-size: 14px;
-  }
-
-  // 移动端样式
-  .is-mobile & {
-    :deep(.el-menu-item),
-    :deep(.el-sub-menu__title) {
-      margin: 2px 16px;
+    // 移动端样式
+    .is-mobile & {
+      margin: 4px 16px;
       height: 48px;
     }
   }
@@ -340,10 +357,11 @@ const handleSelect = () => {
     padding: $spacing-md;
     background: linear-gradient(
       135deg,
-      rgba(78, 205, 196, 0.1) 0%,
-      rgba(69, 183, 209, 0.1) 100%
+      rgba($primary, 0.08) 0%,
+      rgba($secondary, 0.08) 100*1%
     );
     border-radius: $border-radius;
+    border: 1px solid rgba($primary, 0.1);
 
     .tip-icon {
       font-size: 16px;
@@ -352,7 +370,7 @@ const handleSelect = () => {
     .tip-text {
       font-size: 12px;
       color: $primary-dark;
-      font-weight: 500;
+      font-weight: 600;
     }
   }
 }

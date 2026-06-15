@@ -55,7 +55,13 @@
         <!-- 分类预算分配 -->
         <el-card class="category-card">
           <template #header>
-            <span class="card-title">分类预算分配</span>
+            <div class="card-header">
+              <span class="card-title">分类预算分配</span>
+              <el-button type="primary" size="small" :loading="loadingSuggest" @click="getBudgetSuggest">
+                <el-icon><MagicStick /></el-icon>
+                AI建议
+              </el-button>
+            </div>
           </template>
           <div class="category-list">
             <div
@@ -110,6 +116,7 @@
 
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
+import { MagicStick } from "@element-plus/icons-vue";
 import * as echarts from "echarts";
 import type { CategoryBudget, BudgetProgress } from "~/types";
 import { getCurrentMonth } from "~/utils/format";
@@ -149,14 +156,23 @@ const categoryProgress = ref<BudgetProgress[]>([]);
 /** 保存状态 */
 const saving = ref(false);
 
+/** AI建议加载状态 */
+const loadingSuggest = ref(false);
+
+/** AI预算建议 */
+const budgetSuggest = ref<any>(null);
+
 /** 图表引用 */
 const budgetChartRef = ref<HTMLElement>();
 let budgetChart: echarts.ECharts | null = null;
 
 /** 分类预算合计 */
 const totalCategoryBudget = computed(() => {
+  if (!budgetForm.category_budgets || budgetForm.category_budgets.length === 0) {
+    return 0;
+  }
   return budgetForm.category_budgets.reduce(
-    (sum, item) => sum + item.budget_amount,
+    (sum, item) => sum + (Number(item.budget_amount) || 0),
     0,
   );
 });
@@ -188,10 +204,14 @@ const initCategoryBudgets = () => {
 
 /** 获取指定分类的预算配置 */
 const getCategoryBudget = (categoryId: number) => {
-  const budget = budgetForm.category_budgets.find(
+  let budget = budgetForm.category_budgets.find(
     (b) => b.category_id === categoryId,
   );
-  return budget || { category_id: categoryId, category_name: "", budget_amount: 0 };
+  if (!budget) {
+    budget = { category_id: categoryId, category_name: "", budget_amount: 0 };
+    budgetForm.category_budgets.push(budget);
+  }
+  return budget;
 };
 
 /** 获取指定分类的执行进度百分比 */
@@ -339,6 +359,38 @@ const resetForm = () => {
   budgetForm.total_budget = 0;
   initCategoryBudgets();
 };
+
+/** 获取AI预算建议 */
+const getBudgetSuggest = async () => {
+  loadingSuggest.value = true;
+  try {
+    const res = await api.post("/api/ai/budget-suggest", { months: 3 });
+    if (res.success && res.data) {
+      budgetSuggest.value = res.data;
+      
+      if (res.data.total_budget > 0) {
+        budgetForm.total_budget = res.data.total_budget;
+      }
+      
+      if (res.data.category_budgets && res.data.category_budgets.length > 0) {
+        for (const suggest of res.data.category_budgets) {
+          const budget = budgetForm.category_budgets.find(
+            (b) => b.category_id === suggest.category_id
+          );
+          if (budget) {
+            budget.budget_amount = suggest.suggested_budget;
+          }
+        }
+      }
+      
+      ElMessage.success("已应用AI预算建议");
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || "获取AI建议失败");
+  } finally {
+    loadingSuggest.value = false;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -425,6 +477,12 @@ const resetForm = () => {
     padding: $spacing-md $spacing-lg;
     overflow-y: auto;
     max-height: calc(100vh - 420px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .card-title {
