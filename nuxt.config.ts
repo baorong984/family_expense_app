@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   
   modules: [
     '@pinia/nuxt',
+    '@vite-pwa/nuxt',
   ],
   
   plugins: [
@@ -64,6 +65,42 @@ export default defineNuxtConfig({
   
   pinia: {
     storesDirs: ['./stores/**'],
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: '家庭财务管家',
+      short_name: '记账本',
+      description: '家庭财务管家 - 智能家庭消费记账系统',
+      theme_color: '#00f0ff',
+      background_color: '#0a0e27',
+      icons: [
+        {
+          src: 'pwa-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any maskable',
+        },
+      ],
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
   },
 
   // 开发服务器配置
