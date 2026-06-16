@@ -601,7 +601,7 @@ import {
   PieChart,
   Clock,
 } from "@element-plus/icons-vue";
-import echarts from "~/utils/echarts";
+import type { ECharts } from "echarts/core";
 import type { AnalysisResult, TrendData, AIAnalysisRecord } from "~/types";
 import {
   getMonthRange,
@@ -640,9 +640,10 @@ const trendChartRef = ref<HTMLElement>();
 const categoryChartRef = ref<HTMLElement>();
 const memberChartRef = ref<HTMLElement>();
 
-let trendChart: echarts.ECharts | null = null;
-let categoryChart: echarts.ECharts | null = null;
-let memberChart: echarts.ECharts | null = null;
+let echartsLib: any = null;
+let trendChart: ECharts | null = null;
+let categoryChart: ECharts | null = null;
+let memberChart: ECharts | null = null;
 
 const analyzing = ref(false);
 const analysis = ref<AnalysisResult | null>(null);
@@ -691,19 +692,22 @@ onMounted(async () => {
   currentYear.value = year;
   currentMonth.value = month;
 
-  initCharts();
+  await initCharts();
   await fetchData();
 });
 
-const initCharts = () => {
-  if (trendChartRef.value) {
-    trendChart = echarts.init(trendChartRef.value);
+const initCharts = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
   }
-  if (categoryChartRef.value) {
-    categoryChart = echarts.init(categoryChartRef.value);
+  if (trendChartRef.value && !trendChart) {
+    trendChart = echartsLib.init(trendChartRef.value);
   }
-  if (memberChartRef.value) {
-    memberChart = echarts.init(memberChartRef.value);
+  if (categoryChartRef.value && !categoryChart) {
+    categoryChart = echartsLib.init(categoryChartRef.value);
+  }
+  if (memberChartRef.value && !memberChart) {
+    memberChart = echartsLib.init(memberChartRef.value);
   }
 
   window.addEventListener("resize", () => {

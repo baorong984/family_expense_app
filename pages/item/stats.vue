@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
-import echarts from "~/utils/echarts";
+import type { ECharts } from "echarts/core";
 
 definePageMeta({
   layout: "default",
@@ -155,8 +155,9 @@ const trendData = ref<any[]>([]);
 
 const categoryChartRef = ref<HTMLElement>();
 const trendChartRef = ref<HTMLElement>();
-let categoryChart: echarts.ECharts | null = null;
-let trendChart: echarts.ECharts | null = null;
+let echartsLib: any = null;
+let categoryChart: ECharts | null = null;
+let trendChart: ECharts | null = null;
 
 /**
  * 格式化金额
@@ -248,11 +249,14 @@ const fetchTrendData = async () => {
 /**
  * 渲染分类图表
  */
-const renderCategoryChart = () => {
+const renderCategoryChart = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
+  }
   if (!categoryChartRef.value) return;
 
   if (!categoryChart) {
-    categoryChart = echarts.init(categoryChartRef.value);
+    categoryChart = echartsLib.init(categoryChartRef.value);
   }
 
   const option = {
@@ -306,11 +310,14 @@ const renderCategoryChart = () => {
 /**
  * 渲染趋势图表
  */
-const renderTrendChart = () => {
+const renderTrendChart = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
+  }
   if (!trendChartRef.value) return;
 
   if (!trendChart) {
-    trendChart = echarts.init(trendChartRef.value);
+    trendChart = echartsLib.init(trendChartRef.value);
   }
 
   const option = {
@@ -334,7 +341,7 @@ const renderTrendChart = () => {
         smooth: true,
         data: trendData.value.map((item) => item.avg_cpd),
         areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new echartsLib.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: "rgba(64, 158, 255, 0.5)" },
             { offset: 1, color: "rgba(64, 158, 255, 0.1)" },
           ]),

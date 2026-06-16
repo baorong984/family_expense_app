@@ -7,14 +7,47 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
+    '@element-plus/nuxt',
+    'nuxt-security'
   ],
+  
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: false,
+      xFrameOptions: 'SAMEORIGIN',
+    },
+    rateLimiter: {
+      tokensPerInterval: 150,
+      interval: 'hour',
+      fireAndForget: true,
+    }
+  },
+  
+  routeRules: {
+    '/api/auth/login': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 5,
+          interval: 'minute'
+        }
+      }
+    },
+    '/api/ai/**': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 15,
+          interval: 'minute'
+        }
+      }
+    }
+  },
   
   plugins: [
     '@/plugins/element-plus',
   ],
   
   css: [
-    'element-plus/dist/index.css',
     '@/assets/styles/global.scss',
   ],
   

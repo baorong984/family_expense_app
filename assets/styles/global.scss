@@ -2,6 +2,67 @@
 // 🌿 PREMIUM FRESH & GLASS GLOBAL STYLES
 // ============================================
 
+:root {
+  /* 科技风格亮色主色调 */
+  --el-color-primary: #00a8cc;
+  --el-color-primary-light-3: #4dc2db;
+  --el-color-primary-dark-2: #0086a3;
+  --el-color-success: #10b981;
+  --el-color-warning: #f59e0b;
+  --el-color-danger: #ef4444;
+  --el-color-info: #3b82f6;
+  
+  --el-border-radius-base: 12px;
+  --el-border-radius-small: 8px;
+  --el-border-radius-round: 20px;
+  
+  --el-transition-duration: 0.3s;
+}
+
+/* 科技风格暗色主题 */
+html.dark {
+  --el-color-primary: #00f0ff;
+  --el-color-primary-light-3: #00d4ff;
+  --el-color-primary-light-5: #00a8cc;
+  --el-color-primary-light-7: #007c99;
+  --el-color-primary-light-9: #005066;
+  --el-color-primary-dark-2: #00e6f5;
+  
+  --el-color-success: #39ff14;
+  --el-color-warning: #ff006e;
+  --el-color-danger: #ff2a6d;
+  --el-color-info: #00d4ff;
+  
+  --el-text-color-primary: #ffffff;
+  --el-text-color-regular: #a0aec0;
+  --el-text-color-secondary: #718096;
+  --el-text-color-placeholder: #4a5568;
+  
+  --el-border-color: rgba(0, 240, 255, 0.2);
+  --el-border-color-light: rgba(0, 240, 255, 0.15);
+  --el-border-color-lighter: rgba(0, 240, 255, 0.1);
+  --el-border-color-extra-light: rgba(0, 240, 255, 0.05);
+  --el-border-color-dark: rgba(0, 240, 255, 0.3);
+  
+  --el-fill-color: rgba(0, 240, 255, 0.05);
+  --el-fill-color-light: rgba(0, 240, 255, 0.03);
+  --el-fill-color-blank: transparent;
+  
+  --el-bg-color: rgba(21, 25, 50, 0.7);
+  --el-bg-color-page: #0a0e27;
+  
+  --el-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --el-box-shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
+  
+  /* 深色下背景微调 */
+  body {
+    background: #0a0e27;
+    &::before {
+      background: linear-gradient(135deg, rgba(0,240,255,0.05) 0%, rgba(21,25,50,0.8) 100%);
+    }
+  }
+}
+
 // 字体引入
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
@@ -351,8 +412,26 @@ body {
     padding: 0;
     height: auto;
     
+    &.el-button--primary {
+      color: $primary;
+      &:hover { color: $primary-dark; }
+    }
+    &.el-button--success {
+      color: $success;
+      &:hover { color: darken($success, 10%); }
+    }
+    &.el-button--danger {
+      color: $danger;
+      &:hover { color: darken($danger, 10%); }
+    }
+    &.el-button--warning {
+      color: $warning;
+      &:hover { color: darken($warning, 10%); }
+    }
+
     &:hover {
       transform: none;
+      background: transparent;
     }
   }
 }
