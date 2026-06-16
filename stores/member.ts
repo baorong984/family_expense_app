@@ -4,12 +4,14 @@ import type { Member } from '~/types'
 interface MemberState {
   members: Member[]
   loading: boolean
+  lastFetchTime: number | null
 }
 
 export const useMemberStore = defineStore('member', {
   state: (): MemberState => ({
     members: [],
     loading: false,
+    lastFetchTime: null,
   }),
 
   getters: {
@@ -33,13 +35,17 @@ export const useMemberStore = defineStore('member', {
   },
 
   actions: {
-    async fetchMembers() {
+    async fetchMembers(force = false) {
+      if (!force && this.lastFetchTime && Date.now() - this.lastFetchTime < 5 * 60 * 1000) {
+        return; // Cache valid for 5 minutes
+      }
       this.loading = true
       try {
         const api = useApi()
         const res = await api.get('/api/member')
         if (res.success) {
           this.members = res.data.members
+          this.lastFetchTime = Date.now()
         }
       } finally {
         this.loading = false

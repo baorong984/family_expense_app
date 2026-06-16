@@ -197,6 +197,10 @@ export interface StatisticsSummary {
   avg_amount: number;
   max_amount: number;
   min_amount: number;
+  trend_data?: Array<{
+    date: string;
+    amount: number;
+  }>;
   category_summary: Array<{
     category_id: number;
     category_name: string;
