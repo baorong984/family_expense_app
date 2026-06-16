@@ -1,151 +1,180 @@
-# 💰 家庭财务管家 (Family Expense App)
+# 家庭财务管家 (Family Expense Manager)
 
-[![Vue](https://img.shields.io/badge/Vue.js-3.4-4FC08D?logo=vuedotjs)](https://vuejs.org/)
-[![Nuxt](https://img.shields.io/badge/Nuxt.js-3.10-00DC82?logo=nuxtdotjs)](https://nuxt.com/)
-[![Element Plus](https://img.shields.io/badge/Element%20Plus-2.5-409EFF?logo=element)](https://element-plus.org/)
-[![Capacitor](https://img.shields.io/badge/Capacitor-8.4-119EFF?logo=capacitor)](https://capacitorjs.com/)
-[![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa)](https://web.dev/progressive-web-apps/)
+AI 智能记账 · 轻松管理家庭财务
 
-一个现代化的家庭消费记账 Web/App 应用。支持多用户共享账本，通过 AI 技术（智能识别、OCR）极大增强用户体验，实现消费明细录入、分类汇总、数据分析、预算管理、人情往来、车辆管理等核心功能。
+## 功能特性
 
----
+- **智能记账**：支持 AI 自动识别消费类型和金额
+- **预算管理**：设置月度预算，实时追踪支出
+- **人情往来**：记录和管理家庭社交支出
+- **车辆管理**：记录加油、保养等车辆相关费用
+- **统计分析**：多维度数据可视化报表
+- **成员管理**：家庭成员独立记账，专属颜色标识
+- **分类管理**：自定义收支类别
+- **多端支持**：Web 浏览器 + Android App
 
-## ✨ 核心特性
+## 技术栈
 
-- **🤖 智能记账 (AI-Powered)** 
-  - 支持文字、语音、图片（内置 OCR）多模态输入，AI 自动识别消费金额与信息。
-  - AI 根据消费描述自动推荐最佳分类，实现“零思考”记账。
-- **📊 深度数据洞察** 
-  - AI 分析消费趋势，提供节省建议和异常开销检测。
-  - ECharts 渲染的精美可视化图表（趋势图、分布饼图等）。
-- **🎯 预算管理** 
-  - 设定每月总预算与各子分类预算，实时监控超支情况（配合进度条预警）。
-- **🤝 人情与车辆管理** 
-  - **人情往来**：管理出礼收礼记录，自动关联消费账目，精准统计“人情债”。
-  - **车辆管理**：管理家庭车辆，记录加油、充电、保养，自动同步为“交通”消费记录。
-- **📱 全平台支持 (Cross-Platform)** 
-  - **Web 端**：响应式设计，完美适配桌面与平板。
-  - **移动端**：支持 PWA（Progressive Web App）安装至桌面。
-  - **原生 App**：基于 Capacitor 封装，支持直接编译为 Android / iOS 原生应用。
+| 层级 | 技术 |
+|------|------|
+| 前端框架 | Vue 3 + Nuxt 3 |
+| UI 组件 | Element Plus |
+| 状态管理 | Pinia |
+| 样式 | SCSS (Sass) |
+| 移动端 | Capacitor 6 (Android) |
+| 后端 | Nitro (Nuxt 内置) |
+| 数据库 | MySQL 8.0 |
+| 认证 | JWT |
+| AI | SCNet API (MiniMax-M2.5) |
 
----
+## 项目结构
 
-## 🏗️ 系统架构与技术栈
-
-| 层级 | 技术选型 | 说明 |
-| --- | --- | --- |
-| **前端框架** | Vue 3 + Nuxt 3 | 支持现代组合式 API 开发与极速构建 |
-| **UI 组件** | Element Plus | 企业级桌面/移动端 UI 库 |
-| **状态管理** | Pinia | 状态管理（结合 persistedstate 实现持久化） |
-| **跨端与 PWA** | Capacitor + Vite PWA | 支持安装为本地 Web 应用及打包 Android/iOS |
-| **可视化与识别** | ECharts + Tesseract.js | 消费数据图表分析与图片 OCR 识别 |
-| **后端 API** | Nuxt Server Routes (Nitro) | 内置的轻量级后端服务 |
-| **数据库** | MySQL 8.0+ | 关系型数据库存储（使用 mysql2 驱动） |
-| **AI 引擎** | OpenAI API / SCNet | 兼容 GPT 标准接口的大模型接入 |
-
----
-
-## 🚀 快速开始
-
-### 1. 环境准备
-
-- Node.js >= 18.x
-- MySQL >= 8.0
-- pnpm >= 8.x (强烈推荐)
-- *(可选)* Android Studio / Xcode (用于原生 App 打包)
-
-### 2. 安装与配置
-
-```bash
-# 克隆项目
-git clone <repository-url>
-cd family_expense_app
-
-# 安装依赖
-pnpm install
-
-# 配置环境变量
-cp .env.example .env.development
+```
+family_expense_app/
+├── assets/              # 静态资源
+│   └── styles/          # 全局样式（SCSS）
+├── components/          # Vue 组件
+├── composables/         # 组合式函数（useApi 等）
+├── database/            # 数据库脚本与文档
+├── pages/               # 页面路由
+├── server/              # 后端服务
+│   ├── api/             # API 路由
+│   ├── middleware/      # 中间件（CORS 等）
+│   └── utils/           # 工具函数
+├── stores/              # Pinia 状态管理
+├── android/             # Android 原生项目（Capacitor 生成）
+├── capacitor.config.ts  # Capacitor 配置
+├── nuxt.config.ts       # Nuxt 配置
+└── .env.*               # 环境变量配置
 ```
 
-编辑 `.env.development`：
+## 快速开始
+
+### 环境要求
+
+- Node.js >= 18
+- MySQL >= 8.0
+- Java 17+（构建 Android APK 需要）
+
+### 本地开发
+
+```bash
+# 安装依赖
+npm install
+
+# 配置环境变量（复制并修改）
+cp .env.development.example .env.development
+
+# 启动开发服务器
+npm run dev
+```
+
+访问 `http://localhost:3000`，默认账号：**admin / admin123**
+
+### 构建 Web 生产版本
+
+```bash
+# 构建服务端（用于部署到服务器，同时支持 Web 和 App）
+npm run build:prod
+
+# 或生成静态文件（仅用于 SSG 模式）
+npm run generate:prod
+```
+
+### 构建 Android App
+
+```bash
+# 1. 生成静态文件
+npm run generate:prod
+
+# 2. 同步到 Android 项目
+npx cap sync android
+
+# 3. 构建 Debug APK
+cd android && ./gradlew assembleDebug
+
+# APK 输出路径：android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+> **生产模式说明**：当前使用 Capacitor Server 模式，App 直接从远程服务器加载页面。APK 本身作为 WebView 容器，无需包含完整前端代码。
+
+## 生产环境部署
+
+### 服务器要求
+
+- 云服务器（如阿里云 ECS Ubuntu 22.04）
+- 开放安全组端口：TCP 3000
+- 已安装 Node.js 18+ 和 MySQL 8.0+
+
+### 部署步骤
+
+```bash
+# 1. 上传项目代码到服务器
+scp -r ./project user@139.196.175.70:/opt/family-expense-app/
+
+# 2. SSH 登录服务器
+ssh root@139.196.175.70
+
+# 3. 安装依赖并构建
+cd /opt/family-expense-app
+npm install --production
+npm run build:prod
+
+# 4. 初始化数据库（首次部署）
+mysql -u root -p < database/init.sql
+
+# 5. 使用 PM2 启动服务
+npm install -g pm2
+pm2 start .output/server/index.mjs --name family-expense --env production
+pm2 save
+pm2 startup
+```
+
+### 环境变量配置
+
+生产环境配置文件 `.env.production`：
+
 ```env
 # 数据库配置
 DB_HOST=localhost
 DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
 DB_NAME=family_expense
+DB_USER=your_prod_user
+DB_PASSWORD=your_password
 
-# 认证与AI配置
-JWT_SECRET=your_jwt_secret
-SCNET_API_KEY=your_api_key
+# API 地址（App 和 Web 共用）
+NUXT_PUBLIC_API_BASE_URL=http://139.196.175.70:3000
+
+# JWT 密钥（生产环境请修改！）
+JWT_SECRET=your-production-jwt-secret-key
 ```
 
-### 3. 初始化数据库
+## 常见问题
 
-请依次将 SQL 导入 MySQL：
+### Q: App 登录提示 "Failed to fetch" / "网络连接失败"
 
+**原因及解决方案**：
+1. 确认服务器 `http://139.196.175.70:3000` 可从手机浏览器访问
+2. 确认云服务器安全组已开放 3000 端口
+3. 确认 PM2 服务正在运行：`pm2 status`
+4. 当前使用 Server 模式，确保 `capacitor.config.ts` 中 `server.url` 配置正确
+
+### Q: Sass 构建警告
+
+项目已将 `darken()` 迁移至 `color.adjust()`，如仍有旧代码请检查 `assets/styles/global.scss`。
+
+### Q: Android 构建失败 Namespace 错误
+
+卸载废弃的 `@capacitor/http` 插件：
 ```bash
-mysql -u root -p < database/init.sql
-mysql -u root -p family_expense < database/add_vehicle_tables.sql
-mysql -u root -p family_expense < database/add_gifting_tables.sql
-mysql -u root -p family_expense < database/add_fuel_expense_link.sql
-```
-
-### 4. 运行与打包
-
-```bash
-# 启动开发服务器 (http://localhost:3000)
-pnpm dev
-
-# 构建生产环境 Web 静态资源
-pnpm build
-pnpm preview
-
-# 同步构建移动端原生应用 (需要全局安装 Capacitor)
+npm uninstall @capacitor/http
 npx cap sync android
-npx cap open android
 ```
 
-> **默认管理员账号**：  
-> 用户名：`admin` | 密码：`admin123`
+## 更新日志
 
----
+详见 [log.md](./log.md)
 
-## 💡 特色功能：自动化联动逻辑
+## 数据库变更
 
-为了减少重复录入，系统在底层实现了智能联动：
-
-1. **加油充电自动记账**：创建车辆“加油/充电”记录时，系统会自动在主账本创建一笔分类为“交通”的消费记录。修改或删除时同步生效。
-2. **人情往来自动记账**：在日常记账时，若选择“出礼”分类，系统将在“人情往来”模块自动生成对应的人情记录，且两者双向绑定，同步更新。
-
-| 触发操作 | 是否自动创建【消费记录】 | 是否自动创建【人情记录】 |
-| --- | :---: | :---: |
-| 录入**消费记录** (当分类为"出礼") | - | ✅ 是 |
-| 录入**人情记录** (收/出礼) | ❌ 否 | - |
-| 录入**加油/充电记录** | ✅ 是 | ❌ 否 |
-
----
-
-## 📁 核心目录结构
-
-```text
-family_expense_app/
-├── pages/              # Nuxt 路由页面 (预算/分类/人情/统计等)
-├── components/         # 页面公共组件与业务组件
-├── composables/        # 组合式函数 (useApi, useAI 等)
-├── stores/             # Pinia 状态管理
-├── server/             # Nuxt 服务端 API (后端逻辑)
-│   ├── api/            # RESTful API 路由
-│   └── utils/          # 数据库连接、Auth 等工具函数
-├── database/           # 数据库初始化 SQL 脚本
-├── android/            # Capacitor Android 原生工程目录
-└── nuxt.config.ts      # Nuxt 与相关模块配置文件
-```
-
----
-
-## 📄 许可证
-
-本项目基于 [MIT License](./LICENSE) 开源。
+详见 [database/README.md](./database/README.md)
