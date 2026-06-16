@@ -284,8 +284,8 @@ onMounted(async () => {
 
       .stat-item {
         text-align: center;
-        padding: 15px;
-        background: #f5f7fa;
+        padding: $spacing-lg $spacing-md;
+        background: var(--bg-card);
         border-radius: 8px;
 
         .stat-value {

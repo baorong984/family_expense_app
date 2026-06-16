@@ -388,7 +388,8 @@ onMounted(() => {
   .overview-card {
     .stat-item {
       text-align: center;
-      padding: 20px 0;
+      padding: $spacing-lg $spacing-md;
+      background: var(--bg-card);
 
       .stat-value {
         font-size: 28px;

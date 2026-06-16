@@ -9,18 +9,6 @@ export default defineEventHandler(async (event) => {
   const startDateInput = queryParams.start_date as string
   const endDateInput = queryParams.end_date as string
 
-  if (!startDateInput || !endDateInput) {
-    return successResponse({
-      total_amount: 0,
-      total_count: 0,
-      avg_amount: 0,
-      max_amount: 0,
-      min_amount: 0,
-      category_summary: [],
-      member_summary: [],
-    })
-  }
-
   // 将ISO格式日期转换为YYYY-MM-DD格式
   const formatSQLDate = (isoDate: string) => {
     const dateObj = new Date(isoDate)
@@ -30,8 +18,18 @@ export default defineEventHandler(async (event) => {
     return `${year}-${month}-${day}`
   }
 
-  const startDate = formatSQLDate(startDateInput)
-  const endDate = formatSQLDate(endDateInput)
+  const startDate = startDateInput ? formatSQLDate(startDateInput) : null
+  const endDate = endDateInput ? formatSQLDate(endDateInput) : null
+  
+  let whereClause = ''
+  let joinWhereClause = ''
+  const params: any[] = []
+  
+  if (startDate && endDate) {
+    whereClause = 'WHERE expense_date BETWEEN ? AND ?'
+    joinWhereClause = 'AND e.expense_date BETWEEN ? AND ?'
+    params.push(startDate, endDate)
+  }
   
   // 基本统计
   const basicStats = await queryOne<{
@@ -48,8 +46,8 @@ export default defineEventHandler(async (event) => {
       COALESCE(MAX(amount), 0) as max_amount,
       COALESCE(MIN(amount), 0) as min_amount
      FROM expenses
-     WHERE expense_date BETWEEN ? AND ?`,
-    [startDate, endDate]
+     ${whereClause}`,
+    params
   )
   
   // 分类汇总
@@ -65,12 +63,12 @@ export default defineEventHandler(async (event) => {
       COALESCE(SUM(e.amount), 0) as amount,
       COUNT(e.id) as count
      FROM categories c
-     LEFT JOIN expenses e ON c.id = e.category_id AND e.expense_date BETWEEN ? AND ?
+     LEFT JOIN expenses e ON c.id = e.category_id ${joinWhereClause}
      WHERE c.parent_id IS NULL
      GROUP BY c.id, c.name
      HAVING amount > 0
      ORDER BY amount DESC`,
-    [startDate, endDate]
+    params
   )
   
   // 计算百分比
@@ -95,11 +93,11 @@ export default defineEventHandler(async (event) => {
       COALESCE(SUM(e.amount), 0) as amount,
       COUNT(e.id) as count
      FROM members m
-     LEFT JOIN expenses e ON m.id = e.member_id AND e.expense_date BETWEEN ? AND ?
+     LEFT JOIN expenses e ON m.id = e.member_id ${joinWhereClause}
      GROUP BY m.id, m.name, m.color
      HAVING amount > 0
      ORDER BY amount DESC`,
-    [startDate, endDate]
+    params
   )
   
   const memberWithPercentage = memberSummary.map(item => ({

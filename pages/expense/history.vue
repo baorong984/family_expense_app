@@ -507,17 +507,15 @@ const fetchData = async () => {
       pagination.total = listRes.data.total;
     }
 
-    if (filters.start_date && filters.end_date) {
-      const summaryRes = await api.get("/api/statistics/summary", {
-        params: {
-          start_date: filters.start_date,
-          end_date: filters.end_date,
-        },
-      });
+    const summaryRes = await api.get("/api/statistics/summary", {
+      params: {
+        start_date: filters.start_date,
+        end_date: filters.end_date,
+      },
+    });
 
-      if (summaryRes.success) {
-        summary.value = summaryRes.data;
-      }
+    if (summaryRes.success) {
+      summary.value = summaryRes.data;
     }
   } finally {
     loading.value = false;
@@ -776,10 +774,10 @@ const clearSmartSearch = () => {
   }
 }
 
-.stat-item {
-  text-align: center;
-  padding: $spacing-lg $spacing-md;
-  background: rgba(255, 255, 255, 0.6);
+  .stat-item {
+    text-align: center;
+    padding: $spacing-lg $spacing-md;
+    background: var(--bg-card);
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   transition: all $transition-base;

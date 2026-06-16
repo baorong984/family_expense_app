@@ -413,8 +413,7 @@ const updateChart = () => {
 .stat-item {
   text-align: center;
   padding: $spacing-lg $spacing-md;
-  background: $bg-white;
-  border: 1px solid $border-color;
+  background: var(--bg-card);border: 1px solid $border-color;
   border-radius: $border-radius;
   transition: all $transition-base;
   position: relative;
