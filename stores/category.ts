@@ -6,6 +6,7 @@ interface CategoryState {
   categories: Category[]
   tree: Category[]
   loading: boolean
+  lastFetchTime: number | null
 }
 
 export const useCategoryStore = defineStore('category', {
@@ -13,6 +14,7 @@ export const useCategoryStore = defineStore('category', {
     categories: [],
     tree: [],
     loading: false,
+    lastFetchTime: null,
   }),
 
   getters: {
@@ -47,7 +49,10 @@ export const useCategoryStore = defineStore('category', {
   },
 
   actions: {
-    async fetchCategories() {
+    async fetchCategories(force = false) {
+      if (!force && this.lastFetchTime && Date.now() - this.lastFetchTime < 5 * 60 * 1000) {
+        return; // Cache valid for 5 minutes
+      }
       this.loading = true
       try {
         const api = useApi()
@@ -72,6 +77,7 @@ export const useCategoryStore = defineStore('category', {
           }
           this.categories = flattenCategories(res.data.categories)
           console.log('分类扁平数据:', this.categories);
+          this.lastFetchTime = Date.now()
         } else {
           console.error('获取分类失败:', res.message);
           throw new Error(res.message);

@@ -105,9 +105,25 @@ export default defineEventHandler(async (event) => {
     percentage: totalAmount > 0 ? (item.amount / totalAmount * 100) : 0,
   }))
   
+  // 每日趋势汇总
+  const trendSummary = await query<{
+    date: string
+    amount: number
+  }>(
+    `SELECT
+      DATE_FORMAT(e.expense_date, '%Y-%m-%d') as date,
+      COALESCE(SUM(e.amount), 0) as amount
+     FROM expenses e
+     ${whereClause}
+     GROUP BY DATE_FORMAT(e.expense_date, '%Y-%m-%d')
+     ORDER BY date ASC`,
+    params
+  )
+
   return successResponse({
     ...basicStats,
     category_summary: categoryWithPercentage,
     member_summary: memberWithPercentage,
+    trend_data: trendSummary,
   })
 })

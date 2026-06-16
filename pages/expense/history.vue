@@ -152,79 +152,97 @@
 
     <!-- 统计摘要 -->
     <el-card class="summary-card">
-      <el-row :gutter="isMobile ? 8 : 16">
-        <el-col :span="isMobile ? 12 : 6">
-          <div class="stat-item">
-            <span class="label">总支出</span>
-            <span class="value accent">
-              ¥{{ Number(summary.total_amount || 0).toFixed(2) }}
-            </span>
-          </div>
-        </el-col>
-        <el-col :span="isMobile ? 12 : 6">
-          <div class="stat-item">
-            <span class="label">记录数</span>
-            <span class="value">{{ Number(summary.total_count || 0) }}条</span>
-          </div>
-        </el-col>
-        <el-col :span="isMobile ? 12 : 6">
-          <div class="stat-item">
-            <span class="label">平均</span>
-            <span class="value">
-              ¥{{ Number(summary.avg_amount || 0).toFixed(2) }}
-            </span>
-          </div>
-        </el-col>
-        <el-col :span="isMobile ? 12 : 6">
-          <div class="stat-item">
-            <span class="label">最高</span>
-            <span class="value">
-              ¥{{ Number(summary.max_amount || 0).toFixed(2) }}
-            </span>
-          </div>
-        </el-col>
-      </el-row>
+      <el-skeleton animated :loading="loading" style="width: 100%">
+        <template #template>
+          <el-row :gutter="16">
+            <el-col :span="4"><el-skeleton-item variant="rect" style="height: 90px; border-radius: 12px;" /></el-col>
+            <el-col :span="4"><el-skeleton-item variant="rect" style="height: 90px; border-radius: 12px;" /></el-col>
+            <el-col :span="4"><el-skeleton-item variant="rect" style="height: 90px; border-radius: 12px;" /></el-col>
+            <el-col :span="4"><el-skeleton-item variant="rect" style="height: 90px; border-radius: 12px;" /></el-col>
+            <el-col :span="8"><el-skeleton-item variant="rect" style="height: 90px; border-radius: 12px;" /></el-col>
+          </el-row>
+        </template>
+        <template #default>
+          <el-row :gutter="isMobile ? 8 : 16">
+            <el-col :span="isMobile ? 12 : 4">
+              <div class="stat-item">
+                <span class="label">总支出</span>
+                <span class="value accent">
+                  ¥{{ Number(summary.total_amount || 0).toFixed(2) }}
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="isMobile ? 12 : 4">
+              <div class="stat-item">
+                <span class="label">记录数</span>
+                <span class="value">{{ Number(summary.total_count || 0) }}条</span>
+              </div>
+            </el-col>
+            <el-col :span="isMobile ? 12 : 4">
+              <div class="stat-item">
+                <span class="label">平均</span>
+                <span class="value">
+                  ¥{{ Number(summary.avg_amount || 0).toFixed(2) }}
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="isMobile ? 12 : 4">
+              <div class="stat-item">
+                <span class="label">最高</span>
+                <span class="value">
+                  ¥{{ Number(summary.max_amount || 0).toFixed(2) }}
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="isMobile ? 24 : 8">
+              <div class="chart-container" ref="chartRef"></div>
+            </el-col>
+          </el-row>
+        </template>
+      </el-skeleton>
     </el-card>
 
     <!-- 桌面端：表格列表 -->
     <el-card v-if="!isMobile" class="list-card">
-      <el-table :data="expenseList" stripe v-loading="loading">
-        <el-table-column label="消费日期" width="120" align="center">
-          <template #default="{ row }">
-            <span class="date">{{
-              row.expense_date ? formatDate(row.expense_date) : "-"
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="消费时间" width="100" align="center">
-          <template #default="{ row }">
-            <span class="time">{{ row.expense_time || "-" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="分类" width="120">
-          <template #default="{ row }">
-            <el-tag type="primary" size="small">{{ row.category_name }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="member_name" label="成员" width="100">
-          <template #default="{ row }">
-            <div v-if="row.member_name" class="member-tag" :style="{ backgroundColor: row.member_color || '#4ECDC4' }">
-              {{ row.member_name }}
-            </div>
-            <span v-else class="text-placeholder">-</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="amount" label="金额" width="100" align="right">
-          <template #default="{ row }">
-            <span class="amount">¥{{ Number(row.amount).toFixed(2) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="description"
-          label="备注"
-          min-width="150"
-          show-overflow-tooltip
-        >
+      <el-skeleton animated :loading="loading" :rows="10">
+        <template #default>
+          <el-table :data="expenseList" stripe>
+            <el-table-column label="消费日期" width="120" align="center">
+              <template #default="{ row }">
+                <span class="date">{{
+                  row.expense_date ? formatDate(row.expense_date) : "-"
+                }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="消费时间" width="100" align="center">
+              <template #default="{ row }">
+                <span class="time">{{ row.expense_time || "-" }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="分类" width="120">
+              <template #default="{ row }">
+                <el-tag type="primary" size="small">{{ row.category_name }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="member_name" label="成员" width="100">
+              <template #default="{ row }">
+                <div v-if="row.member_name" class="member-tag" :style="{ backgroundColor: row.member_color || '#4ECDC4' }">
+                  {{ row.member_name }}
+                </div>
+                <span v-else class="text-placeholder">-</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="amount" label="金额" width="100" align="right">
+              <template #default="{ row }">
+                <span class="amount">¥{{ Number(row.amount).toFixed(2) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="description"
+              label="备注"
+              min-width="150"
+              show-overflow-tooltip
+            >
           <template #default="{ row }">
             <span class="description">{{ row.description || "-" }}</span>
           </template>
@@ -276,6 +294,8 @@
           @change="fetchData"
         />
       </div>
+        </template>
+      </el-skeleton>
     </el-card>
 
     <!-- 移动端：卡片列表 -->
@@ -366,6 +386,7 @@ import {
   formatDateTime as formatDateTimeStandard,
   formatDate,
 } from "~/utils/format";
+import * as echarts from 'echarts';
 
 definePageMeta({
   middleware: ["auth"],
@@ -439,6 +460,68 @@ const summary = ref<StatisticsSummary>({
 const editDialogVisible = ref(false);
 const currentExpense = ref<Expense | null>(null);
 
+// 图表实例
+const chartRef = ref<HTMLElement | null>(null);
+let chartInstance: echarts.ECharts | null = null;
+
+const renderChart = () => {
+  if (!chartRef.value || !summary.value.trend_data || summary.value.trend_data.length === 0) {
+    if (chartInstance) chartInstance.clear();
+    return;
+  }
+  
+  if (!chartInstance) {
+    chartInstance = echarts.init(chartRef.value);
+  }
+  
+  const option = {
+    grid: { top: 10, right: 10, bottom: 20, left: 10, containLabel: false },
+    xAxis: { 
+      type: 'category', 
+      data: summary.value.trend_data.map(d => d.date.substring(5)), 
+      show: false 
+    },
+    yAxis: { type: 'value', show: false, min: 'dataMin' },
+    series: [{
+      data: summary.value.trend_data.map(d => d.amount),
+      type: 'line',
+      smooth: true,
+      lineStyle: { color: '#00a8cc', width: 2 },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: 'rgba(0, 168, 204, 0.4)' },
+          { offset: 1, color: 'rgba(0, 168, 204, 0.0)' }
+        ])
+      },
+      itemStyle: { opacity: 0 }
+    }],
+    tooltip: { 
+      trigger: 'axis', 
+      formatter: '{b}日: ¥{c}',
+      backgroundColor: 'rgba(21, 25, 50, 0.9)',
+      textStyle: { color: '#fff' },
+      borderColor: 'rgba(0, 240, 255, 0.3)'
+    }
+  };
+  chartInstance.setOption(option);
+};
+
+watch(() => summary.value.trend_data, () => {
+  nextTick(() => {
+    if (!loading.value) {
+      renderChart();
+    }
+  });
+});
+
+watch(loading, (newVal) => {
+  if (!newVal) {
+    nextTick(() => {
+      renderChart();
+    });
+  }
+});
+
 // 分类级联数据
 const categoryCascaderData = computed(() => {
   return categoryTreeToCascaderData(categoryStore.tree);
@@ -446,6 +529,8 @@ const categoryCascaderData = computed(() => {
 
 // 初始化
 onMounted(async () => {
+  window.addEventListener('resize', () => chartInstance?.resize());
+
   await Promise.all([
     categoryStore.fetchCategories(),
     memberStore.fetchMembers(),
@@ -460,6 +545,11 @@ onMounted(async () => {
   endDateTemp.value = range.end;
 
   await fetchData();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', () => chartInstance?.resize());
+  chartInstance?.dispose();
 });
 
 /** 处理桌面端日期范围变化 */
