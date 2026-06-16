@@ -19,6 +19,32 @@
   --el-border-radius-round: 20px;
 
   --el-transition-duration: 0.3s;
+
+  /* Premium Backgrounds */
+  --bg-white: #FFFFFF;
+  --bg-light: #F8FAFC;
+  --bg-page: #F1F5F9;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-input: rgba(248, 250, 252, 0.8);
+  --bg-input-focus: #FFFFFF;
+
+  /* Glassmorphism System */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-hover: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-border-hover: rgba(255, 255, 255, 0.8);
+
+  /* Text Color Hierarchy */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+
+  /* Borders */
+  --border-color: rgba(226, 232, 240, 0.8);
+  --border-color-hover: rgba(203, 213, 225, 0.9);
+  --border-light: rgba(241, 245, 249, 0.6);
 }
 
 /* 科技风格暗色主题 */
@@ -55,6 +81,32 @@ html.dark {
 
   --el-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   --el-box-shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* Premium Backgrounds */
+  --bg-white: #151932;
+  --bg-light: #0f132a;
+  --bg-page: #0a0e27;
+  --bg-card: rgba(21, 25, 50, 0.6);
+  --bg-card-hover: rgba(21, 25, 50, 0.8);
+  --bg-input: rgba(10, 14, 39, 0.6);
+  --bg-input-focus: #151932;
+
+  /* Glassmorphism System */
+  --glass-bg: rgba(21, 25, 50, 0.45);
+  --glass-bg-hover: rgba(21, 25, 50, 0.6);
+  --glass-border: rgba(0, 240, 255, 0.15);
+  --glass-border-hover: rgba(0, 240, 255, 0.3);
+
+  /* Text Color Hierarchy */
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --text-light: #4a5568;
+
+  /* Borders */
+  --border-color: rgba(0, 240, 255, 0.2);
+  --border-color-hover: rgba(0, 240, 255, 0.35);
+  --border-light: rgba(0, 240, 255, 0.1);
 
   /* 深色下背景微调 */
   body {

@@ -20,45 +20,45 @@ $warning: #F59E0B;        // Amber Warning
 $danger: #EF4444;         // Rose Danger
 $info: #6366F1;           // Indigo Info
 
-// Premium Backgrounds (Slightly translucent for glassmorphism)
-$bg-white: #FFFFFF;
-$bg-light: #F8FAFC;
-$bg-page: #F1F5F9;
-$bg-card: rgba(255, 255, 255, 0.8);
-$bg-card-hover: rgba(255, 255, 255, 0.95);
-$bg-input: rgba(248, 250, 252, 0.8);
-$bg-input-focus: #FFFFFF;
+// Premium Backgrounds (Dynamic via CSS Variables)
+$bg-white: var(--bg-white, #FFFFFF);
+$bg-light: var(--bg-light, #F8FAFC);
+$bg-page: var(--bg-page, #F1F5F9);
+$bg-card: var(--bg-card, rgba(255, 255, 255, 0.8));
+$bg-card-hover: var(--bg-card-hover, rgba(255, 255, 255, 0.95));
+$bg-input: var(--bg-input, rgba(248, 250, 252, 0.8));
+$bg-input-focus: var(--bg-input-focus, #FFFFFF);
 
 // Glassmorphism System
-$glass-bg: rgba(255, 255, 255, 0.45);
-$glass-bg-hover: rgba(255, 255, 255, 0.6);
-$glass-border: rgba(255, 255, 255, 0.5);
-$glass-border-hover: rgba(255, 255, 255, 0.8);
+$glass-bg: var(--glass-bg, rgba(255, 255, 255, 0.45));
+$glass-bg-hover: var(--glass-bg-hover, rgba(255, 255, 255, 0.6));
+$glass-border: var(--glass-border, rgba(255, 255, 255, 0.5));
+$glass-border-hover: var(--glass-border-hover, rgba(255, 255, 255, 0.8));
 $glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
 $glass-shadow-hover: 0 12px 40px 0 rgba(16, 185, 129, 0.12);
 $glass-blur: blur(20px);
 
 // Text Color Hierarchy
-$text-primary: #0F172A;   // Slate 900
-$text-secondary: #475569; // Slate 600
-$text-muted: #64748B;     // Slate 500
-$text-light: #94A3B8;     // Slate 400
+$text-primary: var(--text-primary, #0F172A);
+$text-secondary: var(--text-secondary, #475569);
+$text-muted: var(--text-muted, #64748B);
+$text-light: var(--text-light, #94A3B8);
 $text-accent: #10B981;
 
 // Borders & Radius
-$border-color: rgba(226, 232, 240, 0.8); // Slate 200
-$border-color-hover: rgba(203, 213, 225, 0.9);
-$border-light: rgba(241, 245, 249, 0.6);
+$border-color: var(--border-color, rgba(226, 232, 240, 0.8));
+$border-color-hover: var(--border-color-hover, rgba(203, 213, 225, 0.9));
+$border-light: var(--border-light, rgba(241, 245, 249, 0.6));
 $border-radius: 12px;     // More rounded for modern feel
 $border-radius-lg: 16px;
 $border-radius-xl: 24px;
 
 // Shadows (Modern soft shadow layers)
-$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-$shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-$shadow-hover: 0 20px 25px -5px rgba(16, 185, 129, 0.12), 0 8px 10px -6px rgba(16, 185, 129, 0.08);
+$shadow-sm: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+$shadow-md: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05));
+$shadow-lg: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08));
+$shadow-card: var(--shadow-card, 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02));
+$shadow-hover: var(--shadow-hover, 0 20px 25px -5px rgba(16, 185, 129, 0.12), 0 8px 10px -6px rgba(16, 185, 129, 0.08));
 
 // Gradients (Super smooth 3-stop or refined 2-stop angles)
 $gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
