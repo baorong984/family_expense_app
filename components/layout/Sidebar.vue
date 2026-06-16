@@ -229,7 +229,7 @@ const handleSelect = () => {
 .sidebar-logo {
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
-  background: linear-gradient(180deg, rgba($bg-light, 0.4) 0%, rgba($bg-white, 0) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, $bg-light 40%, transparent) 0%, transparent 100%);
   transition: padding $transition-base;
   min-height: 72px;
   display: flex;

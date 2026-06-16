@@ -1,7 +1,7 @@
 import { ElMessage } from "element-plus";
 
 // 全局维护进行中的请求
-const pendingRequests = new Map<string, AbortController>();
+const pendingPromises = new Map<string, Promise<any>>();
 
 /**
  * API 请求 composable
@@ -49,74 +49,71 @@ export const useApi = () => {
     // 生成请求的唯一标识 (基于方法、URL和参数)
     const reqKey = `${reqMethod}:${fullUrl}?${JSON.stringify(options.params || options.body || {})}`;
 
-    if (pendingRequests.has(reqKey)) {
+    if (pendingPromises.has(reqKey)) {
       if (reqMethod === "GET") {
-        pendingRequests.get(reqKey)?.abort("Duplicate GET request cancelled");
-        pendingRequests.delete(reqKey);
+        // GET 请求直接共享进行中的 Promise
+        return pendingPromises.get(reqKey) as Promise<T>;
       } else {
         return Promise.reject(new Error("请求处理中，请勿重复提交"));
       }
     }
 
-    const controller = new AbortController();
-    options.signal = controller.signal;
-    pendingRequests.set(reqKey, controller);
+    const promise = (async () => {
+      try {
+        console.log("[API] 请求:", reqMethod, fullUrl);
 
-    try {
-      console.log("[API] 请求:", reqMethod, fullUrl);
+        const response = await fetch(fullUrl, {
+          method: reqMethod,
+          headers,
+          body: options.body ? JSON.stringify(options.body) : undefined,
+          signal: options.signal,
+        });
 
-      const response = await fetch(fullUrl, {
-        method: reqMethod,
-        headers,
-        body: options.body ? JSON.stringify(options.body) : undefined,
-        signal: controller.signal,
-      });
+        // 检查 HTTP 状态码
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
 
-      // 检查 HTTP 状态码
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+          // 401 未授权处理
+          if (response.status === 401) {
+            userStore.token = "";
+            userStore.user = null;
+            userStore.clearStorage();
 
-        // 401 未授权处理
-        if (response.status === 401) {
-          userStore.token = "";
-          userStore.user = null;
-          userStore.clearStorage();
-
-          if (typeof window !== "undefined") {
-            ElMessage.error("登录已过期，请重新登录");
-            navigateTo("/login", { replace: true });
+            if (typeof window !== "undefined") {
+              ElMessage.error("登录已过期，请重新登录");
+              navigateTo("/login", { replace: true });
+            }
           }
+
+          throw new Error(errorData.message || `请求失败 (${response.status})`);
         }
 
-        throw new Error(errorData.message || `请求失败 (${response.status})`);
+        const data = await response.json();
+
+        // 兼容服务端统一响应格式 { success, data, message, code }
+        if (data.code && data.code !== 200) {
+          throw new Error(data.message || "请求失败");
+        }
+
+        return data as T;
+      } catch (error: any) {
+        if (error?.name === "AbortError") {
+          console.warn("Request cancelled:", reqKey);
+          return Promise.reject(error);
+        }
+
+        if (error?.name === "TypeError" || error?.message?.includes("Failed to fetch")) {
+          throw new Error("网络连接失败，请检查网络设置");
+        }
+
+        throw error;
+      } finally {
+        pendingPromises.delete(reqKey);
       }
+    })();
 
-      const data = await response.json();
-      pendingRequests.delete(reqKey);
-
-      // 兼容服务端统一响应格式 { success, data, message, code }
-      if (data.code && data.code !== 200) {
-        throw new Error(data.message || "请求失败");
-      }
-
-      return data as T;
-    } catch (error: any) {
-      pendingRequests.delete(reqKey);
-
-      if (
-        error.name === "AbortError" ||
-        error.message === "Duplicate GET request cancelled"
-      ) {
-        console.warn("Request cancelled:", reqKey);
-        return Promise.reject(error);
-      }
-
-      if (error.name === "TypeError" || error.message.includes("Failed to fetch")) {
-        throw new Error("网络连接失败，请检查网络设置");
-      }
-
-      throw error;
-    }
+    pendingPromises.set(reqKey, promise);
+    return promise;
   };
 
   return {

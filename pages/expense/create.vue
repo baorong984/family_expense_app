@@ -1725,7 +1725,7 @@ const handleExcelImport = async (file: File) => {
   height: 420px;
   overflow-y: auto;
   padding: $spacing-lg;
-  background: rgba($bg-light, 0.5);
+  background: color-mix(in srgb, $bg-light 50%, transparent);
   border: 1px solid $border-color;
   border-radius: $border-radius;
   margin-bottom: $spacing-lg;
