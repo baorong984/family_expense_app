@@ -135,8 +135,8 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import echarts from "~/utils/echarts";
 import type { EChartsOption } from "echarts";
+import type { ECharts } from "echarts/core";
 import { getMonthRange, getCurrentMonth, formatDate } from "~/utils/format";
 
 definePageMeta({
@@ -154,11 +154,12 @@ const currentMonthLabel = ref("");
 const statistics = ref(giftStore.statistics);
 
 const occasionChartRef = ref<HTMLElement>();
-let occasionChart: echarts.ECharts | null = null;
+let echartsLib: any = null;
+let occasionChart: ECharts | null = null;
 
 onMounted(async () => {
+  await initChart();
   await fetchStatistics();
-  initChart();
 });
 
 onUnmounted(() => {
@@ -263,15 +264,18 @@ const fetchStatistics = async () => {
 /**
  * 初始化图表
  */
-const initChart = () => {
+const initChart = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
+  }
   if (!occasionChartRef.value) return;
 
-  occasionChart = echarts.init(occasionChartRef.value);
-  updateChart();
-
-  window.addEventListener("resize", () => {
-    occasionChart?.resize();
-  });
+  if (!occasionChart) {
+    occasionChart = echartsLib.init(occasionChartRef.value);
+    window.addEventListener("resize", () => {
+      occasionChart?.resize();
+    });
+  }
 };
 
 /**

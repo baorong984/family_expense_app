@@ -117,7 +117,7 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
 import { MagicStick } from "@element-plus/icons-vue";
-import echarts from "~/utils/echarts";
+import type { ECharts } from "echarts/core";
 import type { CategoryBudget, BudgetProgress } from "~/types";
 import { getCurrentMonth } from "~/utils/format";
 
@@ -164,7 +164,8 @@ const budgetSuggest = ref<any>(null);
 
 /** 图表引用 */
 const budgetChartRef = ref<HTMLElement>();
-let budgetChart: echarts.ECharts | null = null;
+let echartsLib: any = null;
+let budgetChart: ECharts | null = null;
 
 /** 分类预算合计 */
 const totalCategoryBudget = computed(() => {
@@ -189,7 +190,7 @@ onMounted(async () => {
 
   await categoryStore.fetchCategories();
   initCategoryBudgets();
-  initChart();
+  await initChart();
   await fetchBudgetData();
 });
 
@@ -231,9 +232,12 @@ const getProgressStatus = (categoryId: number) => {
 };
 
 /** 初始化图表实例 */
-const initChart = () => {
-  if (budgetChartRef.value) {
-    budgetChart = echarts.init(budgetChartRef.value);
+const initChart = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
+  }
+  if (budgetChartRef.value && !budgetChart) {
+    budgetChart = echartsLib.init(budgetChartRef.value);
     window.addEventListener("resize", () => {
       budgetChart?.resize();
     });

@@ -11,6 +11,14 @@
     </div>
     
     <div class="right">
+      <!-- 主题切换 -->
+      <div class="theme-toggle" @click="toggleDark()">
+        <el-icon class="toggle-icon">
+          <Moon v-if="!isDark" />
+          <Sunny v-else />
+        </el-icon>
+      </div>
+
       <!-- 时间显示 -->
       <div class="time-display" :class="{ 'hide-mobile': isMobile }">
         <div class="time">{{ currentTime }}</div>
@@ -50,8 +58,12 @@
 </template>
 
 <script setup lang="ts">
-import { Fold, Expand, ArrowDown, Key, SwitchButton } from '@element-plus/icons-vue'
+import { Fold, Expand, ArrowDown, Key, SwitchButton, Moon, Sunny } from '@element-plus/icons-vue'
+import { useDark, useToggle } from '@vueuse/core'
 import PasswordDialog from './PasswordDialog.vue'
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const props = defineProps<{
   isCollapsed: boolean
@@ -174,6 +186,33 @@ const handleCommand = async (command: string) => {
   align-items: center;
   gap: $spacing-xl;
 }
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid $border-color;
+  cursor: pointer;
+  transition: all $transition-base;
+  backdrop-filter: blur(4px);
+  
+  &:hover {
+    background: $bg-white;
+    border-color: $primary-light;
+    transform: rotate(15deg) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 240, 255, 0.2);
+  }
+  
+  .toggle-icon {
+    font-size: 18px;
+    color: $text-secondary;
+  }
+}
+
 
 // 时间显示
 .time-display {
