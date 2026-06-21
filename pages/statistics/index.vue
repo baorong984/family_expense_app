@@ -1005,12 +1005,27 @@ const runAnalysis = async () => {
 
 const exportExcel = async () => {
   try {
-    const params = new URLSearchParams({
-      start_date: dateRange.value.start,
-      end_date: dateRange.value.end,
+    const res = await api.get("/api/statistics/export", {
+      params: {
+        start_date: dateRange.value.start,
+        end_date: dateRange.value.end,
+      },
+      responseType: "blob",
     });
 
-    window.open(`/api/statistics/export?${params.toString()}`, "_blank");
+    const url = window.URL.createObjectURL(
+      new Blob([res as any], { type: "text/csv;charset=utf-8" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `消费记录_${dateRange.value.start}_${dateRange.value.end}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   } catch (error: any) {
     ElMessage.error(error.message || "导出失败");
   }

@@ -34,11 +34,25 @@ export const useApi = () => {
     url: string,
     options: any = {},
   ): Promise<T> => {
-    const fullUrl = resolve_url(url);
+    let fullUrl = resolve_url(url);
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...options.headers,
     };
+
+    // 处理GET请求的查询参数，拼接到URL上
+    if (options.params && typeof options.params === 'object') {
+      const search_params = new URLSearchParams();
+      for (const [key, value] of Object.entries(options.params)) {
+        if (value !== null && value !== undefined && value !== '') {
+          search_params.append(key, String(value));
+        }
+      }
+      const query_string = search_params.toString();
+      if (query_string) {
+        fullUrl += (fullUrl.includes('?') ? '&' : '?') + query_string;
+      }
+    }
 
     // 添加 token
     if (userStore.token) {
@@ -47,7 +61,7 @@ export const useApi = () => {
 
     const reqMethod = options.method || "GET";
     // 生成请求的唯一标识 (基于方法、URL和参数)
-    const reqKey = `${reqMethod}:${fullUrl}?${JSON.stringify(options.params || options.body || {})}`;
+    const reqKey = `${reqMethod}:${fullUrl}`;
 
     if (pendingPromises.has(reqKey)) {
       if (reqMethod === "GET") {
@@ -88,7 +102,14 @@ export const useApi = () => {
           throw new Error(errorData.message || `请求失败 (${response.status})`);
         }
 
-        const data = await response.json();
+        const data = options.responseType === 'blob'
+          ? await response.blob()
+          : await response.json();
+
+        // blob 响应直接返回
+        if (options.responseType === 'blob') {
+          return data as T;
+        }
 
         // 兼容服务端统一响应格式 { success, data, message, code }
         if (data.code && data.code !== 200) {

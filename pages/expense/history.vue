@@ -100,7 +100,6 @@
               placeholder="全部分类"
               clearable
               style="width: 100%"
-              @change="fetchData"
             />
           </el-form-item>
           <el-form-item label="成员">
@@ -109,7 +108,6 @@
               placeholder="全部成员"
               clearable
               style="width: 100%"
-              @change="fetchData"
             >
               <el-option
                 v-for="member in memberStore.members"
@@ -125,11 +123,11 @@
               placeholder="搜索备注..."
               clearable
               style="width: 100%"
-              @keyup.enter="fetchData"
+              @keyup.enter="handleQuery"
             />
           </el-form-item>
           <el-form-item v-if="isMobile">
-            <el-button type="primary" @click="fetchData" style="width: 100%">
+            <el-button type="primary" @click="handleQuery" style="width: 100%">
               查询
             </el-button>
           </el-form-item>
@@ -139,7 +137,7 @@
             </el-button>
           </el-form-item>
           <div v-if="!isMobile" class="filter-actions">
-            <el-button type="primary" @click="fetchData">
+            <el-button type="primary" @click="handleQuery">
               查询
             </el-button>
             <el-button @click="resetFilters">
@@ -552,7 +550,7 @@ onUnmounted(() => {
   chartInstance?.dispose();
 });
 
-/** 处理桌面端日期范围变化 */
+/** 处理桌面端日期范围变化（仅更新筛选条件，不触发请求） */
 const handleDateChange = (val: [string, string] | null) => {
   if (val) {
     filters.start_date = val[0];
@@ -561,48 +559,49 @@ const handleDateChange = (val: [string, string] | null) => {
     filters.start_date = "";
     filters.end_date = "";
   }
-  fetchData();
 };
 
-/** 处理移动端开始日期变化 */
+/** 处理移动端开始日期变化（仅更新筛选条件，不触发请求） */
 const handleStartDateChange = (val: string) => {
   filters.start_date = val;
   if (!filters.end_date || filters.end_date < val) {
     endDateTemp.value = val;
     filters.end_date = val;
   }
-  fetchData();
 };
 
-/** 处理移动端结束日期变化 */
+/** 处理移动端结束日期变化（仅更新筛选条件，不触发请求） */
 const handleEndDateChange = (val: string) => {
   filters.end_date = val;
-  fetchData();
 };
 
 /** 获取数据 */
 const fetchData = async () => {
   loading.value = true;
   try {
-    const listRes = await api.get("/api/expense", {
-      params: {
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-        ...filters,
-      },
-    });
+    const [listRes, summaryRes] = await Promise.all([
+      api.get("/api/expense", {
+        params: {
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+          ...filters,
+        },
+      }),
+      api.get("/api/statistics/summary", {
+        params: {
+          start_date: filters.start_date,
+          end_date: filters.end_date,
+          category_id: filters.category_id,
+          member_id: filters.member_id,
+          keyword: filters.keyword,
+        },
+      }),
+    ]);
 
     if (listRes.success) {
       expenseList.value = listRes.data.list;
       pagination.total = listRes.data.total;
     }
-
-    const summaryRes = await api.get("/api/statistics/summary", {
-      params: {
-        start_date: filters.start_date,
-        end_date: filters.end_date,
-      },
-    });
 
     if (summaryRes.success) {
       summary.value = summaryRes.data;
@@ -610,6 +609,12 @@ const fetchData = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+/** 点击查询按钮（重置页码为第一页后请求） */
+const handleQuery = () => {
+  pagination.page = 1;
+  fetchData();
 };
 
 /** 重置筛选条件 */
