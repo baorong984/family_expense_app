@@ -2,7 +2,7 @@
 <!-- 网络安全配置：允许 HTTP 明文流量访问生产服务器 -->
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">139.196.175.70</domain>
+        <domain includeSubdomains="true">your_server_ip</domain>
     </domain-config>
     <!-- 允许调试时使用 localhost -->
     <debug-overrides>

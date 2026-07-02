@@ -10,7 +10,7 @@ export default defineEventHandler((event) => {
     'http://localhost:5173',
     'capacitor://localhost',
     'ionic://localhost',
-    'http://139.196.175.70:3000',
+    'http://your_server_ip:3000',
   ]
 
   // 匹配到白名单则返回具体 origin，否则返回 *（允许所有）

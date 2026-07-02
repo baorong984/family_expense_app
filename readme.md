@@ -110,10 +110,10 @@ cd android && ./gradlew assembleDebug
 
 ```bash
 # 1. 上传项目代码到服务器
-scp -r ./project user@139.196.175.70:/opt/family-expense-app/
+scp -r ./project user@your_server_ip:/opt/family-expense-app/
 
 # 2. SSH 登录服务器
-ssh root@139.196.175.70
+ssh root@your_server_ip
 
 # 3. 安装依赖并构建
 cd /opt/family-expense-app
@@ -143,7 +143,7 @@ DB_USER=your_prod_user
 DB_PASSWORD=your_password
 
 # API 地址（App 和 Web 共用）
-NUXT_PUBLIC_API_BASE_URL=http://139.196.175.70:3000
+NUXT_PUBLIC_API_BASE_URL=http://your_server_ip:3000
 
 # JWT 密钥（生产环境请修改！）
 JWT_SECRET=your-production-jwt-secret-key
@@ -154,7 +154,7 @@ JWT_SECRET=your-production-jwt-secret-key
 ### Q: App 登录提示 "Failed to fetch" / "网络连接失败"
 
 **原因及解决方案**：
-1. 确认服务器 `http://139.196.175.70:3000` 可从手机浏览器访问
+1. 确认服务器 `http://your_server_ip:3000` 可从手机浏览器访问
 2. 确认云服务器安全组已开放 3000 端口
 3. 确认 PM2 服务正在运行：`pm2 status`
 4. 当前使用 Server 模式，确保 `capacitor.config.ts` 中 `server.url` 配置正确
