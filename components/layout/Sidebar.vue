@@ -69,6 +69,7 @@
           </template>
         </el-menu-item>
       </el-sub-menu>
+
       <!-- 人情管理 -->
       <div class="menu-divider"></div>
 
@@ -152,10 +153,7 @@ import {
   Document,
   Van,
   Setting,
-<<<<<<< HEAD
-=======
   Box,
->>>>>>> b9f98f240d6789f45db02fd7d82afe547b03c0ec
 } from "@element-plus/icons-vue";
 
 const props = defineProps<{
@@ -231,11 +229,7 @@ const handleSelect = () => {
 .sidebar-logo {
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
-<<<<<<< HEAD
-  background: linear-gradient(180deg, rgba($bg-light, 0.4) 0%, rgba($bg-white, 0) 100%);
-=======
   background: linear-gradient(180deg, color-mix(in srgb, $bg-light 40%, transparent) 0%, transparent 100%);
->>>>>>> b9f98f240d6789f45db02fd7d82afe547b03c0ec
   transition: padding $transition-base;
   min-height: 72px;
   display: flex;
@@ -281,12 +275,8 @@ const handleSelect = () => {
   overflow-y: auto;
   overflow-x: hidden;
 
-<<<<<<< HEAD
-  :deep(.el-menu-item) {
-=======
   :deep(.el-menu-item),
   :deep(.el-sub-menu__title) {
->>>>>>> b9f98f240d6789f45db02fd7d82afe547b03c0ec
     color: $text-secondary;
     border-radius: $border-radius;
     margin: 6px 14px;
@@ -307,28 +297,6 @@ const handleSelect = () => {
         transform: scale(1.1);
       }
     }
-<<<<<<< HEAD
-
-    &.is-active {
-      color: white;
-      background: $gradient-primary;
-      box-shadow: 0 4px 14px rgba($primary, 0.25);
-      font-weight: 600;
-
-      .el-icon {
-        color: white;
-        transform: scale(1.1);
-      }
-    }
-
-    // 移动端样式
-    .is-mobile & {
-      margin: 4px 16px;
-      height: 48px;
-    }
-  }
-
-=======
   }
 
   :deep(.el-menu-item.is-active) {
@@ -354,7 +322,6 @@ const handleSelect = () => {
     height: 48px;
   }
 
->>>>>>> b9f98f240d6789f45db02fd7d82afe547b03c0ec
   :deep(.el-menu--collapse) {
     width: 100%;
 
