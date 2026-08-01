@@ -158,7 +158,8 @@ onUnmounted(() => {
 .mobile-drawer {
   .el-drawer__body {
     padding: 0;
-    background: $bg-white;
+    background: #FAF8ED;
+    border-right: 3px solid #7B5E43;
   }
   
   .drawer-sidebar-wrapper {

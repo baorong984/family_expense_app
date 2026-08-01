@@ -104,11 +104,11 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: '家庭财务管家',
-      short_name: '记账本',
-      description: '家庭财务管家 - 智能家庭消费记账系统',
-      theme_color: '#00f0ff',
-      background_color: '#0a0e27',
+      name: '家庭财务管家 - 岛屿生活记账',
+      short_name: '动森记账',
+      description: '家庭财务管家 - 动森风格智能家庭消费记账系统',
+      theme_color: '#59C990',
+      background_color: '#FAF8ED',
       icons: [
         {
           src: 'pwa-192x192.png',
@@ -146,11 +146,11 @@ export default defineNuxtConfig({
   // 配置页面过渡动画
   app: {
     head: {
-      title: '家庭财务管家',
+      title: '家庭财务管家 🍃 岛屿记账',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: '家庭财务管家 - 智能家庭消费记账系统，支持AI智能记账、预算管理、人情往来、车辆管理等功能' },
+        { name: 'description', content: '家庭财务管家 - 动森风格智能家庭消费记账系统' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

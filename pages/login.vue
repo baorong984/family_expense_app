@@ -1,27 +1,30 @@
 <template>
-  <div class="login-container">
-    <!-- 背景装饰 -->
+  <div class="login-container ac-login-container">
+    <!-- 背景装饰叶子浮动 -->
     <div class="background-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
+      <div class="leaf leaf-1">🍃</div>
+      <div class="leaf leaf-2">🍃</div>
+      <div class="leaf leaf-3">🍃</div>
     </div>
     
-    <!-- 登录卡片 -->
-    <div class="login-card">
+    <!-- 动森风格登录卡片 -->
+    <div class="login-card ac-login-card">
       <div class="login-header">
         <div class="logo-container">
-          <span class="logo-icon">🌿</span>
+          <span class="logo-icon">🍃</span>
         </div>
-        <h1 class="title">家庭财务管家</h1>
-        <p class="description">AI智能记账 · 轻松管理家庭财务</p>
+        
+        <!-- 动森对话框标语 -->
+        <div class="ac-speech-bubble welcome-bubble">
+          <span>欢迎来到 狸克岛屿记账服务台！请验证您的居民凭证。</span>
+        </div>
       </div>
       
-      <el-form ref="formRef" :model="form" :rules="rules" class="login-form" @submit.prevent="handleLogin">
+      <el-form ref="formRef" :model="form" :rules="rules" class="login-form ac-login-form" @submit.prevent="handleLogin">
         <el-form-item prop="username">
           <el-input
             v-model="form.username"
-            placeholder="请输入用户名"
+            placeholder="请输入居民姓名 / 用户名"
             size="large"
             @keyup.enter="handleLogin"
           >
@@ -35,7 +38,7 @@
           <el-input
             v-model="form.password"
             type="password"
-            placeholder="请输入密码"
+            placeholder="请输入登岛密码"
             size="large"
             show-password
             @keyup.enter="handleLogin"
@@ -47,16 +50,14 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            size="large"
-            :loading="loading"
-            class="login-btn"
-            native-type="submit"
+          <button
+            type="submit"
+            :disabled="loading"
+            class="ac-btn ac-btn--yellow ac-login-btn"
             @click="handleLogin"
           >
-            登录
-          </el-button>
+            <span>🏝️ 登岛登录 (Check-in)</span>
+          </button>
         </el-form-item>
       </el-form>
     </div>
@@ -100,13 +101,13 @@ const handleLogin = async () => {
   loading.value = true
   try {
     await userStore.login(form.username, form.password)
-    ElMessage.success('登录成功')
+    ElMessage.success('登岛验证成功！欢迎回来。')
     
     // 跳转到目标页面或首页
     const redirect = route.query.redirect as string || '/expense/create'
     router.push(redirect)
   } catch (error: any) {
-    ElMessage.error(error.message || '登录失败')
+    ElMessage.error(error.message || '登岛验证失败')
   } finally {
     loading.value = false
   }
@@ -114,12 +115,12 @@ const handleLogin = async () => {
 </script>
 
 <style lang="scss" scoped>
-.login-container {
+.login-container.ac-login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #F0FDF4 0%, #E0F2FE 50%, #F5F3FF 100%);
+  background: var(--ac-bg-page, #F6F5E8);
   position: relative;
   overflow: hidden;
 
@@ -130,14 +131,17 @@ const handleLogin = async () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: radial-gradient(rgba(16, 185, 129, 0.12) 1.5px, transparent 1.5px);
-    background-size: 32px 32px;
+    background-image: 
+      radial-gradient(rgba(89, 201, 144, 0.15) 2.5px, transparent 2.5px),
+      radial-gradient(rgba(255, 224, 102, 0.15) 2.5px, transparent 2.5px);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
     pointer-events: none;
     z-index: 0;
   }
 }
 
-// 背景装饰 (Vibrant Glowing Spheres)
+// 浮动叶子动画
 .background-decoration {
   position: fixed;
   top: 0;
@@ -147,195 +151,147 @@ const handleLogin = async () => {
   pointer-events: none;
   z-index: 0;
   
-  .circle {
+  .leaf {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.65;
+    font-size: 36px;
+    opacity: 0.7;
   }
   
-  .circle-1 {
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(14, 165, 233, 0.1) 70%);
-    top: -100px;
-    right: -100px;
-    animation: float1 18s ease-in-out infinite;
+  .leaf-1 {
+    top: 10%;
+    right: 15%;
+    animation: floatLeaf 8s ease-in-out infinite;
   }
   
-  .circle-2 {
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(236, 72, 153, 0.08) 70%);
-    bottom: -80px;
-    left: -80px;
-    animation: float2 22s ease-in-out infinite;
+  .leaf-2 {
+    bottom: 12%;
+    left: 10%;
+    animation: floatLeaf 10s ease-in-out infinite 2s;
   }
   
-  .circle-3 {
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(99, 102, 241, 0.05) 70%);
-    top: 45%;
-    left: 15%;
-    animation: float3 16s ease-in-out infinite;
+  .leaf-3 {
+    top: 50%;
+    left: 80%;
+    animation: floatLeaf 7s ease-in-out infinite 4s;
   }
 }
 
-@keyframes float1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-40px, 30px) scale(1.1); }
+@keyframes floatLeaf {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(15deg); }
 }
 
-@keyframes float2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(30px, -40px) scale(1.05); }
-}
-
-@keyframes float3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-30px, -30px) scale(1.15); }
-}
-
-// 登录卡片 (Layered Glassmorphism)
-.login-card {
+// 动森纸张登录卡片
+.login-card.ac-login-card {
   width: 440px;
   padding: $spacing-2xl;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: $border-radius-xl;
-  box-shadow: 
-    0 10px 30px rgba(15, 23, 42, 0.04),
-    0 20px 50px rgba(15, 23, 42, 0.06),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  background: var(--ac-bg-bar, #FAF8ED);
+  border: 3.5px solid var(--ac-border-wood, #7B5E43);
+  border-radius: 32px;
+  box-shadow: 0 12px 0 var(--ac-shadow);
   position: relative;
   z-index: 1;
-  animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: cardAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: $gradient-header;
-    border-radius: $border-radius-xl $border-radius-xl 0 0;
+    top: -3.5px;
+    left: 20px;
+    right: 20px;
+    height: 6px;
+    background: #59C990;
+    border-radius: 4px 4px 0 0;
   }
 }
 
 @keyframes cardAppear {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-// Logo
+// Logo & 对话气泡
 .login-header {
   text-align: center;
-  margin-bottom: $spacing-2xl;
+  margin-bottom: $spacing-xl;
   
   .logo-container {
-    margin-bottom: $spacing-md;
+    margin-bottom: 12px;
     
     .logo-icon {
-      font-size: 52px;
+      font-size: 54px;
       display: inline-block;
-      animation: bounce 2.5s ease-in-out infinite;
+      animation: leafSpin 4s ease-in-out infinite;
     }
   }
   
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-8px) rotate(4deg); }
+  @keyframes leafSpin {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
   }
-  
-  .title {
-    font-family: $font-display;
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0 0 $spacing-xs 0;
-  }
-  
-  .description {
+
+  .welcome-bubble {
     font-size: 14px;
-    color: $text-secondary;
-    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+    background: var(--ac-bg-card, #FFFFFF);
+    border: 2.5px solid var(--ac-border-wood, #7B5E43);
+    color: var(--ac-text-primary, #5D4037);
+
+    &::after {
+      border-color: var(--ac-bg-card, #FFFFFF) transparent transparent transparent;
+    }
   }
 }
 
 // 表单
-.login-form {
+.login-form.ac-login-form {
   .el-form-item {
     margin-bottom: $spacing-lg;
   }
   
   :deep(.el-input__wrapper) {
-    padding: 12px 16px;
-    border-radius: $border-radius;
-    background: rgba(248, 250, 252, 0.7);
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    backdrop-filter: blur(4px);
+    padding: 10px 16px;
+    border-radius: 18px;
+    background: var(--ac-input-bg, #FFFFFF) !important;
+    border: 2px solid var(--ac-border, #E8DFCC) !important;
+    box-shadow: 0 3px 0 var(--ac-shadow) !important;
     
     &:hover {
-      border-color: $primary-light;
-      background: white;
+      border-color: #59C990 !important;
     }
     
     &.is-focus {
-      border-color: $primary;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
-      background: white;
+      border-color: #59C990 !important;
+      box-shadow: 0 0 0 3px rgba(89, 201, 144, 0.2) !important;
     }
   }
   
   :deep(.el-input__prefix) {
     .el-icon {
-      color: $text-muted;
+      color: var(--ac-text-secondary, #7B5E43);
       font-size: 19px;
     }
   }
   
-  .login-btn {
+  .ac-login-btn {
     width: 100%;
-    height: 48px;
+    height: 50px;
     font-size: 16px;
-    font-weight: 700;
     margin-top: $spacing-md;
-    border-radius: $border-radius;
-    background: $gradient-primary;
-    border: none;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
-    transition: all $transition-base;
-    color: white;
-    
-    &:hover {
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-      transform: translateY(-2px);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
   }
 }
 
 @media (max-width: $breakpoint-sm) {
-  .login-card {
+  .login-card.ac-login-card {
     width: 92%;
-    padding: $spacing-xl;
+    padding: $spacing-lg;
   }
 }
 </style>

@@ -1,44 +1,51 @@
 <template>
-  <div class="header">
+  <div class="header ac-header">
     <div class="left">
-      <el-icon class="collapse-btn" @click="toggleCollapse">
+      <el-icon class="collapse-btn ac-collapse" @click="toggleCollapse">
         <Fold v-if="!isCollapsed" />
         <Expand v-else />
       </el-icon>
       <div class="title-container">
-        <span class="title">家庭消费记账</span>
+        <div class="ac-logo-badge">
+          <span class="ac-leaf-icon">🍃</span>
+          <span class="title">岛屿生活记账</span>
+          <span class="ac-subtitle">Nook Ledger</span>
+        </div>
       </div>
     </div>
     
     <div class="right">
+      <!-- 铃钱标识 -->
+      <div class="ac-bell-badge hide-mobile">
+        <span class="bell-icon">🔔</span>
+        <span>Bell Ledger</span>
+      </div>
+
       <!-- 主题切换 -->
-      <div class="theme-toggle" @click="toggleDark()">
-        <el-icon class="toggle-icon">
-          <Moon v-if="!isDark" />
-          <Sunny v-else />
-        </el-icon>
+      <div class="theme-toggle ac-theme-btn" @click="toggleDark()" title="切换昼夜模式">
+        <span class="toggle-emoji">{{ isDark ? '🌙' : '☀️' }}</span>
       </div>
 
       <!-- 时间显示 -->
-      <div class="time-display" :class="{ 'hide-mobile': isMobile }">
+      <div class="time-display ac-time-box" :class="{ 'hide-mobile': isMobile }">
         <div class="time">{{ currentTime }}</div>
-        <div class="date">{{ currentDate }}</div>
+        <div class="date">📅 {{ currentDate }}</div>
       </div>
       
       <!-- 用户菜单 -->
       <el-dropdown @command="handleCommand">
-        <span class="user-info">
-          <el-avatar :size="36" class="avatar">
+        <span class="user-info ac-user-card">
+          <el-avatar :size="36" class="avatar ac-avatar">
             {{ userStore.username?.charAt(0)?.toUpperCase() }}
           </el-avatar>
           <div class="user-details" :class="{ 'hide-mobile': isMobile }">
             <span class="username">{{ userStore.username }}</span>
-            <span class="user-role">{{ userStore.isAdmin ? '管理员' : '成员' }}</span>
+            <span class="user-role">🏝️ {{ userStore.isAdmin ? '岛长' : '居民' }}</span>
           </div>
           <el-icon class="dropdown-icon"><ArrowDown /></el-icon>
         </span>
         <template #dropdown>
-          <el-dropdown-menu class="user-dropdown">
+          <el-dropdown-menu class="user-dropdown ac-dropdown">
             <el-dropdown-item command="password">
               <el-icon><Key /></el-icon>
               <span>修改密码</span>
@@ -118,28 +125,27 @@ const handleCommand = async (command: string) => {
 </script>
 
 <style lang="scss" scoped>
-.header {
+.header.ac-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: $header-height;
   padding: 0 $spacing-xl;
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border-bottom: 1px solid $glass-border;
+  background: var(--ac-bg-bar, #FAF8ED);
+  border-bottom: 3px solid var(--ac-border, #E8DFCC);
   position: relative;
   z-index: 20;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 0 var(--ac-shadow);
+  transition: background $transition-base, border-color $transition-base;
   
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -3px;
     left: 0;
     right: 0;
-    height: 2px;
-    background: $gradient-header;
+    height: 3px;
+    background: #59C990;
     opacity: 0.8;
   }
 }
@@ -147,188 +153,214 @@ const handleCommand = async (command: string) => {
 .left {
   display: flex;
   align-items: center;
-  gap: $spacing-lg;
+  gap: $spacing-md;
   
-  .collapse-btn {
-    font-size: 20px;
+  .ac-collapse {
+    font-size: 22px;
     cursor: pointer;
-    color: $text-muted;
+    color: var(--ac-text-primary, #7B5E43);
     transition: all $transition-base;
-    padding: $spacing-sm;
-    border-radius: $border-radius;
+    padding: 8px;
+    border-radius: 14px;
+    background: var(--ac-bg-card, #FFF9E6);
+    border: 2px solid var(--ac-border, #E8DFCC);
     
     &:hover {
-      color: $primary;
-      background: rgba($primary, 0.1);
+      color: #3B9264;
+      background: rgba(89, 201, 144, 0.15);
+      border-color: #59C990;
+      transform: scale(1.08) rotate(-4deg);
     }
   }
   
   .title-container {
     display: flex;
-    flex-direction: column;
-    
-    .title {
-      font-family: $font-display;
-      font-size: 19px;
-      font-weight: 800;
-      color: $text-primary;
-      letter-spacing: 0.5px;
-      background: linear-gradient(120deg, $text-primary 0%, $text-secondary 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    align-items: center;
+
+    .ac-logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ac-bg-card, #FFFFFF);
+      border: 2.5px solid #59C990;
+      border-radius: 20px;
+      padding: 4px 14px;
+      box-shadow: 0 3px 0 var(--ac-shadow);
+
+      .ac-leaf-icon {
+        font-size: 20px;
+        animation: leafBounce 3s infinite ease-in-out;
+      }
+
+      .title {
+        font-family: $font-display;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--ac-text-primary, #5D4037);
+        letter-spacing: 0.5px;
+      }
+
+      .ac-subtitle {
+        font-size: 11px;
+        font-weight: 700;
+        background: #FFE066;
+        color: #5D4037;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #F8C843;
+      }
     }
   }
+}
+
+@keyframes leafBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(10deg); }
 }
 
 .right {
   display: flex;
   align-items: center;
-  gap: $spacing-xl;
+  gap: $spacing-md;
 }
 
-.theme-toggle {
+.ac-theme-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid $border-color;
+  background: var(--ac-bg-card, #FFF9D2);
+  border: 2px solid #F8C843;
   cursor: pointer;
   transition: all $transition-base;
-  backdrop-filter: blur(4px);
+  box-shadow: 0 3px 0 rgba(248, 200, 67, 0.4);
   
   &:hover {
-    background: $bg-white;
-    border-color: $primary-light;
-    transform: rotate(15deg) scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 240, 255, 0.2);
+    transform: scale(1.1) rotate(15deg);
   }
-  
-  .toggle-icon {
+
+  .toggle-emoji {
     font-size: 18px;
-    color: $text-secondary;
   }
 }
 
-
 // 时间显示
-.time-display {
+.ac-time-box {
   text-align: right;
-  font-family: $font-mono;
-  padding: 6px $spacing-md;
-  background: rgba($primary, 0.05);
-  border: 1px solid rgba($primary, 0.08);
-  border-radius: $border-radius;
+  font-family: $font-display;
+  padding: 4px 14px;
+  background: var(--ac-bg-card, #FFFFFF);
+  border: 2px solid var(--ac-border, #E8DFCC);
+  border-radius: 16px;
+  box-shadow: 0 3px 0 var(--ac-shadow);
   
   .time {
-    font-size: 15px;
-    font-weight: 700;
-    color: $primary-dark;
+    font-size: 14px;
+    font-weight: 800;
+    color: #59C990;
   }
   
   .date {
     font-size: 11px;
-    color: $text-muted;
-    margin-top: 1px;
-    font-weight: 500;
+    color: var(--ac-text-secondary, #7B5E43);
+    font-weight: 600;
   }
 }
 
 // 用户信息
-.user-info {
+.ac-user-card {
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
+  padding: 4px 14px;
+  background: var(--ac-bg-card, #FFFFFF);
+  border: 2.5px solid var(--ac-border, #E8DFCC);
+  border-radius: 20px;
   cursor: pointer;
-  backdrop-filter: blur(4px);
   transition: all $transition-base;
+  box-shadow: 0 3px 0 var(--ac-shadow);
   
   &:hover {
-    border-color: $primary-light;
-    box-shadow: $shadow-sm;
-    background: $bg-white;
+    border-color: #59C990;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 rgba(89, 201, 144, 0.25);
   }
   
-  .avatar {
-    background: $gradient-primary;
+  .ac-avatar {
+    background: #59C990;
     color: white;
     font-weight: 800;
-    font-size: 15px;
-    box-shadow: 0 2px 8px rgba($primary, 0.2);
+    font-size: 16px;
+    border: 2px solid #3B9264;
   }
   
   .user-details {
     display: flex;
     flex-direction: column;
-    gap: 1px;
     
     .username {
-      font-weight: 700;
-      color: $text-primary;
+      font-weight: 800;
+      color: var(--ac-text-primary, #5D4037);
       font-size: 13px;
+      font-family: $font-display;
     }
     
     .user-role {
       font-size: 11px;
-      color: $primary-dark;
-      font-weight: 600;
+      color: #59C990;
+      font-weight: 700;
     }
   }
   
   .dropdown-icon {
-    color: $text-muted;
+    color: var(--ac-text-secondary, #7B5E43);
     transition: transform $transition-base;
     font-size: 12px;
   }
   
   &:hover .dropdown-icon {
     transform: rotate(180deg);
-    color: $primary;
+    color: #59C990;
   }
 }
 
 // 下拉菜单
-:deep(.user-dropdown) {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
-  padding: $spacing-xs;
+:deep(.ac-dropdown) {
+  background: var(--ac-bg-bar, #FAF8ED) !important;
+  border: 2.5px solid var(--ac-border-wood, #7B5E43) !important;
+  border-radius: 20px;
+  box-shadow: 0 8px 0 var(--ac-shadow);
+  padding: 6px;
   
   .el-dropdown-menu__item {
-    color: $text-secondary;
-    border-radius: $border-radius;
-    padding: $spacing-sm $spacing-md;
+    color: var(--ac-text-primary, #5D4037) !important;
+    border-radius: 14px;
+    padding: 8px 16px;
     transition: all $transition-base;
-    font-weight: 500;
+    font-weight: 700;
+    font-family: $font-display;
     
     &:hover {
-      background: rgba($primary, 0.08);
-      color: $primary-dark;
+      background: #59C990 !important;
+      color: #FFFFFF !important;
     }
     
     .el-icon {
-      margin-right: $spacing-sm;
+      margin-right: 8px;
       font-size: 16px;
     }
     
     .danger {
-      color: $danger;
+      color: #FF7675;
     }
   }
 }
 
 // 移动端适配
 @media (max-width: $breakpoint-sm) {
-  .header {
+  .header.ac-header {
     height: $header-height-mobile;
     padding: 0 $spacing-mobile-md;
   }
@@ -336,22 +368,28 @@ const handleCommand = async (command: string) => {
   .left {
     gap: $spacing-sm;
     
-    .title-container .title {
-      font-size: 16px;
+    .ac-logo-badge {
+      padding: 2px 8px;
+      .title {
+        font-size: 14px;
+      }
+      .ac-subtitle {
+        display: none;
+      }
     }
   }
   
   .right {
-    gap: $spacing-sm;
+    gap: $spacing-xs;
   }
   
-  .user-info {
-    padding: 4px 8px;
+  .ac-user-card {
+    padding: 2px 6px;
     
-    .avatar {
+    .ac-avatar {
       width: 30px !important;
       height: 30px !important;
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 }

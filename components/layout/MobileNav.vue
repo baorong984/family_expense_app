@@ -63,14 +63,15 @@ const navigateTo = (path: string) => {
   left: 0;
   right: 0;
   height: $bottom-nav-height;
-  background: $bg-white;
-  border-top: 1px solid $border-color;
+  background: var(--ac-bg-bar, #FAF8ED);
+  border-top: 3px solid var(--ac-border, #E8DFCC);
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding-bottom: $safe-area-inset-bottom;
   z-index: $z-fixed;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 0 var(--ac-shadow);
+  transition: background $transition-base, border-color $transition-base;
 }
 
 .nav-item {
@@ -78,37 +79,44 @@ const navigateTo = (path: string) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: 4px 10px;
   cursor: pointer;
   transition: all $transition-fast;
-  border-radius: $border-radius;
-  min-width: 64px;
+  border-radius: 16px;
+  min-width: 56px;
 
   .el-icon {
-    color: $text-muted;
-    transition: color $transition-fast;
+    color: var(--ac-text-secondary, #7B5E43);
+    transition: transform $transition-fast, color $transition-fast;
   }
 
   .label {
     font-size: 11px;
+    font-family: $font-display;
+    font-weight: 700;
     margin-top: 2px;
-    color: $text-muted;
+    color: var(--ac-text-secondary, #7B5E43);
     transition: color $transition-fast;
   }
 
   &.active {
+    background: #59C990;
+    border: 2px solid #3B9264;
+    box-shadow: 0 3px 0 #3B9264;
+    transform: translateY(-2px);
+
     .el-icon {
-      color: $primary;
+      color: #FFFFFF;
     }
 
     .label {
-      color: $primary;
-      font-weight: 600;
+      color: #FFFFFF;
+      font-weight: 800;
     }
   }
 
   &:active {
-    background: $bg-light;
+    transform: translateY(2px);
   }
 }
 </style>

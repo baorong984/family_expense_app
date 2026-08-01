@@ -1,0 +1,273 @@
+// ============================================
+// 🍃 ANIMAL CROSSING (动森) THEME UTILITIES & OVERRIDES
+// ============================================
+
+@use "sass:color";
+@use "./variables.scss" as *;
+
+// CSS Variables for Element Plus Override
+:root {
+  --el-color-primary: #59C990;
+  --el-color-primary-light-3: #74D094;
+  --el-color-primary-light-5: #98E0B4;
+  --el-color-primary-light-7: #BCF0D0;
+  --el-color-primary-light-9: #E6F9EE;
+  --el-color-primary-dark-2: #3B9264;
+
+  --el-color-success: #59C990;
+  --el-color-warning: #FFE066;
+  --el-color-danger: #FF7675;
+  --el-color-info: #74B9FF;
+
+  --el-text-color-primary: #5D4037;
+  --el-text-color-regular: #7B5E43;
+  --el-text-color-secondary: #9E8570;
+  --el-text-color-placeholder: #BDB497;
+
+  --el-border-radius-base: 18px;
+  --el-border-radius-small: 12px;
+  --el-border-radius-round: 28px;
+
+  --el-bg-color-page: #F6F5E8;
+  --el-bg-color: #FFFFFF;
+  --el-border-color: #E8DFCC;
+}
+
+// --------------------------------------------
+// 💬 Animal Crossing Speech Bubble (动森对话框)
+// --------------------------------------------
+.ac-speech-bubble {
+  position: relative;
+  background: var(--ac-bg-bar, #FAF8ED);
+  border: 3px solid var(--ac-border-wood, #7B5E43);
+  border-radius: 24px;
+  padding: 16px 24px;
+  color: var(--ac-text-primary, #5D4037);
+  font-family: $font-display;
+  font-weight: 700;
+  box-shadow: 0 6px 0 var(--ac-shadow);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 14px 12px 0 12px;
+    border-color: var(--ac-bg-bar, #FAF8ED) transparent transparent transparent;
+    z-index: 2;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: 34px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 16px 14px 0 14px;
+    border-color: var(--ac-border-wood, #7B5E43) transparent transparent transparent;
+    z-index: 1;
+  }
+}
+
+// --------------------------------------------
+// 🌿 Animal Crossing Card (动森贴纸卡片)
+// --------------------------------------------
+.ac-card {
+  background: var(--ac-bg-card, #FFFFFF);
+  border: 3px solid var(--ac-border, #E8DFCC);
+  color: var(--ac-text-primary, #5D4037);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 6px 0 var(--ac-shadow);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 0 rgba(89, 201, 144, 0.25);
+    border-color: #59C990;
+  }
+}
+
+// --------------------------------------------
+// 🪵 Animal Crossing Wooden Title Tag (木标牌)
+// --------------------------------------------
+.ac-wood-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #A08266 0%, #7B5E43 100%);
+  color: #FFF8E7;
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 2px solid #5D4037;
+  font-family: $font-display;
+  font-weight: 700;
+  box-shadow: 0 4px 0 rgba(93, 64, 55, 0.3);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+// --------------------------------------------
+// 🍃 3D Press Button Style (动森实体弹簧按钮)
+// --------------------------------------------
+.ac-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #59C990;
+  color: #FFFFFF;
+  border: 2px solid #3B9264;
+  border-radius: 22px;
+  padding: 10px 24px;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #3B9264;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+
+  &:hover {
+    background: #74D094;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #3B9264;
+  }
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #3B9264;
+  }
+
+  &.ac-btn--yellow {
+    background: #FFE066;
+    color: #5D4037;
+    border-color: #F8C843;
+    box-shadow: 0 4px 0 #D49B00;
+
+    &:hover {
+      background: #FFF3B0;
+      box-shadow: 0 6px 0 #D49B00;
+    }
+
+    &:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #D49B00;
+    }
+  }
+
+  &.ac-btn--blue {
+    background: #74B9FF;
+    color: #FFFFFF;
+    border-color: #0984E3;
+    box-shadow: 0 4px 0 #0984E3;
+
+    &:hover {
+      background: #A0D2FF;
+      box-shadow: 0 6px 0 #0984E3;
+    }
+
+    &:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #0984E3;
+    }
+  }
+}
+
+// --------------------------------------------
+// 🔔 Bell Currency Counter (动森铃钱显示)
+// --------------------------------------------
+.ac-bell-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ac-bg-card, #FFF9D2);
+  border: 2px solid #F8C843;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-family: $font-display;
+  font-weight: 800;
+  color: var(--ac-text-primary, #5D4037);
+  box-shadow: 0 3px 0 rgba(248, 200, 67, 0.4);
+
+  .bell-icon {
+    width: 20px;
+    height: 20px;
+    background: #F8C843;
+    color: #5D4037;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    border: 1.5px solid #5D4037;
+  }
+}
+
+// --------------------------------------------
+// 📱 NookPhone App Icon (NookPhone 应用组件)
+// --------------------------------------------
+.nook-app-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #FFFFFF;
+  box-shadow: 0 4px 0 rgba(93, 64, 55, 0.2);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    transform: scale(1.1) rotate(-4deg);
+  }
+}
+
+// --------------------------------------------
+// 📦 Element Plus Custom Dialog Overrides
+// --------------------------------------------
+.el-dialog {
+  border-radius: 28px !important;
+  border: 3px solid var(--ac-border-wood, #7B5E43) !important;
+  background: var(--ac-bg-bar, #FAF8ED) !important;
+  box-shadow: 0 12px 32px var(--ac-shadow) !important;
+  overflow: hidden;
+
+  .el-dialog__header {
+    background: #59C990;
+    padding: 16px 24px;
+    margin: 0;
+    border-bottom: 3px solid #3B9264;
+
+    .el-dialog__title {
+      color: #FFFFFF;
+      font-family: $font-display;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #FFFFFF;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 24px;
+    color: var(--ac-text-primary, #5D4037);
+  }
+
+  .el-dialog__footer {
+    padding: 16px 24px;
+    border-top: 2px dashed var(--ac-border, #D8CFB5);
+    background: var(--ac-bg-page, #F6F5E8);
+  }
+}

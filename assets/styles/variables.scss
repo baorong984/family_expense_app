@@ -1,77 +1,81 @@
 // ============================================
-// 🌿 PREMIUM FRESH & GLASS THEME
+// 🍃 ANIMAL CROSSING (动森) DESIGN SYSTEM VARIABLES
 // ============================================
 
-// Brand Colors (Optimized for modern screen rendering)
-$primary: #10B981;        // Emerald Green (more premium than #4ECDC4)
-$primary-light: #34D399;
-$primary-dark: #059669;
+// Brand Colors (Animal Crossing Signature Colors)
+$primary: #59C990;        // Nook Leaf Green (狸克绿)
+$primary-light: #74D094;
+$primary-dark: #3B9264;
 
-$secondary: #0EA5E9;      // Deep Sky Blue (more vibrant than #45B7D1)
-$secondary-light: #38BDF8;
-$secondary-dark: #0284C7;
+$secondary: #74B9FF;      // Sky Blue (海风蓝)
+$secondary-light: #A0D2FF;
+$secondary-dark: #0984E3;
 
-$accent: #EC4899;         // Orchid Pink
-$accent-light: #F472B6;
-$accent-dark: #DB2777;
+$accent: #FFE066;         // Bell Yellow (铃钱金黄)
+$accent-light: #FFF3B0;
+$accent-dark: #F8C843;
 
-$success: #10B981;        // Emerald Success
-$warning: #F59E0B;        // Amber Warning
-$danger: #EF4444;         // Rose Danger
-$info: #6366F1;           // Indigo Info
+$success: #59C990;        // Leaf Success
+$warning: #FFA502;        // Orange Warning
+$danger: #FF7675;         // Coral Red
+$info: #70A1FF;           // Soft Blue
 
-// Premium Backgrounds (Dynamic via CSS Variables)
+$wood-dark: #5D4037;      // Bark Brown (深树皮棕 - 主文字色)
+$wood-medium: #7B5E43;    // Wood Brown (边框与标题)
+$wood-light: #A08266;     // Soft Wood
+
+// Paper & Backgrounds
 $bg-white: var(--bg-white, #FFFFFF);
-$bg-light: var(--bg-light, #F8FAFC);
-$bg-page: var(--bg-page, #F1F5F9);
-$bg-card: var(--bg-card, rgba(255, 255, 255, 0.8));
-$bg-card-hover: var(--bg-card-hover, rgba(255, 255, 255, 0.95));
-$bg-input: var(--bg-input, rgba(248, 250, 252, 0.8));
+$bg-light: var(--bg-light, #FAF8ED);     // Warm Cream Paper
+$bg-page: var(--bg-page, #F6F5E8);      // Island Paper Canvas
+$bg-card: var(--bg-card, #FFFFFF);
+$bg-card-hover: var(--bg-card-hover, #FAF8ED);
+$bg-input: var(--bg-input, #FAF8ED);
 $bg-input-focus: var(--bg-input-focus, #FFFFFF);
 
-// Glassmorphism System
-$glass-bg: var(--glass-bg, rgba(255, 255, 255, 0.45));
-$glass-bg-hover: var(--glass-bg-hover, rgba(255, 255, 255, 0.6));
-$glass-border: var(--glass-border, rgba(255, 255, 255, 0.5));
-$glass-border-hover: var(--glass-border-hover, rgba(255, 255, 255, 0.8));
-$glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
-$glass-shadow-hover: 0 12px 40px 0 rgba(16, 185, 129, 0.12);
-$glass-blur: blur(20px);
+// Glass & Soft Shadow System
+$glass-bg: var(--glass-bg, rgba(255, 255, 255, 0.92));
+$glass-bg-hover: var(--glass-bg-hover, #FFFFFF);
+$glass-border: var(--glass-border, #D8CFB5);
+$glass-border-hover: var(--glass-border-hover, #59C990);
+$glass-shadow: 0 6px 0 rgba(93, 64, 55, 0.08);
+$glass-shadow-hover: 0 8px 0 rgba(89, 201, 144, 0.2);
+$glass-blur: blur(0px);
 
-// Text Color Hierarchy
-$text-primary: var(--text-primary, #0F172A);
-$text-secondary: var(--text-secondary, #475569);
-$text-muted: var(--text-muted, #64748B);
-$text-light: var(--text-light, #94A3B8);
-$text-accent: #10B981;
+// Text Color Hierarchy (Animal Crossing Warm Bark Style)
+$text-primary: var(--text-primary, #5D4037);
+$text-secondary: var(--text-secondary, #7B5E43);
+$text-muted: var(--text-muted, #9E8570);
+$text-light: var(--text-light, #BDB497);
+$text-accent: #3B9264;
 
-// Borders & Radius
-$border-color: var(--border-color, rgba(226, 232, 240, 0.8));
-$border-color-hover: var(--border-color-hover, rgba(203, 213, 225, 0.9));
-$border-light: var(--border-light, rgba(241, 245, 249, 0.6));
-$border-radius: 12px;     // More rounded for modern feel
-$border-radius-lg: 16px;
-$border-radius-xl: 24px;
+// Borders & Large Round Radius
+$border-color: var(--border-color, #E8DFCC);
+$border-color-hover: var(--border-color-hover, #59C990);
+$border-light: var(--border-light, #FAF5EA);
+$border-radius: 18px;     // Distinct AC rounded feel
+$border-radius-lg: 24px;  // Large AC card radius
+$border-radius-xl: 32px;  // NookPhone badge radius
 
-// Shadows (Modern soft shadow layers)
-$shadow-sm: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
-$shadow-md: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05));
-$shadow-lg: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08));
-$shadow-card: var(--shadow-card, 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02));
-$shadow-hover: var(--shadow-hover, 0 20px 25px -5px rgba(16, 185, 129, 0.12), 0 8px 10px -6px rgba(16, 185, 129, 0.08));
+// Shadows (Solid 3D & Soft Warm Layer)
+$shadow-sm: var(--shadow-sm, 0 3px 0 rgba(93, 64, 55, 0.12));
+$shadow-md: var(--shadow-md, 0 4px 0 rgba(93, 64, 55, 0.15));
+$shadow-lg: var(--shadow-lg, 0 6px 0 rgba(93, 64, 55, 0.18));
+$shadow-card: var(--shadow-card, 0 6px 0 rgba(216, 207, 181, 0.4));
+$shadow-hover: var(--shadow-hover, 0 8px 0 rgba(89, 201, 144, 0.3));
 
-// Gradients (Super smooth 3-stop or refined 2-stop angles)
-$gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-$gradient-accent: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
-$gradient-success: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-$gradient-header: linear-gradient(135deg, #10B981 0%, #0EA5E9 50%, #6366F1 100%);
-$gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+// Gradients (Natural AC Tones)
+$gradient-primary: linear-gradient(135deg, #74D094 0%, #59C990 100%);
+$gradient-accent: linear-gradient(135deg, #FFE066 0%, #F8C843 100%);
+$gradient-success: linear-gradient(135deg, #74D094 0%, #3B9264 100%);
+$gradient-header: linear-gradient(135deg, #74D094 0%, #85E3BA 50%, #74B9FF 100%);
+$gradient-card: linear-gradient(180deg, #FFFFFF 0%, #FAF8ED 100%);
 
-// Decorative Backgrounds
+// Decorative Backgrounds (Subtle Leaf & Sunbeam Pattern)
 $gradient-bg-light: 
-  radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 45%),
-  radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 45%),
-  radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+  radial-gradient(circle at 10% 20%, rgba(89, 201, 144, 0.08) 0%, transparent 45%),
+  radial-gradient(circle at 90% 80%, rgba(255, 224, 102, 0.1) 0%, transparent 45%),
+  radial-gradient(circle at 50% 50%, rgba(116, 185, 255, 0.06) 0%, transparent 50%);
 
 // Spacing
 $spacing-xs: 4px;
@@ -82,18 +86,18 @@ $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
 // Layout
-$sidebar-width: 260px;
-$sidebar-collapsed-width: 88px;
-$header-height: 72px; // slightly taller for breathing room
+$sidebar-width: 270px;
+$sidebar-collapsed-width: 90px;
+$header-height: 74px;
 
-$header-height-mobile: 60px;
-$bottom-nav-height: 64px;
+$header-height-mobile: 62px;
+$bottom-nav-height: 68px;
 $safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 
-// Typography (Fallback to modern system fonts)
-$font-display: 'Nunito', 'Outfit', 'PingFang SC', sans-serif;
-$font-body: 'Inter', 'Plus Jakarta Sans', 'PingFang SC', -apple-system, sans-serif;
-$font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+// Typography (Round & Playful)
+$font-display: 'Fredoka', 'Quicksand', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+$font-body: 'Quicksand', 'Fredoka', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
 // Breakpoints
 $breakpoint-xs: 430px;
@@ -108,10 +112,10 @@ $spacing-mobile-sm: 12px;
 $spacing-mobile-md: 16px;
 $spacing-mobile-lg: 20px;
 
-// Transitions
-$transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+// Transitions (Bouncy AC motion)
+$transition-fast: 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+$transition-base: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+$transition-slow: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
 // Z-index
 $z-dropdown: 1000;
@@ -120,4 +124,4 @@ $z-fixed: 1030;
 $z-modal-backdrop: 1040;
 $z-modal: 1050;
 $z-popover: 1060;
-$z-tooltip: 1070;
+$z-tooltip: 1070;

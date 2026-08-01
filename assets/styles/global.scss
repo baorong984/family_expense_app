@@ -1,128 +1,134 @@
 // ============================================
-// 🌿 PREMIUM FRESH & GLASS GLOBAL STYLES
+// 🍃 ANIMAL CROSSING GLOBAL STYLES
 // ============================================
 
 @use "sass:color";
+@use "./variables.scss" as *;
+@use "./ac-theme.scss" as *;
 
 :root {
-  /* 科技风格亮色主色调 */
-  --el-color-primary: #00a8cc;
-  --el-color-primary-light-3: #4dc2db;
-  --el-color-primary-dark-2: #0086a3;
-  --el-color-success: #10b981;
-  --el-color-warning: #f59e0b;
-  --el-color-danger: #ef4444;
-  --el-color-info: #3b82f6;
+  /* 动森白天/浅色模式设计 Token */
+  --ac-bg-page: #F6F5E8;
+  --ac-bg-bar: #FAF8ED;
+  --ac-bg-card: #FFFFFF;
+  --ac-bg-input: #FFFFFF;
+  --ac-border: #E8DFCC;
+  --ac-border-wood: #7B5E43;
+  --ac-text-primary: #5D4037;
+  --ac-text-secondary: #7B5E43;
+  --ac-text-muted: #9E8570;
+  --ac-shadow: rgba(216, 207, 181, 0.4);
 
-  --el-border-radius-base: 12px;
-  --el-border-radius-small: 8px;
-  --el-border-radius-round: 20px;
+  --el-color-primary: #59C990;
+  --el-color-primary-light-3: #74D094;
+  --el-color-primary-dark-2: #3B9264;
+  --el-color-success: #59C990;
+  --el-color-warning: #FFE066;
+  --el-color-danger: #FF7675;
+  --el-color-info: #74B9FF;
 
-  --el-transition-duration: 0.3s;
+  --el-border-radius-base: 18px;
+  --el-border-radius-small: 12px;
+  --el-border-radius-round: 28px;
+  --el-transition-duration: 0.25s;
 
-  /* Premium Backgrounds */
   --bg-white: #FFFFFF;
-  --bg-light: #F8FAFC;
-  --bg-page: #F1F5F9;
-  --bg-card: rgba(255, 255, 255, 0.8);
-  --bg-card-hover: rgba(255, 255, 255, 0.95);
-  --bg-input: rgba(248, 250, 252, 0.8);
+  --bg-light: #FAF8ED;
+  --bg-page: #F6F5E8;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FAF8ED;
+  --bg-input: #FAF8ED;
   --bg-input-focus: #FFFFFF;
 
-  /* Glassmorphism System */
-  --glass-bg: rgba(255, 255, 255, 0.45);
-  --glass-bg-hover: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-border-hover: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.94);
+  --glass-bg-hover: #FFFFFF;
+  --glass-border: #E8DFCC;
+  --glass-border-hover: #59C990;
 
-  /* Text Color Hierarchy */
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-light: #94A3B8;
+  --text-primary: #5D4037;
+  --text-secondary: #7B5E43;
+  --text-muted: #9E8570;
+  --text-light: #BDB497;
 
-  /* Borders */
-  --border-color: rgba(226, 232, 240, 0.8);
-  --border-color-hover: rgba(203, 213, 225, 0.9);
-  --border-light: rgba(241, 245, 249, 0.6);
+  --border-color: #E8DFCC;
+  --border-color-hover: #59C990;
+  --border-light: #FAF5EA;
 }
 
-/* 科技风格暗色主题 */
+/* 动森星空夜景模式 (Cozy Starry Night Theme) */
 html.dark {
-  --el-color-primary: #00f0ff;
-  --el-color-primary-light-3: #00d4ff;
-  --el-color-primary-light-5: #00a8cc;
-  --el-color-primary-light-7: #007c99;
-  --el-color-primary-light-9: #005066;
-  --el-color-primary-dark-2: #00e6f5;
+  --ac-bg-page: #131E2B;       /* 沉静夜空 */
+  --ac-bg-bar: #1C2B3C;        /* 状态栏与侧边栏蓝调 */
+  --ac-bg-card: #223447;       /* 柔和夜间卡片色 */
+  --ac-bg-input: #182535;      /* 沉稳输入框底色 */
+  --ac-border: #354B64;        /* 月光夜蓝边框 */
+  --ac-border-wood: #F5C563;   /* 温暖金黄木纹边框 */
+  --ac-text-primary: #F0F4F8;   /* 柔和月光白主文字 */
+  --ac-text-secondary: #C0D1E3; /* 辅助文字 */
+  --ac-text-muted: #829AB4;    /* 灰调次要文字 */
+  --ac-shadow: rgba(0, 0, 0, 0.35);
 
-  --el-color-success: #39ff14;
-  --el-color-warning: #ff006e;
-  --el-color-danger: #ff2a6d;
-  --el-color-info: #00d4ff;
+  --el-color-primary: #59C990;
+  --el-color-primary-light-3: #74D094;
+  --el-color-primary-light-5: #3B9264;
+  --el-color-primary-dark-2: #2E734E;
+  --el-color-success: #59C990;
+  --el-color-warning: #FFE066;
+  --el-color-danger: #FF7675;
+  --el-color-info: #74B9FF;
 
-  --el-text-color-primary: #ffffff;
-  --el-text-color-regular: #a0aec0;
-  --el-text-color-secondary: #718096;
-  --el-text-color-placeholder: #4a5568;
+  --el-text-color-primary: #F0F4F8;
+  --el-text-color-regular: #C0D1E3;
+  --el-text-color-secondary: #829AB4;
+  --el-text-color-placeholder: #5C728C;
 
-  --el-border-color: rgba(0, 240, 255, 0.2);
-  --el-border-color-light: rgba(0, 240, 255, 0.15);
-  --el-border-color-lighter: rgba(0, 240, 255, 0.1);
-  --el-border-color-extra-light: rgba(0, 240, 255, 0.05);
-  --el-border-color-dark: rgba(0, 240, 255, 0.3);
+  --el-border-color: #354B64;
+  --el-border-color-light: #2A3B50;
+  --el-border-color-lighter: #223447;
 
-  --el-fill-color: rgba(0, 240, 255, 0.05);
-  --el-fill-color-light: rgba(0, 240, 255, 0.03);
-  --el-fill-color-blank: transparent;
+  --el-bg-color: #223447;
+  --el-bg-color-overlay: #223447;
+  --el-bg-color-page: #131E2B;
+  --el-fill-color-blank: #182535;
+  --el-fill-color: #1F2E3F;
 
-  --el-bg-color: rgba(21, 25, 50, 0.7);
-  --el-bg-color-page: #0a0e27;
+  --bg-white: #223447;
+  --bg-light: #1C2B3C;
+  --bg-page: #131E2B;
+  --bg-card: #223447;
+  --bg-card-hover: #2B3E56;
+  --bg-input: #182535;
+  --bg-input-focus: #223447;
 
-  --el-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --el-box-shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --text-primary: #F0F4F8;
+  --text-secondary: #C0D1E3;
+  --text-muted: #829AB4;
+  --text-light: #5C728C;
 
-  /* Premium Backgrounds */
-  --bg-white: #151932;
-  --bg-light: #0f132a;
-  --bg-page: #0a0e27;
-  --bg-card: rgba(21, 25, 50, 0.6);
-  --bg-card-hover: rgba(21, 25, 50, 0.8);
-  --bg-input: rgba(10, 14, 39, 0.6);
-  --bg-input-focus: #151932;
+  --border-color: #354B64;
+  --border-color-hover: #59C990;
 
-  /* Glassmorphism System */
-  --glass-bg: rgba(21, 25, 50, 0.45);
-  --glass-bg-hover: rgba(21, 25, 50, 0.6);
-  --glass-border: rgba(0, 240, 255, 0.15);
-  --glass-border-hover: rgba(0, 240, 255, 0.3);
-
-  /* Text Color Hierarchy */
-  --text-primary: #ffffff;
-  --text-secondary: #a0aec0;
-  --text-muted: #718096;
-  --text-light: #4a5568;
-
-  /* Borders */
-  --border-color: rgba(0, 240, 255, 0.2);
-  --border-color-hover: rgba(0, 240, 255, 0.35);
-  --border-light: rgba(0, 240, 255, 0.1);
-
-  /* 深色下背景微调 */
   body {
-    background: #0a0e27;
+    background: #131E2B !important;
+    color: #F0F4F8 !important;
+
     &::before {
-      background: linear-gradient(
-        135deg,
-        rgba(0, 240, 255, 0.05) 0%,
-        rgba(21, 25, 50, 0.8) 100%
-      );
+      background: radial-gradient(circle at 20% 20%, rgba(255, 224, 102, 0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(89, 201, 144, 0.06) 0%, transparent 50%);
+    }
+
+    &::after {
+      background-image:
+        radial-gradient(rgba(255, 224, 102, 0.3) 1.5px, transparent 1.5px),
+        radial-gradient(rgba(240, 244, 248, 0.2) 1.5px, transparent 1.5px);
+      background-size: 38px 38px;
+      background-position: 0 0, 19px 19px;
     }
   }
 }
 
-// 字体引入
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+// 字体引入 (Fredoka + Quicksand 动森圆润英文字体，系统圆体回退)
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap");
 
 * {
   margin: 0;
@@ -149,7 +155,7 @@ body {
 }
 
 // ============================================
-// 🌈 Premium Backgrounds & Dynamic Grid
+// 🍃 Animal Crossing Island Canvas & Leaf Dots
 // ============================================
 
 body {
@@ -175,12 +181,12 @@ body {
     right: 0;
     bottom: 0;
     background-image:
-      radial-gradient(rgba(16, 185, 129, 0.08) 1.5px, transparent 1.5px),
-      radial-gradient(rgba(14, 165, 233, 0.06) 1.5px, transparent 1.5px);
-    background-size: 32px 32px;
+      radial-gradient(rgba(89, 201, 144, 0.12) 2px, transparent 2px),
+      radial-gradient(rgba(255, 224, 102, 0.12) 2px, transparent 2px);
+    background-size: 36px 36px;
     background-position:
       0 0,
-      16px 16px;
+      18px 18px;
     pointer-events: none;
     z-index: -1;
   }
@@ -291,33 +297,21 @@ body {
 // 💎 Card & Panels (Glassmorphism)
 // ============================================
 
-.glass-card {
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
-  border-radius: $border-radius-lg;
-  box-shadow: $glass-shadow;
-  transition: all $transition-base;
+// ============================================
+// 💎 Card & Panels (Animal Crossing Style Cards)
+// ============================================
 
-  &:hover {
-    border-color: $glass-border-hover;
-    box-shadow: $glass-shadow-hover;
-    transform: translateY(-4px);
-  }
-}
-
+.glass-card,
 .page-card {
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
+  background: var(--ac-bg-card, #FFFFFF);
+  border: 3px solid var(--ac-border, #E8DFCC);
   border-radius: $border-radius-lg;
   padding: $spacing-xl;
   margin-bottom: $spacing-lg;
-  box-shadow: $glass-shadow;
+  box-shadow: 0 6px 0 var(--ac-shadow);
   position: relative;
   overflow: hidden;
+  color: var(--ac-text-primary, #5D4037);
   transition: all $transition-base;
 
   &::before {
@@ -328,21 +322,13 @@ body {
     right: 0;
     height: 4px;
     background: $gradient-primary;
-    opacity: 0.7;
-    transition:
-      opacity $transition-base,
-      height $transition-base;
+    opacity: 0.8;
   }
 
   &:hover {
-    box-shadow: $glass-shadow-hover;
+    box-shadow: 0 10px 0 rgba(89, 201, 144, 0.2);
     transform: translateY(-3px);
-    border-color: rgba($primary, 0.35);
-
-    &::before {
-      opacity: 1;
-      height: 6px;
-    }
+    border-color: #59C990;
   }
 }
 
@@ -356,13 +342,13 @@ body {
   align-items: center;
   margin-bottom: $spacing-xl;
   padding-bottom: $spacing-md;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 2px dashed var(--ac-border, #E8DFCC);
 
   h2 {
     font-family: $font-display;
     font-size: 24px;
     font-weight: 800;
-    color: $text-primary;
+    color: var(--ac-text-primary, #5D4037);
     margin: 0;
     position: relative;
     letter-spacing: -0.5px;
@@ -373,9 +359,9 @@ body {
       left: -16px;
       top: 50%;
       transform: translateY(-50%);
-      width: 4px;
+      width: 5px;
       height: 24px;
-      background: $gradient-primary;
+      background: #59C990;
       border-radius: 4px;
     }
   }
@@ -392,125 +378,65 @@ body {
 // ============================================
 
 .el-button {
-  font-family: $font-body;
-  font-weight: 600;
-  border-radius: $border-radius;
+  font-family: $font-display;
+  font-weight: 700;
+  border-radius: 20px;
   transition: all $transition-base;
-  letter-spacing: 0.3px;
-  height: 38px;
-  padding: 8px 16px;
+  height: 40px;
+  padding: 8px 18px;
+  border: 2px solid transparent;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(2px);
   }
 
   &.el-button--primary {
-    background: $gradient-primary;
-    border: none;
+    background: #59C990;
+    border-color: #3B9264;
     color: white;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22);
+    box-shadow: 0 4px 0 #3B9264;
 
     &:hover {
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.32);
-      background: $gradient-primary;
-      opacity: 0.95;
-    }
-
-    &:focus {
-      background: $gradient-primary;
+      background: #74D094;
+      box-shadow: 0 6px 0 #3B9264;
     }
   }
 
   &.el-button--success {
-    background: linear-gradient(135deg, $success 0%, $primary-light 100%);
-    border: none;
+    background: #59C990;
+    border-color: #3B9264;
     color: white;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
-
-    &:hover {
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
-      opacity: 0.95;
-    }
+    box-shadow: 0 4px 0 #3B9264;
   }
 
   &.el-button--danger {
-    background: linear-gradient(135deg, $danger 0%, $accent 100%);
-    border: none;
+    background: #FF7675;
+    border-color: #D63031;
     color: white;
-    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18);
-
-    &:hover {
-      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.28);
-      opacity: 0.95;
-    }
+    box-shadow: 0 4px 0 #D63031;
   }
 
   &.el-button--warning {
-    background: linear-gradient(135deg, $warning 0%, #fbbf24 100%);
-    border: none;
-    color: white;
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
-
-    &:hover {
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.28);
-      opacity: 0.95;
-    }
+    background: #FFE066;
+    border-color: #F8C843;
+    color: #5D4037;
+    box-shadow: 0 4px 0 #D49B00;
   }
 
   // Default button style
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid $border-color;
-  color: $text-secondary;
-  backdrop-filter: blur(8px);
+  background: var(--ac-bg-card, #FFFFFF);
+  border: 2px solid var(--ac-border, #E8DFCC);
+  color: var(--ac-text-primary, #5D4037);
+  box-shadow: 0 3px 0 var(--ac-shadow);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: $primary-light;
-    color: $primary;
-  }
-
-  &.is-link {
-    background: transparent;
-    border: none;
-    backdrop-filter: none;
-    box-shadow: none !important;
-    padding: 0;
-    height: auto;
-
-    &.el-button--primary {
-      color: $primary;
-      &:hover {
-        color: $primary-dark;
-      }
-    }
-    &.el-button--success {
-      color: $success;
-      &:hover {
-        color: color.adjust($success, $lightness: -10%);
-      }
-    }
-    &.el-button--danger {
-      color: $danger;
-      &:hover {
-        color: color.adjust($danger, $lightness: -10%);
-      }
-    }
-    &.el-button--warning {
-      color: $warning;
-      &:hover {
-        color: color.adjust($warning, $lightness: -10%);
-      }
-    }
-
-    &:hover {
-      transform: none;
-      background: transparent;
-    }
+    background: var(--ac-bg-bar, #FAF8ED);
+    border-color: #59C990;
+    color: #59C990;
   }
 }
 
@@ -518,83 +444,131 @@ body {
 // 💻 Element Plus Input Overrides
 // ============================================
 
-.el-input__wrapper {
-  background: $bg-input;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: none !important;
+.el-input__wrapper,
+.el-select__wrapper,
+.el-cascader {
+  background: var(--ac-input-bg, #FFFFFF) !important;
+  border: 2px solid var(--ac-border, #E8DFCC) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 3px 0 var(--ac-shadow) !important;
   transition: all $transition-base;
-  color: $text-primary;
-  padding: 8px 12px;
+  color: var(--ac-text-primary, #5D4037) !important;
+  padding: 6px 14px;
 
   &:hover {
-    border-color: $primary-light;
-    background: $bg-white;
+    border-color: #59C990 !important;
   }
 
   &.is-focus {
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
-    background: $bg-white;
+    border-color: #59C990 !important;
+    box-shadow: 0 0 0 3px rgba(89, 201, 144, 0.2) !important;
   }
 
-  .el-input__inner {
-    color: $text-primary;
+  .el-input__inner,
+  .el-select__selected-item {
+    color: var(--ac-text-primary, #5D4037) !important;
     font-family: $font-body;
+    font-weight: 600;
   }
 }
 
 .el-textarea__inner {
-  background: $bg-input;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  color: $text-primary;
+  background: var(--ac-input-bg, #FFFFFF) !important;
+  border: 2px solid var(--ac-border, #E8DFCC) !important;
+  border-radius: 18px !important;
+  color: var(--ac-text-primary, #5D4037) !important;
   font-family: $font-body;
   padding: 10px 14px;
-  box-shadow: none !important;
+  box-shadow: 0 3px 0 var(--ac-shadow) !important;
   transition: all $transition-base;
 
   &:focus {
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
-    background: $bg-white;
+    border-color: #59C990 !important;
+    box-shadow: 0 0 0 3px rgba(89, 201, 144, 0.2) !important;
+  }
+}
+
+.el-range-editor.el-input__wrapper {
+  background: var(--ac-input-bg, #FFFFFF) !important;
+  
+  .el-range-input {
+    color: var(--ac-text-primary, #5D4037) !important;
+    background: transparent !important;
+  }
+
+  .el-range-separator {
+    color: var(--ac-text-secondary, #7B5E43) !important;
+  }
+}
+
+// 下拉菜单面板深色与动森风
+.el-popper.is-pure,
+.el-select-dropdown,
+.el-picker-panel {
+  background: var(--ac-bg-card, #FFFFFF) !important;
+  border: 2px solid var(--ac-border, #E8DFCC) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 24px var(--ac-shadow) !important;
+  color: var(--ac-text-primary, #5D4037) !important;
+
+  .el-select-dropdown__item {
+    color: var(--ac-text-primary, #5D4037) !important;
+    font-family: $font-display;
+    font-weight: 600;
+    border-radius: 10px;
+
+    &.hover, &:hover {
+      background: rgba(89, 201, 144, 0.15) !important;
+      color: #59C990 !important;
+    }
+
+    &.is-selected {
+      color: #59C990 !important;
+      font-weight: 800;
+    }
+  }
+
+  .el-date-table td.available:hover {
+    color: #59C990 !important;
+  }
+
+  .el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+    background: #59C990 !important;
   }
 }
 
 // ============================================
-// 🎨 Element Plus Card (Glassmorphism Defaults)
+// 🎨 Element Plus Card
 // ============================================
 
 .el-card {
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
-  border-radius: $border-radius-lg;
-  box-shadow: $glass-shadow;
+  background: var(--ac-bg-card, #FFFFFF) !important;
+  border: 3px solid var(--ac-border, #E8DFCC) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 6px 0 var(--ac-shadow) !important;
   transition: all $transition-base;
-  color: $text-primary;
+  color: var(--ac-text-primary, #5D4037) !important;
 
   &:hover {
-    box-shadow: $glass-shadow-hover;
-    border-color: rgba($primary, 0.25);
+    box-shadow: 0 10px 0 rgba(89, 201, 144, 0.25) !important;
+    border-color: #59C990 !important;
   }
 
   .el-card__header {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 2px dashed var(--ac-border, #E8DFCC) !important;
     padding: $spacing-lg;
 
     .card-title {
       font-family: $font-display;
-      font-weight: 700;
-      color: $text-primary;
-      font-size: 16px;
+      font-weight: 800;
+      color: var(--ac-text-primary, #5D4037);
+      font-size: 17px;
     }
   }
 
   .el-card__body {
     padding: $spacing-lg;
-    color: $text-primary;
+    color: var(--ac-text-primary, #5D4037);
   }
 }
 
@@ -613,12 +587,8 @@ body {
 
   &.large {
     font-size: 32px;
-    background: $gradient-primary;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #FFE066;
     letter-spacing: -1px;
-    text-shadow: 0 2px 10px rgba(16, 185, 129, 0.05);
   }
 }
 
@@ -629,15 +599,13 @@ body {
 .stat-item {
   text-align: center;
   padding: $spacing-lg;
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
-  border-radius: $border-radius-lg;
+  background: var(--ac-bg-card, #FFFFFF) !important;
+  border: 2.5px solid var(--ac-border, #E8DFCC) !important;
+  border-radius: 22px !important;
   transition: all $transition-base;
   position: relative;
   overflow: hidden;
-  box-shadow: $glass-shadow;
+  box-shadow: 0 4px 0 var(--ac-shadow) !important;
 
   &::before {
     content: "";
@@ -646,15 +614,15 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: $gradient-primary;
+    background: #59C990;
     opacity: 0;
     transition: opacity $transition-base;
   }
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: $glass-shadow-hover;
-    border-color: rgba($primary, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 0 rgba(89, 201, 144, 0.25) !important;
+    border-color: #59C990 !important;
 
     &::before {
       opacity: 1;
@@ -663,28 +631,25 @@ body {
 
   .label {
     display: block;
-    font-size: 12px;
-    color: $text-muted;
-    font-weight: 600;
+    font-size: 13px;
+    color: var(--ac-text-secondary, #7B5E43) !important;
+    font-family: $font-display;
+    font-weight: 700;
     margin-bottom: $spacing-sm;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
   }
 
   .value {
     display: block;
     font-family: $font-mono;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 800;
-    color: $text-primary;
+    color: var(--ac-text-primary, #5D4037) !important;
     letter-spacing: -0.5px;
   }
 
   .value-accent {
-    background: $gradient-primary;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #FFE066 !important;
   }
 }
 
@@ -702,15 +667,15 @@ body {
   font-weight: 700;
 
   &.up {
-    color: $primary-dark;
-    background: rgba($primary, 0.12);
-    border: 1px solid rgba($primary, 0.15);
+    color: #3B9264;
+    background: rgba(89, 201, 144, 0.15);
+    border: 1px solid rgba(89, 201, 144, 0.3);
   }
 
   &.down {
-    color: $accent-dark;
-    background: rgba($accent, 0.12);
-    border: 1px solid rgba($accent, 0.15);
+    color: #FF7675;
+    background: rgba(255, 118, 117, 0.15);
+    border: 1px solid rgba(255, 118, 117, 0.3);
   }
 }
 
@@ -720,60 +685,63 @@ body {
 
 .el-tag {
   border-radius: 20px;
-  font-weight: 600;
-  padding: 2px 10px;
+  font-family: $font-display;
+  font-weight: 700;
+  padding: 4px 12px;
   height: auto;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
 
   &.el-tag--success {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.2);
-    color: $primary-dark;
+    background: rgba(89, 201, 144, 0.15);
+    border-color: rgba(89, 201, 144, 0.3);
+    color: #3B9264;
   }
 
   &.el-tag--warning {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.2);
-    color: #c27803;
+    background: rgba(255, 224, 102, 0.2);
+    border-color: rgba(248, 200, 67, 0.4);
+    color: #D49B00;
   }
 
   &.el-tag--danger {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.2);
-    color: $danger;
+    background: rgba(255, 118, 117, 0.15);
+    border-color: rgba(255, 118, 117, 0.3);
+    color: #FF7675;
   }
 
   &.el-tag--info {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.2);
-    color: #4f46e5;
+    background: rgba(116, 185, 255, 0.15);
+    border-color: rgba(116, 185, 255, 0.3);
+    color: #0984E3;
   }
 }
 
 // ============================================
-// 📋 Tables (Modern clean list look)
+// 📋 Tables (Animal Crossing Warm Table Style)
 // ============================================
 
 .el-table {
   background: transparent !important;
   --el-table-bg-color: transparent !important;
-  --el-table-row-hover-bg-color: rgba(16, 185, 129, 0.04) !important;
-  --el-table-border-color: #{$border-color} !important;
-  --el-table-header-bg-color: rgba(248, 250, 252, 0.6) !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-row-hover-bg-color: rgba(89, 201, 144, 0.1) !important;
+  --el-table-border-color: var(--ac-border, #E8DFCC) !important;
+  --el-table-header-bg-color: var(--ac-bg-bar, #FAF8ED) !important;
 
   th.el-table__cell {
-    background: rgba(248, 250, 252, 0.6) !important;
-    color: $text-secondary;
-    font-weight: 700;
-    border-bottom: 1px solid $border-color;
-    padding: 12px 8px;
-    font-size: 13px;
+    background: var(--ac-bg-bar, #FAF8ED) !important;
+    color: var(--ac-text-primary, #5D4037) !important;
+    font-family: $font-display;
+    font-weight: 800;
+    border-bottom: 2px solid var(--ac-border, #E8DFCC) !important;
+    padding: 14px 10px;
+    font-size: 14px;
   }
 
   td.el-table__cell {
-    border-bottom: 1px solid $border-light;
-    color: $text-primary;
-    padding: 14px 8px;
+    border-bottom: 1px solid var(--ac-border, #E8DFCC) !important;
+    color: var(--ac-text-primary, #5D4037) !important;
+    padding: 14px 10px;
   }
 
   tr {
@@ -781,7 +749,16 @@ body {
     transition: background-color $transition-fast;
 
     &:hover td {
-      background: rgba(16, 185, 129, 0.04) !important;
+      background: rgba(89, 201, 144, 0.1) !important;
+    }
+  }
+
+  .el-table__empty-block {
+    background: transparent !important;
+    .el-table__empty-text {
+      color: var(--ac-text-muted, #9E8570) !important;
+      font-family: $font-display;
+      font-weight: 700;
     }
   }
 }

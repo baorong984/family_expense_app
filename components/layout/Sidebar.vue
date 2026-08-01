@@ -1,16 +1,16 @@
 <template>
   <div
-    class="sidebar"
+    class="sidebar ac-sidebar"
     :class="{ collapsed: isCollapsed, 'is-mobile': isMobile }"
   >
     <!-- Logo 区域 -->
-    <div class="sidebar-logo">
+    <div class="sidebar-logo ac-sidebar-logo">
       <transition name="logo-fade" mode="out-in">
         <div v-if="!isCollapsed" class="logo-text">
-          <span class="logo-icon">🌿</span>
-          <span class="logo-name">记账本</span>
+          <span class="logo-icon">📱</span>
+          <span class="logo-name">Nook Apps</span>
         </div>
-        <div v-else class="logo-icon-only">🌿</div>
+        <div v-else class="logo-icon-only">🍃</div>
       </transition>
     </div>
 
@@ -19,123 +19,123 @@
       :default-active="activeMenu"
       :collapse="isCollapsed && !isMobile"
       router
-      class="sidebar-menu"
+      class="sidebar-menu ac-sidebar-menu"
     >
       <el-menu-item index="/expense/create" @click="handleSelect">
         <el-icon><Edit /></el-icon>
         <template #title>
-          <span>记账</span>
+          <span>快速记账</span>
         </template>
       </el-menu-item>
 
       <el-menu-item index="/expense/history" @click="handleSelect">
         <el-icon><List /></el-icon>
         <template #title>
-          <span>消费记录</span>
+          <span>账册明细</span>
         </template>
       </el-menu-item>
 
       <el-menu-item index="/statistics" @click="handleSelect">
         <el-icon><DataAnalysis /></el-icon>
         <template #title>
-          <span>统计分析</span>
+          <span>生活统计</span>
         </template>
       </el-menu-item>
 
       <!-- 物品资产 -->
-      <div class="menu-divider"></div>
+      <div class="menu-divider ac-divider"></div>
 
       <el-sub-menu index="item">
         <template #title>
           <el-icon><Box /></el-icon>
-          <span>物品资产</span>
+          <span>岛屿物资</span>
         </template>
         <el-menu-item index="/item" @click="handleSelect">
           <el-icon><List /></el-icon>
           <template #title>
-            <span>物品列表</span>
+            <span>物品图鉴</span>
           </template>
         </el-menu-item>
         <el-menu-item index="/item/category" @click="handleSelect">
           <el-icon><Grid /></el-icon>
           <template #title>
-            <span>分类管理</span>
+            <span>分类分类</span>
           </template>
         </el-menu-item>
         <el-menu-item index="/item/stats" @click="handleSelect">
           <el-icon><DataAnalysis /></el-icon>
           <template #title>
-            <span>统计分析</span>
+            <span>物资分析</span>
           </template>
         </el-menu-item>
       </el-sub-menu>
 
       <!-- 人情管理 -->
-      <div class="menu-divider"></div>
+      <div class="menu-divider ac-divider"></div>
 
       <el-menu-item index="/gift" @click="handleSelect">
         <el-icon><Present /></el-icon>
         <template #title>
-          <span>人情记录</span>
+          <span>居民礼尚</span>
         </template>
       </el-menu-item>
 
       <el-menu-item index="/gift/statistics" @click="handleSelect">
         <el-icon><Document /></el-icon>
         <template #title>
-          <span>人情统计</span>
+          <span>礼尚统计</span>
         </template>
       </el-menu-item>
 
       <!-- 车辆管理 -->
-      <div class="menu-divider"></div>
+      <div class="menu-divider ac-divider"></div>
 
       <el-menu-item index="/vehicle/fuel" @click="handleSelect">
         <el-icon><Van /></el-icon>
         <template #title>
-          <span>加油/充电记录</span>
+          <span>载具加油/充电</span>
         </template>
       </el-menu-item>
 
       <el-menu-item index="/vehicle" @click="handleSelect">
         <el-icon><Setting /></el-icon>
         <template #title>
-          <span>车辆管理</span>
+          <span>载具管理</span>
         </template>
       </el-menu-item>
 
       <!-- 管理员菜单 -->
       <template v-if="userStore.isAdmin">
-        <div class="menu-divider"></div>
+        <div class="menu-divider ac-divider"></div>
 
         <el-menu-item index="/budget" @click="handleSelect">
           <el-icon><Wallet /></el-icon>
           <template #title>
-            <span>预算管理</span>
+            <span>预算规划</span>
           </template>
         </el-menu-item>
 
         <el-menu-item index="/category" @click="handleSelect">
           <el-icon><Grid /></el-icon>
           <template #title>
-            <span>分类管理</span>
+            <span>科目配置</span>
           </template>
         </el-menu-item>
 
         <el-menu-item index="/member" @click="handleSelect">
           <el-icon><User /></el-icon>
           <template #title>
-            <span>成员管理</span>
+            <span>居民管理</span>
           </template>
         </el-menu-item>
       </template>
     </el-menu>
 
     <!-- 底部状态 -->
-    <div v-if="!isCollapsed && !isMobile" class="sidebar-footer">
-      <div class="tip-card">
-        <span class="tip-icon">💡</span>
-        <span class="tip-text">AI 智能记账</span>
+    <div v-if="!isCollapsed && !isMobile" class="sidebar-footer ac-sidebar-footer">
+      <div class="tip-card ac-tip-card">
+        <span class="tip-icon">🍃</span>
+        <span class="tip-text">狸克 AI 助手在线</span>
       </div>
     </div>
   </div>
@@ -178,17 +178,15 @@ const handleSelect = () => {
 </script>
 
 <style lang="scss" scoped>
-.sidebar {
+.sidebar.ac-sidebar {
   width: $sidebar-width;
   height: calc(100% - #{$spacing-xl});
-  background: $glass-bg;
-  backdrop-filter: $glass-blur;
-  -webkit-backdrop-filter: $glass-blur;
-  border: 1px solid $glass-border;
-  border-radius: $border-radius-lg;
-  box-shadow: $glass-shadow;
+  background: var(--ac-bg-bar, #FAF8ED);
+  border: 3px solid var(--ac-border, #E8DFCC);
+  border-radius: 26px;
+  box-shadow: 0 6px 0 var(--ac-shadow);
   margin: $spacing-md 0 $spacing-md $spacing-md;
-  transition: width $transition-base, all $transition-base;
+  transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), all 0.25s ease;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -221,17 +219,17 @@ const handleSelect = () => {
     border: none;
     border-radius: 0;
     box-shadow: none;
-    background: $bg-white;
+    background: var(--ac-bg-bar, #FAF8ED);
   }
 }
 
 // Logo
-.sidebar-logo {
-  padding: $spacing-lg;
-  border-bottom: 1px solid $border-color;
-  background: linear-gradient(180deg, color-mix(in srgb, $bg-light 40%, transparent) 0%, transparent 100%);
+.sidebar-logo.ac-sidebar-logo {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 2px dashed var(--ac-border, #E8DFCC);
+  background: var(--ac-bg-page, #F6F5E8);
   transition: padding $transition-base;
-  min-height: 72px;
+  min-height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,18 +242,14 @@ const handleSelect = () => {
   white-space: nowrap;
 
   .logo-icon {
-    font-size: 24px;
-    animation: bounce 3s ease-in-out infinite;
+    font-size: 22px;
   }
 
   .logo-name {
     font-family: $font-display;
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 800;
-    background: $gradient-primary;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--ac-text-primary, #5D4037);
     letter-spacing: 0.5px;
   }
 }
@@ -263,112 +257,102 @@ const handleSelect = () => {
 .logo-icon-only {
   display: flex;
   justify-content: center;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 // 菜单
-.sidebar-menu {
+.sidebar-menu.ac-sidebar-menu {
   flex: 1;
   border-right: none;
   background: transparent;
-  padding: $spacing-md 0;
+  padding: $spacing-sm 0;
   overflow-y: auto;
   overflow-x: hidden;
 
   :deep(.el-menu-item),
   :deep(.el-sub-menu__title) {
-    color: $text-secondary;
-    border-radius: $border-radius;
+    color: var(--ac-text-primary, #5D4037);
+    border-radius: 18px;
     margin: 6px 14px;
     height: 46px;
     transition: all $transition-base;
-    font-weight: 500;
+    font-weight: 700;
+    font-family: $font-display;
+    border: 2px solid transparent;
 
     .el-icon {
       font-size: 18px;
+      color: var(--ac-text-secondary, #7B5E43);
       transition: transform $transition-base;
     }
 
     &:hover {
-      color: $primary-dark;
-      background: rgba($primary, 0.08);
+      color: #59C990;
+      background: rgba(89, 201, 144, 0.15);
+      border-color: #59C990;
+      transform: translateY(-2px);
       
       .el-icon {
-        transform: scale(1.1);
+        transform: scale(1.15) rotate(-6deg);
+        color: #59C990;
       }
     }
   }
 
   :deep(.el-menu-item.is-active) {
-    color: white;
-    background: $gradient-primary;
-    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
+    color: #FFFFFF !important;
+    background: #59C990 !important;
+    border: 2px solid #3B9264 !important;
+    box-shadow: 0 4px 0 #3B9264 !important;
 
     .el-icon {
-      color: white;
-      background: $gradient-primary;
-      box-shadow: 0 4px 14px rgba($primary, 0.25);
-      font-weight: 600;
+      color: #FFFFFF !important;
+    }
 
-      .el-icon {
-        color: white;
-        transform: scale(1.1);
-      }
+    span {
+      color: #FFFFFF !important;
     }
   }
-  // 移动端样式
-  .is-mobile & {
-    margin: 4px 16px;
-    height: 48px;
-  }
 
-  :deep(.el-menu--collapse) {
-    width: 100%;
-
-    .el-menu-item {
-      padding: 0 !important;
-      text-align: center;
-    }
+  :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+    color: #59C990;
+    background: rgba(89, 201, 144, 0.15);
+    border-color: #59C990;
   }
 }
 
-.menu-divider {
-  height: 1px;
-  background: $border-color;
-  margin: $spacing-md $spacing-xl;
-  transition: margin $transition-base;
-
-  .is-mobile & {
-    margin: $spacing-sm $spacing-mobile-lg;
-  }
+.menu-divider.ac-divider {
+  height: 2px;
+  background: var(--ac-border, #E8DFCC);
+  border-radius: 2px;
+  margin: 10px 20px;
 }
 
 // 底部
-.sidebar-footer {
+.sidebar-footer.ac-sidebar-footer {
   padding: $spacing-md;
-  border-top: 1px solid $border-color;
+  border-top: 2px dashed var(--ac-border, #E8DFCC);
+  background: var(--ac-bg-page, #F6F5E8);
 
-  .tip-card {
+  .tip-card.ac-tip-card {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
-    padding: $spacing-md;
-    background: linear-gradient(
-      135deg,
-      rgba($primary, 0.08) 0%,
-      rgba($secondary, 0.08) 100*1%
-    );
-    border-radius: $border-radius;
-    border: 1px solid rgba($primary, 0.1);
+    padding: 10px 14px;
+    background: var(--ac-bg-card, #FFFFFF);
+    border-radius: 18px;
+    border: 2px solid #59C990;
+    box-shadow: 0 3px 0 rgba(89, 201, 144, 0.3);
 
     .tip-icon {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     .tip-text {
-      font-size: 12px;
-      color: $primary-dark;
-      font-weight: 600;
+      font-family: $font-display;
+      font-size: 13px;
+      color: #59C990;
+      font-weight: 800;
     }
   }
 }
