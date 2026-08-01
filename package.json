@@ -18,14 +18,19 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "@capacitor/core": "^8.4.0",
     "@element-plus/icons-vue": "^2.3.1",
+    "@element-plus/nuxt": "^1.1.5",
     "@pinia/nuxt": "^0.5.1",
     "bcryptjs": "^2.4.3",
+    "confbox": "^0.2.4",
+    "consola": "^3.4.2",
     "dayjs": "^1.11.10",
     "echarts": "^5.5.0",
     "element-plus": "^2.5.6",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.2",
+    "node-fetch-native": "^1.6.7",
     "nuxt": "^3.10.3",
     "openai": "^4.28.4",
     "pinia": "^2.1.7",
@@ -37,15 +42,19 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
     "@nuxt/devtools": "^1.1.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.11.24",
+    "@vite-pwa/nuxt": "^1.1.1",
+    "@vueuse/core": "^14.3.0",
+    "@vueuse/nuxt": "^14.3.0",
     "eslint": "^8.57.0",
+    "nuxt-security": "^2.6.0",
     "sass": "^1.71.1",
-    "typescript": "^5.3.3",
-    "unplugin-auto-import": "^0.17.5",
-    "unplugin-vue-components": "^0.26.0"
+    "typescript": "^5.3.3"
   }
 }

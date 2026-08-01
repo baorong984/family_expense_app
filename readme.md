@@ -1,289 +1,180 @@
-# 家庭财务管家
+# 家庭财务管家 (Family Expense Manager)
 
-一个现代化的家庭消费记账Web应用，支持多用户共享账本，通过AI技术增强用户体验，实现消费明细录入、分类汇总、数据分析、预算管理、人情往来、车辆管理等核心功能。
+AI 智能记账 · 轻松管理家庭财务
 
 ## 功能特性
 
-### 核心功能
-
-- **智能记账** - 支持文字、语音、图片多模态输入，AI自动识别消费信息
-- **智能分类** - AI根据消费描述自动推荐分类，减少手动操作
-- **数据洞察** - AI分析消费趋势，提供节省建议和异常检测
-- **预算管理** - 设置每月预算，实时监控预算执行情况
-- **人情往来** - 管理出礼收礼记录，统计人情账目
-- **车辆管理** - 管理家庭车辆，记录加油充电，自动同步消费记录
-- **成员管理** - 家庭成员管理，支持成员消费统计
-- **移动适配** - 响应式设计，完美支持移动端和桌面端
-
-### 功能模块
-
-```
-家庭财务管家
-├── 认证模块 - 用户登录、修改密码、退出登录
-├── 记账模块 - 消费录入、AI智能识别、历史记录管理
-├── 统计模块 - 消费趋势图表、分类分布分析、成员占比分析
-├── 预算模块 - 总预算设置、分类预算分配、预算执行监控
-├── 人情模块 - 人情记录管理、人情统计分析
-├── 车辆模块 - 车辆管理、加油充电记录、里程统计
-└── 成员模块 - 成员管理、成员消费统计
-```
+- **智能记账**：支持 AI 自动识别消费类型和金额
+- **预算管理**：设置月度预算，实时追踪支出
+- **人情往来**：记录和管理家庭社交支出
+- **车辆管理**：记录加油、保养等车辆相关费用
+- **统计分析**：多维度数据可视化报表
+- **成员管理**：家庭成员独立记账，专属颜色标识
+- **分类管理**：自定义收支类别
+- **多端支持**：Web 浏览器 + Android App
 
 ## 技术栈
 
-| 层级     | 技术选型           | 说明               |
-| -------- | ------------------ | ------------------ |
-| 前端框架 | Vue 3 + Nuxt.js 3  | 全栈开发框架       |
-| UI组件库 | Element Plus       | 企业级UI组件       |
-| 状态管理 | Pinia              | Vue 3 官方状态管理 |
-| 图表库   | ECharts            | 数据可视化         |
-| 样式     | SCSS               | CSS预处理          |
-| 数据库   | MySQL              | 关系型数据库       |
-| AI平台   | SCNet (兼容OpenAI) | 大模型API          |
-| 认证     | JWT Token          | 无状态认证         |
-
-## 快速开始
-
-### 环境要求
-
-- Node.js >= 18.x
-- MySQL >= 8.0
-- pnpm >= 8.x (推荐)
-
-### 安装步骤
-
-1. **克隆项目**
-
-```bash
-git clone <repository-url>
-cd family_expense_app
-```
-
-2. **安装依赖**
-
-```bash
-pnpm install
-```
-
-3. **配置环境变量**
-
-复制环境变量示例文件并修改：
-
-```bash
-cp .env.example .env.development
-```
-
-编辑 `.env.development` 文件，配置数据库连接和AI API：
-
-```env
-# 数据库配置
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=family_expense
-
-# JWT配置
-JWT_SECRET=your_jwt_secret
-
-# AI配置
-AI_API_KEY=your_api_key
-AI_BASE_URL=https://api.example.com/v1
-AI_MODEL=gpt-4
-```
-
-4. **初始化数据库**
-
-```bash
-# 登录MySQL执行初始化脚本
-mysql -u root -p < database/init.sql
-
-# 添加车辆管理模块表
-mysql -u root -p family_expense < database/add_vehicle_tables.sql
-
-# 添加人情管理模块表
-mysql -u root -p family_expense < database/add_gifting_tables.sql
-
-# 添加加油充电记录关联消费记录字段
-mysql -u root -p family_expense < database/add_fuel_expense_link.sql
-```
-
-5. **启动开发服务器**
-
-```bash
-pnpm dev
-```
-
-6. **访问应用**
-
-打开浏览器访问 `http://localhost:3000`
-
-默认管理员账号：
-- 用户名：`admin`
-- 密码：`admin123`
+| 层级 | 技术 |
+|------|------|
+| 前端框架 | Vue 3 + Nuxt 3 |
+| UI 组件 | Element Plus |
+| 状态管理 | Pinia |
+| 样式 | SCSS (Sass) |
+| 移动端 | Capacitor 6 (Android) |
+| 后端 | Nitro (Nuxt 内置) |
+| 数据库 | MySQL 8.0 |
+| 认证 | JWT |
+| AI | SCNet API (MiniMax-M2.5) |
 
 ## 项目结构
 
 ```
 family_expense_app/
-├── pages/                      # 页面组件（Nuxt自动路由）
-│   ├── login.vue              # 登录页
-│   ├── index.vue              # 首页
-│   ├── expense/               # 记账模块
-│   ├── statistics/            # 统计分析
-│   ├── budget/                # 预算管理
-│   ├── category/              # 分类管理
-│   ├── member/                # 成员管理
-│   ├── gift/                  # 人情管理
-│   └── vehicle/               # 车辆管理
-├── components/                # 公共组件
-│   ├── layout/                # 布局组件
-│   ├── expense/               # 消费相关组件
-│   ├── gift/                  # 人情相关组件
-│   └── vehicle/               # 车辆相关组件
-├── composables/               # 组合式函数
-├── stores/                    # Pinia状态管理
-├── server/                    # 服务端
-│   ├── api/                   # API路由
-│   └── utils/                 # 服务端工具
-├── database/                  # 数据库脚本
-├── assets/styles/             # 全局样式
-├── types/                     # TypeScript类型
-├── utils/                     # 工具函数
-├── middleware/                # 中间件
-├── plugins/                   # 插件
-└── layouts/                   # 布局文件
+├── assets/              # 静态资源
+│   └── styles/          # 全局样式（SCSS）
+├── components/          # Vue 组件
+├── composables/         # 组合式函数（useApi 等）
+├── database/            # 数据库脚本与文档
+├── pages/               # 页面路由
+├── server/              # 后端服务
+│   ├── api/             # API 路由
+│   ├── middleware/      # 中间件（CORS 等）
+│   └── utils/           # 工具函数
+├── stores/              # Pinia 状态管理
+├── android/             # Android 原生项目（Capacitor 生成）
+├── capacitor.config.ts  # Capacitor 配置
+├── nuxt.config.ts       # Nuxt 配置
+└── .env.*               # 环境变量配置
 ```
 
-## API接口
+## 快速开始
 
-### 基础信息
+### 环境要求
 
-- **Base URL**: `http://localhost:3000/api`
-- **Content-Type**: `application/json`
-- **认证方式**: JWT Token (Bearer Token)
+- Node.js >= 18
+- MySQL >= 8.0
+- Java 17+（构建 Android APK 需要）
 
-### 主要接口
+### 本地开发
 
-| 模块 | 方法 | 路径 | 说明 |
-| ---- | ---- | ---- | ---- |
-| 认证 | POST | /api/auth/login | 用户登录 |
-| 认证 | GET | /api/auth/me | 获取当前用户信息 |
-| 消费 | GET | /api/expense | 获取消费记录列表 |
-| 消费 | POST | /api/expense | 创建消费记录 |
-| 统计 | GET | /api/statistics/summary | 获取消费汇总数据 |
-| 预算 | GET | /api/budget | 获取预算设置 |
-| 分类 | GET | /api/category | 获取分类列表 |
-| 成员 | GET | /api/member | 获取成员列表 |
-| 人情 | GET | /api/gift | 获取人情记录列表 |
-| 人情 | GET | /api/gift/statistics | 获取人情统计数据 |
-| 车辆 | GET | /api/vehicle | 获取车辆列表 |
-| 加油充电 | GET | /api/vehicle/fuel | 获取加油充电记录 |
+```bash
+# 安装依赖
+npm install
 
-## 数据库设计
+# 配置环境变量（复制并修改）
+cp .env.development.example .env.development
 
-### 核心表
-
-| 表名 | 说明 |
-| ---- | ---- |
-| users | 用户表 |
-| members | 成员表 |
-| categories | 分类表 |
-| expenses | 消费记录表 |
-| budgets | 预算表 |
-| gifts | 人情记录表 |
-| vehicles | 车辆表 |
-| vehicle_fuel_records | 加油充电记录表 |
-
-### 系统预设分类
-
-| 大类 | 子分类 |
-| ---- | ------ |
-| 餐饮 | 火锅、烧烤、外卖、正餐、零食、饮料、其他餐饮 |
-| 交通 | 打车、地铁、公交、加油、停车、其他交通 |
-| 购物 | 超市、网购、服装、电子产品、家居用品、其他购物 |
-| 娱乐 | 电影、KTV、游戏、旅游、其他娱乐 |
-| 医疗 | 看病、买药、体检、其他医疗 |
-| 教育 | 培训、书籍、课程、其他教育 |
-| 居住 | 房租、水电、物业、其他居住 |
-| 出礼 | 婚礼、生日、丧礼、满月、乔迁、其他出礼 |
-| 收礼 | 婚礼、生日、丧礼、满月、乔迁、其他收礼 |
-| 其他 | 其他消费 |
-
-## 特色功能
-
-### 加油充电自动记账
-
-当创建或更新加油/充电记录时，系统会自动在消费记录中创建或更新对应的记录：
-- 分类自动选择"交通"
-- 描述格式：`加油 - 车牌号 (品牌型号)` 或 `充电 - 车牌号 (品牌型号)`
-- **同步创建**：新增加油充电记录时，自动创建消费记录
-- **同步更新**：更新加油充电记录时，自动更新关联的消费记录
-- **同步删除**：删除加油充电记录时，自动删除关联的消费记录
-
-### 人情往来自动记账
-
-当选择"出礼"分类创建消费记录时，系统会自动创建人情记录：
-- **自动关联**：消费记录与人情记录双向关联（expense_id / gift_id）
-- **同步创建**：新增出礼消费记录时，自动创建人情记录
-- **同步更新**：更新出礼人情记录时，自动更新关联的消费记录
-- **同步删除**：删除人情记录时，自动删除关联的消费记录
-
-### 人情统计
-
-- 支持现金和实物两种支付类型
-- 自动统计出礼/收礼总额（现金 + 实物价值）
-- 按事由和关联人进行明细统计
-- 计算净支出金额
-
-### ⚠️ 注意事项：创建逻辑说明
-
-| 操作 | 是否创建消费记录 | 是否创建人情记录 | 是否创建加油充电记录 |
-|------|:----------------:|:----------------:|:--------------------:|
-| 消费记录创建（选择出礼分类） | - | ✅ 是 | ❌ 否 |
-| 人情记录创建（出礼类型） | ❌ 否 | - | - |
-| 人情记录创建（收礼类型） | ❌ 否 | - | - |
-| 加油充电记录创建 | ✅ 是 | ❌ 否 | - |
-
-**重要说明**：
-- 消费记录创建时，只有选择"出礼"分类才会自动创建人情记录
-- 人情记录创建时，**不会**自动创建消费记录（与加油充电模块逻辑不同）
-- 加油充电记录创建时，会自动创建消费记录（分类为"交通"）
-
-## 移动端适配
-
-- 响应式布局，自动适配不同设备
-- 底部导航栏，移动端专属交互
-- 触摸优化的按钮和表单
-- 支持 iOS 安全区域
-
-## 开发指南
-
-### 命名规范
-
-- 函数名称通过下划线进行拼接：`get_user_info`
-- 字段命名通过下划线拼接，首个字段为数据类型：`num_img_type`、`str_user_name`
-
-### 代码风格
-
-- 使用 ESLint + Prettier 进行代码格式化
-- 函数需要添加注释说明
-
-### 提交规范
-
-```
-feat: 新功能
-fix: 修复bug
-docs: 文档更新
-style: 代码格式调整
-refactor: 代码重构
-test: 测试相关
-chore: 构建/工具相关
+# 启动开发服务器
+npm run dev
 ```
 
-## 许可证
+访问 `http://localhost:3000`，默认账号：**admin / admin123**
 
-MIT License
+### 构建 Web 生产版本
 
----
+```bash
+# 构建服务端（用于部署到服务器，同时支持 Web 和 App）
+npm run build:prod
 
-> 维护者：开发团队
+# 或生成静态文件（仅用于 SSG 模式）
+npm run generate:prod
+```
+
+### 构建 Android App
+
+```bash
+# 1. 生成静态文件
+npm run generate:prod
+
+# 2. 同步到 Android 项目
+npx cap sync android
+
+# 3. 构建 Debug APK
+cd android && ./gradlew assembleDebug
+
+# APK 输出路径：android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+> **生产模式说明**：当前使用 Capacitor Server 模式，App 直接从远程服务器加载页面。APK 本身作为 WebView 容器，无需包含完整前端代码。
+
+## 生产环境部署
+
+### 服务器要求
+
+- 云服务器（如阿里云 ECS Ubuntu 22.04）
+- 开放安全组端口：TCP 3000
+- 已安装 Node.js 18+ 和 MySQL 8.0+
+
+### 部署步骤
+
+```bash
+# 1. 上传项目代码到服务器
+scp -r ./project user@your_server_ip:/opt/family-expense-app/
+
+# 2. SSH 登录服务器
+ssh root@your_server_ip
+
+# 3. 安装依赖并构建
+cd /opt/family-expense-app
+npm install --production
+npm run build:prod
+
+# 4. 初始化数据库（首次部署）
+mysql -u root -p < database/init.sql
+
+# 5. 使用 PM2 启动服务
+npm install -g pm2
+pm2 start .output/server/index.mjs --name family-expense --env production
+pm2 save
+pm2 startup
+```
+
+### 环境变量配置
+
+生产环境配置文件 `.env.production`：
+
+```env
+# 数据库配置
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=family_expense
+DB_USER=your_prod_user
+DB_PASSWORD=your_password
+
+# API 地址（App 和 Web 共用）
+NUXT_PUBLIC_API_BASE_URL=http://your_server_ip:3000
+
+# JWT 密钥（生产环境请修改！）
+JWT_SECRET=your-production-jwt-secret-key
+```
+
+## 常见问题
+
+### Q: App 登录提示 "Failed to fetch" / "网络连接失败"
+
+**原因及解决方案**：
+1. 确认服务器 `http://your_server_ip:3000` 可从手机浏览器访问
+2. 确认云服务器安全组已开放 3000 端口
+3. 确认 PM2 服务正在运行：`pm2 status`
+4. 当前使用 Server 模式，确保 `capacitor.config.ts` 中 `server.url` 配置正确
+
+### Q: Sass 构建警告
+
+项目已将 `darken()` 迁移至 `color.adjust()`，如仍有旧代码请检查 `assets/styles/global.scss`。
+
+### Q: Android 构建失败 Namespace 错误
+
+卸载废弃的 `@capacitor/http` 插件：
+```bash
+npm uninstall @capacitor/http
+npx cap sync android
+```
+
+## 更新日志
+
+详见 [log.md](./log.md)
+
+## 数据库变更
+
+详见 [database/README.md](./database/README.md)

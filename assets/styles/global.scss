@@ -2,8 +2,127 @@
 // 🌿 PREMIUM FRESH & GLASS GLOBAL STYLES
 // ============================================
 
+@use "sass:color";
+
+:root {
+  /* 科技风格亮色主色调 */
+  --el-color-primary: #00a8cc;
+  --el-color-primary-light-3: #4dc2db;
+  --el-color-primary-dark-2: #0086a3;
+  --el-color-success: #10b981;
+  --el-color-warning: #f59e0b;
+  --el-color-danger: #ef4444;
+  --el-color-info: #3b82f6;
+
+  --el-border-radius-base: 12px;
+  --el-border-radius-small: 8px;
+  --el-border-radius-round: 20px;
+
+  --el-transition-duration: 0.3s;
+
+  /* Premium Backgrounds */
+  --bg-white: #FFFFFF;
+  --bg-light: #F8FAFC;
+  --bg-page: #F1F5F9;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-input: rgba(248, 250, 252, 0.8);
+  --bg-input-focus: #FFFFFF;
+
+  /* Glassmorphism System */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-hover: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-border-hover: rgba(255, 255, 255, 0.8);
+
+  /* Text Color Hierarchy */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+
+  /* Borders */
+  --border-color: rgba(226, 232, 240, 0.8);
+  --border-color-hover: rgba(203, 213, 225, 0.9);
+  --border-light: rgba(241, 245, 249, 0.6);
+}
+
+/* 科技风格暗色主题 */
+html.dark {
+  --el-color-primary: #00f0ff;
+  --el-color-primary-light-3: #00d4ff;
+  --el-color-primary-light-5: #00a8cc;
+  --el-color-primary-light-7: #007c99;
+  --el-color-primary-light-9: #005066;
+  --el-color-primary-dark-2: #00e6f5;
+
+  --el-color-success: #39ff14;
+  --el-color-warning: #ff006e;
+  --el-color-danger: #ff2a6d;
+  --el-color-info: #00d4ff;
+
+  --el-text-color-primary: #ffffff;
+  --el-text-color-regular: #a0aec0;
+  --el-text-color-secondary: #718096;
+  --el-text-color-placeholder: #4a5568;
+
+  --el-border-color: rgba(0, 240, 255, 0.2);
+  --el-border-color-light: rgba(0, 240, 255, 0.15);
+  --el-border-color-lighter: rgba(0, 240, 255, 0.1);
+  --el-border-color-extra-light: rgba(0, 240, 255, 0.05);
+  --el-border-color-dark: rgba(0, 240, 255, 0.3);
+
+  --el-fill-color: rgba(0, 240, 255, 0.05);
+  --el-fill-color-light: rgba(0, 240, 255, 0.03);
+  --el-fill-color-blank: transparent;
+
+  --el-bg-color: rgba(21, 25, 50, 0.7);
+  --el-bg-color-page: #0a0e27;
+
+  --el-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --el-box-shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* Premium Backgrounds */
+  --bg-white: #151932;
+  --bg-light: #0f132a;
+  --bg-page: #0a0e27;
+  --bg-card: rgba(21, 25, 50, 0.6);
+  --bg-card-hover: rgba(21, 25, 50, 0.8);
+  --bg-input: rgba(10, 14, 39, 0.6);
+  --bg-input-focus: #151932;
+
+  /* Glassmorphism System */
+  --glass-bg: rgba(21, 25, 50, 0.45);
+  --glass-bg-hover: rgba(21, 25, 50, 0.6);
+  --glass-border: rgba(0, 240, 255, 0.15);
+  --glass-border-hover: rgba(0, 240, 255, 0.3);
+
+  /* Text Color Hierarchy */
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --text-light: #4a5568;
+
+  /* Borders */
+  --border-color: rgba(0, 240, 255, 0.2);
+  --border-color-hover: rgba(0, 240, 255, 0.35);
+  --border-light: rgba(0, 240, 255, 0.1);
+
+  /* 深色下背景微调 */
+  body {
+    background: #0a0e27;
+    &::before {
+      background: linear-gradient(
+        135deg,
+        rgba(0, 240, 255, 0.05) 0%,
+        rgba(21, 25, 50, 0.8) 100%
+      );
+    }
+  }
+}
+
 // 字体引入
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
 
 * {
   margin: 0;
@@ -11,7 +130,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   font-family: $font-body;
@@ -34,9 +154,9 @@ html, body {
 
 body {
   position: relative;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
@@ -48,17 +168,19 @@ body {
   }
 
   &::after {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
+    background-image:
       radial-gradient(rgba(16, 185, 129, 0.08) 1.5px, transparent 1.5px),
       radial-gradient(rgba(14, 165, 233, 0.06) 1.5px, transparent 1.5px);
     background-size: 32px 32px;
-    background-position: 0 0, 16px 16px;
+    background-position:
+      0 0,
+      16px 16px;
     pointer-events: none;
     z-index: -1;
   }
@@ -80,7 +202,8 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
   }
@@ -100,7 +223,8 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -109,7 +233,8 @@ body {
 }
 
 @keyframes borderGlow {
-  0%, 100% {
+  0%,
+  100% {
     border-color: $primary-light;
   }
   50% {
@@ -150,9 +275,13 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba($primary, 0.4), rgba($secondary, 0.4));
+  background: linear-gradient(
+    180deg,
+    rgba($primary, 0.4),
+    rgba($secondary, 0.4)
+  );
   border-radius: 3px;
-  
+
   &:hover {
     background: linear-gradient(180deg, $primary, $secondary);
   }
@@ -170,7 +299,7 @@ body {
   border-radius: $border-radius-lg;
   box-shadow: $glass-shadow;
   transition: all $transition-base;
-  
+
   &:hover {
     border-color: $glass-border-hover;
     box-shadow: $glass-shadow-hover;
@@ -190,9 +319,9 @@ body {
   position: relative;
   overflow: hidden;
   transition: all $transition-base;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -200,14 +329,16 @@ body {
     height: 4px;
     background: $gradient-primary;
     opacity: 0.7;
-    transition: opacity $transition-base, height $transition-base;
+    transition:
+      opacity $transition-base,
+      height $transition-base;
   }
-  
+
   &:hover {
     box-shadow: $glass-shadow-hover;
     transform: translateY(-3px);
     border-color: rgba($primary, 0.35);
-    
+
     &::before {
       opacity: 1;
       height: 6px;
@@ -226,7 +357,7 @@ body {
   margin-bottom: $spacing-xl;
   padding-bottom: $spacing-md;
   border-bottom: 1px solid $border-color;
-  
+
   h2 {
     font-family: $font-display;
     font-size: 24px;
@@ -235,9 +366,9 @@ body {
     margin: 0;
     position: relative;
     letter-spacing: -0.5px;
-    
+
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: -16px;
       top: 50%;
@@ -248,7 +379,7 @@ body {
       border-radius: 4px;
     }
   }
-  
+
   .header-actions {
     display: flex;
     gap: $spacing-md;
@@ -268,81 +399,81 @@ body {
   letter-spacing: 0.3px;
   height: 38px;
   padding: 8px 16px;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   &.el-button--primary {
     background: $gradient-primary;
     border: none;
     color: white;
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22);
-    
+
     &:hover {
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.32);
       background: $gradient-primary;
       opacity: 0.95;
     }
-    
+
     &:focus {
       background: $gradient-primary;
     }
   }
-  
+
   &.el-button--success {
     background: linear-gradient(135deg, $success 0%, $primary-light 100%);
     border: none;
     color: white;
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
-    
+
     &:hover {
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
       opacity: 0.95;
     }
   }
-  
+
   &.el-button--danger {
     background: linear-gradient(135deg, $danger 0%, $accent 100%);
     border: none;
     color: white;
     box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18);
-    
+
     &:hover {
       box-shadow: 0 6px 20px rgba(239, 68, 68, 0.28);
       opacity: 0.95;
     }
   }
-  
+
   &.el-button--warning {
-    background: linear-gradient(135deg, $warning 0%, #FBBF24 100%);
+    background: linear-gradient(135deg, $warning 0%, #fbbf24 100%);
     border: none;
     color: white;
     box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
-    
+
     &:hover {
       box-shadow: 0 6px 20px rgba(245, 158, 11, 0.28);
       opacity: 0.95;
     }
   }
-  
+
   // Default button style
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid $border-color;
   color: $text-secondary;
   backdrop-filter: blur(8px);
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.9);
     border-color: $primary-light;
     color: $primary;
   }
-  
+
   &.is-link {
     background: transparent;
     border: none;
@@ -350,9 +481,35 @@ body {
     box-shadow: none !important;
     padding: 0;
     height: auto;
-    
+
+    &.el-button--primary {
+      color: $primary;
+      &:hover {
+        color: $primary-dark;
+      }
+    }
+    &.el-button--success {
+      color: $success;
+      &:hover {
+        color: color.adjust($success, $lightness: -10%);
+      }
+    }
+    &.el-button--danger {
+      color: $danger;
+      &:hover {
+        color: color.adjust($danger, $lightness: -10%);
+      }
+    }
+    &.el-button--warning {
+      color: $warning;
+      &:hover {
+        color: color.adjust($warning, $lightness: -10%);
+      }
+    }
+
     &:hover {
       transform: none;
+      background: transparent;
     }
   }
 }
@@ -396,7 +553,7 @@ body {
   padding: 10px 14px;
   box-shadow: none !important;
   transition: all $transition-base;
-  
+
   &:focus {
     border-color: $primary;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
@@ -449,11 +606,11 @@ body {
   font-family: $font-mono;
   font-weight: 700;
   color: $accent;
-  
+
   &.positive {
     color: $primary;
   }
-  
+
   &.large {
     font-size: 32px;
     background: $gradient-primary;
@@ -481,9 +638,9 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: $glass-shadow;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -493,17 +650,17 @@ body {
     opacity: 0;
     transition: opacity $transition-base;
   }
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: $glass-shadow-hover;
     border-color: rgba($primary, 0.3);
-    
+
     &::before {
       opacity: 1;
     }
   }
-  
+
   .label {
     display: block;
     font-size: 12px;
@@ -513,7 +670,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.8px;
   }
-  
+
   .value {
     display: block;
     font-family: $font-mono;
@@ -522,7 +679,7 @@ body {
     color: $text-primary;
     letter-spacing: -0.5px;
   }
-  
+
   .value-accent {
     background: $gradient-primary;
     -webkit-background-clip: text;
@@ -543,13 +700,13 @@ body {
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
-  
+
   &.up {
     color: $primary-dark;
     background: rgba($primary, 0.12);
     border: 1px solid rgba($primary, 0.15);
   }
-  
+
   &.down {
     color: $accent-dark;
     background: rgba($accent, 0.12);
@@ -567,29 +724,29 @@ body {
   padding: 2px 10px;
   height: auto;
   border: 1px solid transparent;
-  
+
   &.el-tag--success {
     background: rgba(16, 185, 129, 0.1);
     border-color: rgba(16, 185, 129, 0.2);
     color: $primary-dark;
   }
-  
+
   &.el-tag--warning {
     background: rgba(245, 158, 11, 0.1);
     border-color: rgba(245, 158, 11, 0.2);
-    color: #C27803;
+    color: #c27803;
   }
-  
+
   &.el-tag--danger {
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.2);
     color: $danger;
   }
-  
+
   &.el-tag--info {
     background: rgba(99, 102, 241, 0.1);
     border-color: rgba(99, 102, 241, 0.2);
-    color: #4F46E5;
+    color: #4f46e5;
   }
 }
 
@@ -622,7 +779,7 @@ body {
   tr {
     background: transparent !important;
     transition: background-color $transition-fast;
-    
+
     &:hover td {
       background: rgba(16, 185, 129, 0.04) !important;
     }
@@ -640,7 +797,7 @@ body {
       font-size: 20px;
     }
   }
-  
+
   .stat-item {
     .value {
       font-size: 26px;
@@ -650,28 +807,29 @@ body {
 
 // Mobile (iPhone 14 Pro Max & smaller)
 @media (max-width: $breakpoint-sm) {
-  html, body {
+  html,
+  body {
     font-size: 13px;
     overscroll-behavior: none;
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-sm;
     margin-bottom: $spacing-mobile-md;
     padding-bottom: $spacing-sm;
-    
+
     h2 {
       font-size: 18px;
-      
+
       &::before {
         left: -12px;
         width: 3px;
         height: 18px;
       }
     }
-    
+
     .header-actions {
       width: 100%;
       justify-content: flex-start;
@@ -679,80 +837,82 @@ body {
       gap: $spacing-sm;
     }
   }
-  
+
   .stat-item {
     padding: $spacing-mobile-sm;
-    
+
     .label {
       font-size: 10px;
     }
-    
+
     .value {
       font-size: 22px;
     }
   }
-  
+
   .el-card {
     border-radius: $border-radius;
-    
+
     .el-card__header {
       padding: $spacing-mobile-md;
     }
-    
+
     .el-card__body {
       padding: $spacing-mobile-md;
     }
   }
-  
+
   .el-table {
     font-size: 12px;
-    
+
     th.el-table__cell,
     td.el-table__cell {
       padding: 10px 4px;
     }
   }
-  
+
   .el-button {
     padding: 6px 12px;
     height: 34px;
     font-size: 13px;
   }
-  
+
   .el-form-item {
     margin-bottom: $spacing-mobile-md;
-    
+
     .el-form-item__label {
       font-size: 12px;
       padding-bottom: 4px;
     }
   }
-  
+
   .amount.large {
     font-size: 24px;
   }
-  
+
   .el-dialog {
     margin: 16px auto !important;
     max-width: calc(100vw - 24px);
     border-radius: $border-radius-lg;
-    
+
     .el-dialog__header {
       padding: $spacing-mobile-md;
     }
-    
+
     .el-dialog__body {
       padding: $spacing-mobile-md;
       max-height: calc(100vh - 180px);
       overflow-y: auto;
     }
-    
+
     .el-dialog__footer {
       padding: $spacing-mobile-md;
     }
   }
-  
-  .el-select, .el-date-editor, .el-cascader {
+
+  .el-select,
+  .el-date-editor,
+  .el-cascader {
     width: 100% !important;
   }
 }
@@ -762,7 +922,7 @@ body {
   .page-header h2 {
     font-size: 16px;
   }
-  
+
   .stat-item .value {
     font-size: 18px;
   }
@@ -832,7 +992,8 @@ body {
       background: $bg-white;
     }
 
-    &.is-focused, &.is-focus {
+    &.is-focused,
+    &.is-focus {
       border-color: $primary;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
       background: $bg-white;
@@ -850,14 +1011,15 @@ body {
   font-family: $font-body;
   border-radius: 6px;
   margin: 2px 4px;
-  
+
   &.is-selected {
     color: $primary-dark;
     background: rgba($primary, 0.08) !important;
     font-weight: 700;
   }
 
-  &:hover, &.is-hovering {
+  &:hover,
+  &.is-hovering {
     background: rgba($primary, 0.05) !important;
     color: $primary-dark;
   }
@@ -865,7 +1027,7 @@ body {
 
 .el-descriptions {
   background: transparent !important;
-  
+
   .el-descriptions__label {
     color: $text-secondary;
     font-weight: 600;

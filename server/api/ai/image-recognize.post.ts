@@ -1,5 +1,4 @@
 import { successResponse, errorResponse } from '~/server/utils/response'
-import { recognizeExpense } from '~/server/utils/ai'
 import Tesseract from 'tesseract.js'
 
 export default defineEventHandler(async (event) => {
@@ -24,11 +23,21 @@ export default defineEventHandler(async (event) => {
     )
     
     const ocrText = result.data.text
-    const extractedInfo = await recognizeExpense(ocrText)
     
     return successResponse({
       ocr_text: ocrText,
-      extracted_info: extractedInfo,
+      extracted_info: {
+        amount: null,
+        category: null,
+        subcategory: null,
+        date: null,
+        time: null,
+        members: [],
+        description: null,
+        confidence: 0,
+        category_id: null,
+        member_ids: [],
+      },
     }, '识别成功')
   } catch (error: any) {
     console.error('图片识别失败:', error)

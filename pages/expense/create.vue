@@ -568,6 +568,9 @@ import type {
   Category,
 } from "~/types";
 import { formatDate } from "~/utils/format";
+import { Capacitor } from "@capacitor/core";
+import OCRPlugin from "~/utils/ocr";
+import { parseOcrTextLocally } from "~/utils/ocr-parser";
 
 definePageMeta({
   middleware: ["auth"],
@@ -1164,6 +1167,15 @@ const handleImageChange = (file: any) => {
   previewImage.value = URL.createObjectURL(file.raw);
 };
 
+const getBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const recognizeFromImage = async () => {
   if (!selectedFile.value) {
     ElMessage.warning("请先上传图片");
@@ -1172,22 +1184,47 @@ const recognizeFromImage = async () => {
 
   recognizing.value = true;
   try {
-    const res = await recognizeImage(selectedFile.value);
-    if (res.success) {
-      recognizeResult.value = res.data.extracted_info;
-      fillFormFromResult(res.data.extracted_info);
-      amountInput.value = res.data.extracted_info.amount?.toString() || "";
+    let ocrText = "";
 
-      if (res.data.extracted_info.amount) {
-        await fetchClassifications(
-          res.data.ocr_text || res.data.extracted_info.description || "",
-          res.data.extracted_info.amount,
-        );
-      }
+    if (Capacitor.getPlatform() === "android") {
+      const base64Str = await getBase64(selectedFile.value);
+      const ocrRes = await OCRPlugin.detectText({ base64: base64Str });
+      ocrText = ocrRes.text;
     } else {
-      ElMessage.error(res.message || "图片识别失败");
+      const res = await recognizeImage(selectedFile.value);
+      if (res.success) {
+        ocrText = res.data.ocr_text;
+      } else {
+        ElMessage.error(res.message || "图片识别失败");
+        return;
+      }
+    }
+
+    if (!ocrText || !ocrText.trim()) {
+      ElMessage.warning("未能识别出图片中的文字，请确保图片清晰且包含文字");
+      return;
+    }
+
+    // 使用本地解析算法提取记账要素
+    const parsedData = parseOcrTextLocally(
+      ocrText,
+      categoryStore.categories,
+      memberStore.members,
+      categoryKeywords
+    );
+
+    recognizeResult.value = parsedData;
+    fillFormFromResult(parsedData);
+    amountInput.value = parsedData.amount?.toString() || "";
+
+    if (parsedData.amount) {
+      await fetchClassifications(
+        ocrText || parsedData.description || "",
+        parsedData.amount,
+      );
     }
   } catch (error: any) {
+    console.error("图片识别异常:", error);
     ElMessage.error(error.message || "图片识别失败");
   } finally {
     recognizing.value = false;
@@ -1725,7 +1762,7 @@ const handleExcelImport = async (file: File) => {
   height: 420px;
   overflow-y: auto;
   padding: $spacing-lg;
-  background: rgba($bg-light, 0.5);
+  background: color-mix(in srgb, $bg-light 50%, transparent);
   border: 1px solid $border-color;
   border-radius: $border-radius;
   margin-bottom: $spacing-lg;

@@ -601,7 +601,7 @@ import {
   PieChart,
   Clock,
 } from "@element-plus/icons-vue";
-import * as echarts from "echarts";
+import type { ECharts } from "echarts/core";
 import type { AnalysisResult, TrendData, AIAnalysisRecord } from "~/types";
 import {
   getMonthRange,
@@ -640,9 +640,10 @@ const trendChartRef = ref<HTMLElement>();
 const categoryChartRef = ref<HTMLElement>();
 const memberChartRef = ref<HTMLElement>();
 
-let trendChart: echarts.ECharts | null = null;
-let categoryChart: echarts.ECharts | null = null;
-let memberChart: echarts.ECharts | null = null;
+let echartsLib: any = null;
+let trendChart: ECharts | null = null;
+let categoryChart: ECharts | null = null;
+let memberChart: ECharts | null = null;
 
 const analyzing = ref(false);
 const analysis = ref<AnalysisResult | null>(null);
@@ -691,19 +692,22 @@ onMounted(async () => {
   currentYear.value = year;
   currentMonth.value = month;
 
-  initCharts();
+  await initCharts();
   await fetchData();
 });
 
-const initCharts = () => {
-  if (trendChartRef.value) {
-    trendChart = echarts.init(trendChartRef.value);
+const initCharts = async () => {
+  if (!echartsLib) {
+    echartsLib = (await import("~/utils/echarts")).default;
   }
-  if (categoryChartRef.value) {
-    categoryChart = echarts.init(categoryChartRef.value);
+  if (trendChartRef.value && !trendChart) {
+    trendChart = echartsLib.init(trendChartRef.value);
   }
-  if (memberChartRef.value) {
-    memberChart = echarts.init(memberChartRef.value);
+  if (categoryChartRef.value && !categoryChart) {
+    categoryChart = echartsLib.init(categoryChartRef.value);
+  }
+  if (memberChartRef.value && !memberChart) {
+    memberChart = echartsLib.init(memberChartRef.value);
   }
 
   window.addEventListener("resize", () => {
@@ -1001,12 +1005,27 @@ const runAnalysis = async () => {
 
 const exportExcel = async () => {
   try {
-    const params = new URLSearchParams({
-      start_date: dateRange.value.start,
-      end_date: dateRange.value.end,
+    const res = await api.get("/api/statistics/export", {
+      params: {
+        start_date: dateRange.value.start,
+        end_date: dateRange.value.end,
+      },
+      responseType: "blob",
     });
 
-    window.open(`/api/statistics/export?${params.toString()}`, "_blank");
+    const url = window.URL.createObjectURL(
+      new Blob([res as any], { type: "text/csv;charset=utf-8" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `消费记录_${dateRange.value.start}_${dateRange.value.end}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   } catch (error: any) {
     ElMessage.error(error.message || "导出失败");
   }
