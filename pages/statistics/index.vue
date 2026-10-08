@@ -10,14 +10,18 @@
     </div>
 
     <!-- 时间选择器 -->
-    <el-card class="time-selector-card">
+    <el-card class="time-selector-card ac-filter-card">
       <div class="time-selector">
-        <el-button-group>
-          <el-button @click="prevMonth">&lt;</el-button>
-          <el-button disabled>{{ currentMonthLabel }}</el-button>
-          <el-button @click="nextMonth">&gt;</el-button>
-        </el-button-group>
-        <el-radio-group v-model="quickSelect" @change="handleQuickSelect">
+        <div class="month-stepper">
+          <el-button class="stepper-btn" circle @click="prevMonth">
+            <el-icon><ArrowLeft /></el-icon>
+          </el-button>
+          <span class="stepper-label">{{ currentMonthLabel }}</span>
+          <el-button class="stepper-btn" circle @click="nextMonth">
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
+        <el-radio-group v-model="quickSelect" class="ac-radio-group" @change="handleQuickSelect">
           <el-radio-button value="thisMonth">本月</el-radio-button>
           <el-radio-button value="lastMonth">上月</el-radio-button>
           <el-radio-button value="custom">自定义</el-radio-button>
@@ -34,7 +38,11 @@
 
     <!-- 消费趋势图 -->
     <el-card class="chart-card">
-      <template #header>消费趋势</template>
+      <template #header>
+        <div class="card-header">
+          <span class="card-title">📈 消费趋势</span>
+        </div>
+      </template>
       <div ref="trendChartRef" class="chart" style="height: 300px"></div>
     </el-card>
 
@@ -42,13 +50,21 @@
     <el-row :gutter="16">
       <el-col :span="12">
         <el-card class="chart-card">
-          <template #header>分类分布</template>
+          <template #header>
+            <div class="card-header">
+              <span class="card-title">🥧 分类分布</span>
+            </div>
+          </template>
           <div ref="categoryChartRef" class="chart" style="height: 300px"></div>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card class="chart-card">
-          <template #header>成员占比</template>
+          <template #header>
+            <div class="card-header">
+              <span class="card-title">👥 成员占比</span>
+            </div>
+          </template>
           <div ref="memberChartRef" class="chart" style="height: 300px"></div>
         </el-card>
       </el-col>
@@ -58,7 +74,7 @@
     <el-card class="insight-card" v-loading="analyzing">
       <template #header>
         <div class="insight-header">
-          <span>AI分析洞察</span>
+          <span class="card-title">🍃 狸克 AI 财务洞察</span>
           <div class="insight-actions">
             <el-button link type="primary" @click="showHistoryDialog = true">
               <el-icon><Clock /></el-icon> 历史分析
@@ -600,6 +616,8 @@ import {
   DataAnalysis,
   PieChart,
   Clock,
+  ArrowLeft,
+  ArrowRight,
 } from "@element-plus/icons-vue";
 import type { ECharts } from "echarts/core";
 import type { AnalysisResult, TrendData, AIAnalysisRecord } from "~/types";
@@ -739,6 +757,12 @@ const fetchTrendData = async () => {
   }
 };
 
+const acColors = [
+  "#59C990", "#74B9FF", "#FFE066", "#FF7675",
+  "#FFA502", "#A29BFE", "#55EFC4", "#FAB1A0",
+  "#81ECEC", "#FD79A8", "#B2BEC3"
+];
+
 const updateTrendChart = (data: TrendData[]) => {
   if (!trendChart) return;
 
@@ -750,22 +774,49 @@ const updateTrendChart = (data: TrendData[]) => {
   trendChart.setOption({
     tooltip: {
       trigger: "axis",
+      backgroundColor: "#FAF8ED",
+      borderColor: "#59C990",
+      borderWidth: 2,
+      textStyle: {
+        color: "#5D4037",
+        fontWeight: 600,
+      },
       formatter: (params: any) => {
         const item = params[0];
-        return `${item.axisValue}<br/>消费: ¥${Number(item.value).toFixed(2)}`;
+        return `<div style="font-family: inherit;"><b>${item.axisValue}</b><br/><span style="color:#3B9264;">消费: ¥${Number(item.value).toFixed(2)}</span></div>`;
       },
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      top: "12%",
+      containLabel: true,
     },
     xAxis: {
       type: "category",
       data: chartData.map((d) => d.date.substring(5)),
+      axisLine: {
+        lineStyle: { color: "#D8CFB5" },
+      },
       axisLabel: {
         rotate: 45,
+        color: "#7B5E43",
+        fontWeight: 600,
       },
     },
     yAxis: {
       type: "value",
+      axisLine: {
+        lineStyle: { color: "#D8CFB5" },
+      },
+      splitLine: {
+        lineStyle: { color: "#EFE8D8", type: "dashed" },
+      },
       axisLabel: {
         formatter: "¥{value}",
+        color: "#7B5E43",
+        fontWeight: 600,
       },
     },
     series: [
@@ -773,12 +824,30 @@ const updateTrendChart = (data: TrendData[]) => {
         name: "消费金额",
         type: "line",
         smooth: true,
+        symbol: "circle",
+        symbolSize: 6,
         data: chartData.map((d) => d.value),
         areaStyle: {
-          opacity: 0.3,
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "rgba(89, 201, 144, 0.45)" },
+              { offset: 1, color: "rgba(89, 201, 144, 0.02)" },
+            ],
+          },
         },
         itemStyle: {
-          color: "#409EFF",
+          color: "#59C990",
+          borderColor: "#3B9264",
+          borderWidth: 2,
+        },
+        lineStyle: {
+          width: 3,
+          color: "#59C990",
         },
       },
     ],
@@ -811,23 +880,36 @@ const updateCategoryChart = (data: any[]) => {
   }));
 
   categoryChart.setOption({
+    color: acColors,
     tooltip: {
       trigger: "item",
+      backgroundColor: "#FAF8ED",
+      borderColor: "#59C990",
+      borderWidth: 2,
+      textStyle: { color: "#5D4037", fontWeight: 600 },
       formatter: "{b}: ¥{c} ({d}%)",
     },
     legend: {
       orient: "vertical",
       right: 10,
       top: "center",
+      textStyle: { color: "#5D4037", fontWeight: 600 },
     },
     series: [
       {
         type: "pie",
         radius: ["40%", "70%"],
         center: ["40%", "50%"],
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: "#FAF8ED",
+          borderWidth: 2,
+        },
         label: {
           show: true,
           formatter: "{b}\n{d}%",
+          color: "#5D4037",
+          fontWeight: 600,
         },
         emphasis: {
           label: {
@@ -835,6 +917,7 @@ const updateCategoryChart = (data: any[]) => {
             formatter: "{b}\n¥{c}\n{d}%",
             fontSize: 14,
             fontWeight: "bold",
+            color: "#5D4037",
           },
         },
         data: chartData,
@@ -863,32 +946,45 @@ const fetchMemberData = async () => {
 const updateMemberChart = (data: any[]) => {
   if (!memberChart) return;
 
-  const chartData = data.map((d) => ({
+  const chartData = data.map((d, index) => ({
     name: d.member_name,
     value: Number(d.total_amount) || 0,
     itemStyle: {
-      color: d.member_color || "#4ECDC4",
+      color: d.member_color || acColors[index % acColors.length],
     },
   }));
 
   memberChart.setOption({
+    color: acColors,
     tooltip: {
       trigger: "item",
+      backgroundColor: "#FAF8ED",
+      borderColor: "#59C990",
+      borderWidth: 2,
+      textStyle: { color: "#5D4037", fontWeight: 600 },
       formatter: "{b}: ¥{c} ({d}%)",
     },
     legend: {
       orient: "vertical",
       right: 10,
       top: "center",
+      textStyle: { color: "#5D4037", fontWeight: 600 },
     },
     series: [
       {
         type: "pie",
         radius: ["40%", "70%"],
         center: ["40%", "50%"],
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: "#FAF8ED",
+          borderWidth: 2,
+        },
         label: {
           show: true,
           formatter: "{b}\n{d}%",
+          color: "#5D4037",
+          fontWeight: 600,
         },
         emphasis: {
           label: {
@@ -896,6 +992,7 @@ const updateMemberChart = (data: any[]) => {
             formatter: "{b}\n¥{c}\n{d}%",
             fontSize: 14,
             fontWeight: "bold",
+            color: "#5D4037",
           },
         },
         data: chartData,
@@ -1070,15 +1167,15 @@ watch(showHistoryDialog, (val) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-lg;
+    margin-bottom: $spacing-xl;
     padding-bottom: $spacing-md;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 2px dashed var(--ac-border, #E8DFCC);
 
     h2 {
       font-family: $font-display;
       font-size: 24px;
-      font-weight: 700;
-      color: $text-primary;
+      font-weight: 800;
+      color: var(--ac-text-primary, #5D4037);
       margin: 0;
     }
 
@@ -1089,18 +1186,122 @@ watch(showHistoryDialog, (val) => {
   }
 
   .time-selector-card {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
+    background: var(--ac-bg-card, #FFFFFF);
+    border: 3px solid var(--ac-border, #E8DFCC);
+    border-radius: 24px;
+    box-shadow: 0 6px 0 var(--ac-shadow);
+    transition: all $transition-base;
+
+    &:hover {
+      box-shadow: 0 8px 0 rgba(89, 201, 144, 0.2);
+      border-color: #59C990;
+    }
 
     .time-selector {
       display: flex;
       align-items: center;
-      gap: $spacing-lg;
+      gap: $spacing-md;
       flex-wrap: wrap;
     }
   }
 
+  // 动森月份按键选择器
+  .month-stepper {
+    display: inline-flex;
+    align-items: center;
+    background: var(--ac-bg-bar, #FAF8ED);
+    border: 2px solid var(--ac-border, #E8DFCC);
+    border-radius: 24px;
+    padding: 4px 6px;
+    box-shadow: 0 3px 0 var(--ac-shadow);
+
+    .stepper-btn {
+      width: 32px;
+      height: 32px;
+      min-height: 32px;
+      padding: 0;
+      border: 1.5px solid #3B9264;
+      background: #59C990;
+      color: #FFFFFF;
+      box-shadow: 0 2px 0 #3B9264;
+      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      &:hover {
+        background: #74D094;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 0 #3B9264;
+      }
+
+      &:active {
+        transform: translateY(2px);
+        box-shadow: 0 0 0 #3B9264;
+      }
+    }
+
+    .stepper-label {
+      padding: 0 16px;
+      font-family: $font-display;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--ac-text-primary, #5D4037);
+      user-select: none;
+    }
+  }
+
+  // 动森药丸单选胶囊
+  .ac-radio-group {
+    background: var(--ac-bg-bar, #FAF8ED);
+    border: 2px solid var(--ac-border, #E8DFCC);
+    border-radius: 24px;
+    padding: 3px;
+    box-shadow: 0 3px 0 var(--ac-shadow);
+
+    :deep(.el-radio-button) {
+      margin: 0;
+
+      .el-radio-button__inner {
+        border: none !important;
+        border-radius: 18px !important;
+        background: transparent;
+        color: var(--ac-text-secondary, #7B5E43);
+        font-family: $font-display;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 8px 18px;
+        box-shadow: none !important;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      &.is-active .el-radio-button__inner {
+        background: #59C990 !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 3px 0 #3B9264 !important;
+      }
+
+      &:not(.is-active):hover .el-radio-button__inner {
+        color: #59C990;
+        background: rgba(89, 201, 144, 0.15);
+      }
+    }
+  }
+
   .chart-card {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .card-title {
+        font-family: $font-display;
+        font-weight: 800;
+        font-size: 17px;
+        color: var(--ac-text-primary, #5D4037);
+        letter-spacing: 0.5px;
+      }
+    }
 
     .chart {
       width: 100%;
@@ -1119,20 +1320,22 @@ watch(showHistoryDialog, (val) => {
     display: flex;
     align-items: center;
     gap: $spacing-xs;
-    font-size: 14px;
-    font-weight: 600;
-    color: $text-primary;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: $font-display;
+    color: var(--ac-text-primary, #5D4037);
     margin-bottom: $spacing-md;
 
     .el-icon {
-      font-size: 16px;
-      color: $primary;
+      font-size: 17px;
+      color: #59C990;
     }
   }
 
   p {
-    color: $text-secondary;
+    color: var(--ac-text-secondary, #7B5E43);
     line-height: 1.6;
+    font-size: 14px;
   }
 }
 
@@ -1141,6 +1344,13 @@ watch(showHistoryDialog, (val) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .card-title {
+      font-family: $font-display;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--ac-text-primary, #5D4037);
+    }
 
     .insight-actions {
       display: flex;
@@ -1152,27 +1362,38 @@ watch(showHistoryDialog, (val) => {
 .stat-box {
   text-align: center;
   padding: $spacing-md;
-  background: $bg-light;
-  border-radius: $border-radius;
+  background: var(--ac-bg-bar, #FAF8ED);
+  border: 2px solid var(--ac-border, #E8DFCC);
+  border-radius: 20px;
+  box-shadow: 0 3px 0 var(--ac-shadow);
+  transition: all $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #59C990;
+    box-shadow: 0 6px 0 rgba(89, 201, 144, 0.2);
+  }
 
   .stat-label {
-    font-size: 12px;
-    color: $text-muted;
+    font-size: 13px;
+    font-family: $font-display;
+    font-weight: 700;
+    color: var(--ac-text-secondary, #7B5E43);
     margin-bottom: $spacing-xs;
   }
 
   .stat-value {
-    font-size: 20px;
-    font-weight: 700;
-    color: $text-primary;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ac-text-primary, #5D4037);
     font-family: $font-mono;
 
     &.expense {
-      color: $accent;
+      color: #FF7675;
     }
 
     &.warning {
-      color: $warning;
+      color: #FFA502;
     }
   }
 }
@@ -1185,9 +1406,11 @@ watch(showHistoryDialog, (val) => {
 
 .anomaly-item {
   padding: $spacing-md;
-  background: $bg-light;
-  border-radius: $border-radius;
-  border-left: 3px solid $warning;
+  background: rgba(255, 224, 102, 0.15);
+  border-radius: 18px;
+  border: 2px solid #F8C843;
+  border-left: 5px solid #FFA502;
+  box-shadow: 0 3px 0 rgba(212, 155, 0, 0.12);
 
   .anomaly-header {
     display: flex;
@@ -1196,27 +1419,28 @@ watch(showHistoryDialog, (val) => {
     margin-bottom: $spacing-xs;
 
     .anomaly-category {
-      font-weight: 600;
-      color: $text-primary;
+      font-family: $font-display;
+      font-weight: 700;
+      color: var(--ac-text-primary, #5D4037);
     }
 
     .anomaly-amount {
       margin-left: auto;
-      font-weight: 700;
-      color: $accent;
+      font-weight: 800;
+      color: #FF7675;
       font-family: $font-mono;
     }
   }
 
   .anomaly-desc {
     font-size: 13px;
-    color: $text-secondary;
+    color: var(--ac-text-secondary, #7B5E43);
     line-height: 1.5;
   }
 
   .anomaly-date {
     font-size: 12px;
-    color: $text-muted;
+    color: var(--ac-text-muted, #9E8570);
     margin-top: $spacing-xs;
   }
 }
@@ -1229,9 +1453,11 @@ watch(showHistoryDialog, (val) => {
 
 .suggestion-item {
   padding: $spacing-md;
-  background: rgba(78, 205, 196, 0.05);
-  border-radius: $border-radius;
-  border-left: 3px solid $primary;
+  background: rgba(89, 201, 144, 0.12);
+  border-radius: 18px;
+  border: 2px solid #74D094;
+  border-left: 5px solid #3B9264;
+  box-shadow: 0 3px 0 rgba(59, 146, 100, 0.12);
 
   .suggestion-header {
     display: flex;
@@ -1240,14 +1466,15 @@ watch(showHistoryDialog, (val) => {
     margin-bottom: $spacing-xs;
 
     .suggestion-category {
-      font-weight: 600;
-      color: $text-primary;
+      font-family: $font-display;
+      font-weight: 700;
+      color: var(--ac-text-primary, #5D4037);
     }
   }
 
   .suggestion-content {
     font-size: 13px;
-    color: $text-secondary;
+    color: var(--ac-text-secondary, #7B5E43);
     line-height: 1.6;
   }
 }
@@ -1255,35 +1482,35 @@ watch(showHistoryDialog, (val) => {
 .prediction-content {
   .confidence {
     font-size: 12px;
-    color: $text-muted;
+    color: var(--ac-text-muted, #9E8570);
     margin-top: $spacing-xs;
   }
 
   .no-data-hint {
-    color: $text-muted;
+    color: var(--ac-text-muted, #9E8570);
     font-style: italic;
   }
 }
 
 .percentage {
   font-size: 12px;
-  color: $text-secondary;
+  color: var(--ac-text-secondary, #7B5E43);
 }
 
 .amount {
   font-family: $font-mono;
-  font-weight: 600;
-  color: $accent;
+  font-weight: 700;
+  color: #FFA502;
 }
 
 .increase {
-  color: $accent;
-  font-weight: 600;
+  color: #FF7675;
+  font-weight: 700;
 }
 
 .decrease {
-  color: $success;
-  font-weight: 600;
+  color: #59C990;
+  font-weight: 700;
 }
 
 .pagination-wrapper {
@@ -1297,54 +1524,17 @@ watch(showHistoryDialog, (val) => {
     display: flex;
     gap: $spacing-xl;
     padding: $spacing-md;
-    background: #f5f7fa;
-    border-radius: $border-radius;
+    background: var(--ac-bg-bar, #FAF8ED);
+    border: 2px solid var(--ac-border, #E8DFCC);
+    border-radius: 18px;
     margin-bottom: $spacing-lg;
     font-size: 13px;
-    color: #606266;
+    color: var(--ac-text-secondary, #7B5E43);
   }
 
   .insight-section {
     h4 {
-      color: #303133;
-    }
-
-    .stat-box {
-      background: #f5f7fa;
-
-      .stat-label {
-        color: #909399;
-      }
-
-      .stat-value {
-        color: #303133;
-      }
-    }
-
-    .anomaly-item {
-      background: #fafafa;
-      border-left-color: #e6a23c;
-
-      .anomaly-category {
-        color: #303133;
-      }
-
-      .anomaly-desc {
-        color: #606266;
-      }
-    }
-
-    .suggestion-item {
-      background: #f0f9eb;
-      border-left-color: #67c23a;
-
-      .suggestion-category {
-        color: #303133;
-      }
-
-      .suggestion-content {
-        color: #606266;
-      }
+      color: var(--ac-text-primary, #5D4037);
     }
   }
 }
@@ -1357,7 +1547,7 @@ watch(showHistoryDialog, (val) => {
 
   .stat-box {
     .stat-value {
-      font-size: 16px;
+      font-size: 18px;
     }
   }
 }
@@ -1367,98 +1557,99 @@ watch(showHistoryDialog, (val) => {
 .history-dialog,
 .detail-dialog {
   .el-dialog {
-    --el-dialog-bg-color: #ffffff !important;
-    background: #ffffff !important;
+    --el-dialog-bg-color: #FAF8ED !important;
+    background: #FAF8ED !important;
+    border: 3px solid var(--ac-border, #E8DFCC) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 10px 0 var(--ac-shadow) !important;
   }
 
   .el-dialog__header {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid #e4e7ed;
+    background-color: #FAF8ED !important;
+    border-bottom: 2px dashed var(--ac-border, #E8DFCC) !important;
+    padding: 16px 20px;
   }
 
   .el-dialog__title {
-    color: #1a1a1a !important;
-    font-weight: 600;
+    color: var(--ac-text-primary, #5D4037) !important;
+    font-family: "Fredoka", "Quicksand", sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 18px !important;
   }
 
   .el-dialog__headerbtn .el-dialog__close {
-    color: #606266 !important;
+    color: var(--ac-text-secondary, #7B5E43) !important;
   }
 
   .el-dialog__body {
-    background-color: #ffffff !important;
-    color: #1a1a1a !important;
+    background-color: #FAF8ED !important;
+    color: var(--ac-text-primary, #5D4037) !important;
     padding: 20px;
   }
 
   .el-table {
-    --el-table-bg-color: #ffffff;
-    --el-table-tr-bg-color: #ffffff;
-    --el-table-header-bg-color: #f5f5f5;
-    --el-table-row-hover-bg-color: #f0f0f0;
-    --el-table-text-color: #1a1a1a;
-    --el-table-header-text-color: #1a1a1a;
-    background-color: #ffffff !important;
-    color: #1a1a1a !important;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    --el-table-header-bg-color: var(--ac-bg-card, #FFFFFF);
+    --el-table-row-hover-bg-color: rgba(89, 201, 144, 0.12);
+    --el-table-text-color: var(--ac-text-primary, #5D4037);
+    --el-table-header-text-color: var(--ac-text-primary, #5D4037);
+    background-color: transparent !important;
+    color: var(--ac-text-primary, #5D4037) !important;
 
     th.el-table__cell {
-      background-color: #f5f5f5 !important;
-      color: #1a1a1a !important;
-      font-weight: 600;
+      background-color: var(--ac-bg-card, #FFFFFF) !important;
+      color: var(--ac-text-primary, #5D4037) !important;
+      font-weight: 800;
     }
 
     td.el-table__cell {
-      color: #333333 !important;
-    }
-
-    .el-table__body tr:hover > td.el-table__cell {
-      background-color: #f0f0f0 !important;
+      color: var(--ac-text-secondary, #7B5E43) !important;
     }
 
     .el-table__row--striped td.el-table__cell {
-      background-color: #fafafa !important;
-    }
-
-    .el-table__empty-text {
-      color: #333333 !important;
+      background-color: rgba(255, 255, 255, 0.5) !important;
     }
   }
 
   .el-button.is-link {
-    color: #409eff !important;
-  }
+    color: #59C990 !important;
 
-  .el-tag {
-    --el-tag-bg-color: #f4f4f5;
-    --el-tag-text-color: #1a1a1a;
+    &:hover {
+      color: #3B9264 !important;
+    }
   }
 
   .el-pagination {
-    --el-pagination-bg-color: #ffffff;
-    --el-pagination-text-color: #333333;
-    --el-pagination-button-bg-color: #f4f4f5;
-    --el-pagination-hover-color: #409eff;
+    --el-pagination-bg-color: transparent;
+    --el-pagination-text-color: var(--ac-text-secondary, #7B5E43);
+    --el-pagination-button-bg-color: var(--ac-bg-card, #FFFFFF);
+    --el-pagination-hover-color: #59C990;
 
-    .el-pagination__total {
-      color: #333333 !important;
-    }
-
+    .el-pagination__total,
     .el-pagination__jump {
-      color: #333333 !important;
+      color: var(--ac-text-secondary, #7B5E43) !important;
     }
 
     button {
-      background-color: #f4f4f5 !important;
-      color: #333333 !important;
+      background-color: var(--ac-bg-card, #FFFFFF) !important;
+      color: var(--ac-text-secondary, #7B5E43) !important;
+      border: 1.5px solid var(--ac-border, #E8DFCC);
+      border-radius: 12px;
     }
 
     .el-pager li {
-      background-color: #f4f4f5 !important;
-      color: #333333 !important;
+      background-color: var(--ac-bg-card, #FFFFFF) !important;
+      color: var(--ac-text-secondary, #7B5E43) !important;
+      border: 1.5px solid var(--ac-border, #E8DFCC);
+      border-radius: 12px;
+      margin: 0 3px;
 
       &.is-active {
         color: #ffffff !important;
-        background-color: #409eff !important;
+        background-color: #59C990 !important;
+        border-color: #3B9264 !important;
+        box-shadow: 0 2px 0 #3B9264 !important;
       }
     }
   }
