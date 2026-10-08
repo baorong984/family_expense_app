@@ -1,4 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import fs from 'node:fs'
+import path from 'node:path'
+import dotenv from 'dotenv'
+
+// 优先加载本地未脱敏的私有环境配置（若存在则自动覆盖模板配置）
+const isProd = process.argv.some(arg => arg.includes('.env.production')) ||
+  (!process.argv.some(arg => arg.includes('.env.development')) && process.env.NODE_ENV === 'production')
+const envMode = isProd ? 'production' : 'development'
+const localEnvFiles = [
+  path.resolve(process.cwd(), `.env.${envMode}.local`),
+  path.resolve(process.cwd(), '.env.local'),
+]
+for (const envFile of localEnvFiles) {
+  if (fs.existsSync(envFile)) {
+    dotenv.config({ path: envFile, override: true, quiet: true })
+  }
+}
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   
