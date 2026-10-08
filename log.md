@@ -26,8 +26,8 @@
     - `server/middleware/cors.ts` — 移除与 credentials 冲突的配置，添加生产域名白名单
 
 - **API 地址端口缺失**：`.env.production` 中 `NUXT_PUBLIC_API_BASE_URL` 缺少端口号
-  - 修改前：`http://139.196.175.70`
-  - 修改后：`http://139.196.175.70:3000`
+  - 修改前：`http://your_server_ip`
+  - 修改后：`http://your_server_ip:3000`
 
 ### 构建流程变更
 
@@ -44,7 +44,7 @@ npx cap sync android     # 同步到 Android 项目
 cd android && ./gradlew assembleDebug  # 构建 APK
 ```
 
-> 注意：Server 模式下 App 不再使用本地静态文件，而是直接从 `http://139.196.175.70:3000` 加载页面。
+> 注意：Server 模式下 App 不再使用本地静态文件，而是直接从 `http://your_server_ip:3000` 加载页面。
 
 ### 部署要求
 - 云服务器安全组需开放 **TCP 3000** 端口
