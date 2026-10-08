@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nuxt dev --dotenv .env.development",
+    "start": "nuxt dev --dotenv .env.development",
     "dev:prod": "nuxt dev --dotenv .env.production",
     "build": "nuxt build --dotenv .env.development",
     "build:prod": "nuxt build --dotenv .env.production",

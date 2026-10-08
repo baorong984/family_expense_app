@@ -438,6 +438,45 @@ body {
     border-color: #59C990;
     color: #59C990;
   }
+
+  &.is-link {
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+    box-shadow: none !important;
+    padding: 0;
+    height: auto;
+
+    &.el-button--primary {
+      color: #59C990;
+      &:hover {
+        color: #3B9264;
+      }
+    }
+    &.el-button--success {
+      color: #59C990;
+      &:hover {
+        color: #3B9264;
+      }
+    }
+    &.el-button--danger {
+      color: #FF7675;
+      &:hover {
+        color: #D63031;
+      }
+    }
+    &.el-button--warning {
+      color: #D49B00;
+      &:hover {
+        color: #B58400;
+      }
+    }
+
+    &:hover {
+      transform: none;
+      background: transparent;
+    }
+  }
 }
 
 // ============================================
@@ -713,6 +752,7 @@ body {
     background: rgba(116, 185, 255, 0.15);
     border-color: rgba(116, 185, 255, 0.3);
     color: #0984E3;
+  }
   }
 }
 

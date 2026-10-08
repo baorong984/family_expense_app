@@ -18,10 +18,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Local env files
-.env
-.env.*
-!.env.example
+# Local env files (已取消忽略，允许提交脱敏的环境配置模板)
+# .env
+# .env.*
+# !.env.example
+
+# Local private env files (本地私有真实配置，禁止提交)
+*.local
+.env.local
+.env.*.local
+
 
 # IDE
 .vscode/*

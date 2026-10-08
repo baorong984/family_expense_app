@@ -319,6 +319,15 @@ const handleSelect = () => {
     background: rgba(89, 201, 144, 0.15);
     border-color: #59C990;
   }
+
+  :deep(.el-menu--collapse) {
+    width: 100%;
+
+    .el-menu-item {
+      padding: 0 !important;
+      text-align: center;
+    }
+  }
 }
 
 .menu-divider.ac-divider {
