@@ -4,6 +4,10 @@ export default defineNuxtConfig({
   
   ssr: false,  // 禁用 SSR 避免水合不匹配
   
+  experimental: {
+    appManifest: false,
+  },
+  
   modules: [
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
